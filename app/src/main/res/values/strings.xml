@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Spend</string>
+    <string name="home">Home</string>
+    <string name="total_balance">Total Balance</string>
+    <string name="transaction_history">Transaction History</string>
+    <string name="see_all">See All</string>
+    <string name="expenses">Expenses</string>
+    <string name="total_expense">Total Expense</string>
+    <string name="analytics">Analytics</string>
+    <string name="add_entry">Add Entry</string>
+    <string name="back">Back</string>
+    <string name="update_balance">Update balance</string>
+    <string name="new_balance">New Balance</string>
+    <string name="done">Done</string>
+    <string name="enter_new_balance">Enter new balance</string>
+    <string name="transactions">Transactions</string>
+    <string name="delete_everything">Delete Everything</string>
+    <string name="transaction_success_message">Successfully inserted transaction</string>
+</resources>
