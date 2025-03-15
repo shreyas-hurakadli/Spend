@@ -1,6 +1,5 @@
 package com.example.spend.data.room
 
-import com.example.spend.data.TagModel
 import kotlinx.coroutines.flow.Flow
 
 interface EntryRepository {
@@ -19,6 +18,4 @@ interface EntryRepository {
     suspend fun resetAutoincrement()
 
     fun getExpense(from: Long): Flow<Int>
-
-    // fun getTagList(): Flow<List<Entry>>
 }

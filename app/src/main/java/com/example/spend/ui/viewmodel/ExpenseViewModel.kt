@@ -2,7 +2,6 @@ package com.example.spend.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spend.data.TagModel
 import com.example.spend.data.datastore.BalanceRepository
 import com.example.spend.data.room.Entry
 import com.example.spend.data.room.EntryRepository

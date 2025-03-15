@@ -1,6 +1,5 @@
 package com.example.spend.data.room
 
-import com.example.spend.data.TagModel
 import kotlinx.coroutines.flow.Flow
 
 class DefaultRepository(private val entryDao: EntryDao): EntryRepository {
