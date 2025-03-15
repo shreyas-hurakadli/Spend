@@ -1,5 +1,10 @@
 package com.example.spend.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -112,12 +117,17 @@ fun AddScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 )
+            }
 
+            AnimatedVisibility(
+                visible = isExpanded,
+                enter = slideInVertically() + fadeIn(),
+                exit = slideOutVertically() + fadeOut()
+            ) {
                 DropdownMenu(
                     expanded = isExpanded,
                     onDismissRequest = { isExpanded = false },
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
                         .padding(16.dp)
                 ) {
                     categories.forEach { category ->
