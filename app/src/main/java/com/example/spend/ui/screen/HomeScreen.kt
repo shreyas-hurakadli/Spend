@@ -72,14 +72,7 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            AppTopBar(title = stringResource(id = R.string.home)) {
-                IconButton(onClick = { viewModel.truncateTable() }) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.baseline_clear_all),
-                        contentDescription = stringResource(R.string.delete_everything)
-                    )
-                }
-            }
+            AppTopBar(title = stringResource(id = R.string.home))
         },
         bottomBar = {
             AppBottomBar(

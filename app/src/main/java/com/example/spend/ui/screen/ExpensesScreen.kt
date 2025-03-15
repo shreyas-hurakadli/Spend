@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -66,7 +68,7 @@ fun ExpensesScreen(
         },
         modifier = Modifier.safeContentPadding()
     ) { innerPadding ->
-        var selectedIndex = viewModel.selectedIndex.collectAsState()
+        val selectedIndex = viewModel.selectedIndex.collectAsState()
         val uiState by viewModel.uiState.collectAsState()
 
         Box(
@@ -125,7 +127,6 @@ fun CardRow(
 fun CardInfo(
     index: Int,
     entry: Entry,
-    modifier: Modifier = Modifier
 ) {
     Card(
         modifier = Modifier.padding(top = 16.dp, bottom = 16.dp, end = 16.dp),
@@ -133,8 +134,8 @@ fun CardInfo(
         colors = CardColors(
             containerColor = if (index and 1 == 0) Color(0xFFF7C948) else Color(0xFF8C6EFF),
             contentColor = if (index and 1 == 0) Color.Black else Color.White,
-            disabledContainerColor = TODO(),
-            disabledContentColor = TODO()
+            disabledContainerColor = Color.White,
+            disabledContentColor = Color.White
         )
     ) {
         Text(text = entry.tag)

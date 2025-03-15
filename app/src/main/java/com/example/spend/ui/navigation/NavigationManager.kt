@@ -83,7 +83,26 @@ fun NavigationManager(navHostController: NavHostController) {
         ) {
             AddScreen(navHostController = navHostController)
         }
-        composable<Routes.EntryScreen> {
+        composable<Routes.EntryScreen>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                    animationSpec = tween(durationMillis = 500)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                    animationSpec = tween(durationMillis = 500)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Down,
+                    animationSpec = tween(durationMillis = 500)
+                )
+            }
+        ) {
             EntryScreen(navHostController = navHostController)
         }
     }
