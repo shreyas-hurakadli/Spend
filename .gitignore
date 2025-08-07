@@ -30,3 +30,6 @@ coverage/
 
 # Ignore generated files from popular tools
 *.lock
+
+# Ignore .gradle directory
+.gradle/
