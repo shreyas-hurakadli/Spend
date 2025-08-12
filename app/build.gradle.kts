@@ -74,6 +74,10 @@ dependencies {
     // Data Store
     implementation(libs.androidx.datastore.preferences)
 
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.57")
+    ksp("com.google.dagger:hilt-android-compiler:2.57")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
