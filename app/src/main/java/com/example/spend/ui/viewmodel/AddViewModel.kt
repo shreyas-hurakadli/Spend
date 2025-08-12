@@ -6,11 +6,14 @@ import com.example.spend.data.datastore.BalanceRepository
 import com.example.spend.data.room.Entry
 import com.example.spend.data.room.EntryRepository
 import com.example.spend.getTodayStart
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AddViewModel(
+@HiltViewModel
+class AddViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
     private val dataStoreRepository: BalanceRepository
 ): ViewModel() {

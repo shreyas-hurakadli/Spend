@@ -8,19 +8,20 @@ import com.example.spend.data.room.EntryRepository
 import com.example.spend.getMonthStart
 import com.example.spend.getSunday
 import com.example.spend.getTodayStart
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class ExpenseUiState(
     val balance: Int = 0,
     val expense: Int = 0
 )
 
-class ExpenseViewModel(
+@HiltViewModel
+class ExpenseViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
     private val dataStoreRepository: BalanceRepository
 ): ViewModel() {

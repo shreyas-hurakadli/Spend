@@ -5,15 +5,18 @@ import androidx.lifecycle.viewModelScope
 import com.example.spend.data.datastore.BalanceRepository
 import com.example.spend.data.room.Entry
 import com.example.spend.data.room.EntryRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel(
+@HiltViewModel
+class HomeViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
     private val dataStoreRepository: BalanceRepository
-): ViewModel() {
+) : ViewModel() {
     val balance: StateFlow<Int> =
         dataStoreRepository.balance
             .stateIn(
