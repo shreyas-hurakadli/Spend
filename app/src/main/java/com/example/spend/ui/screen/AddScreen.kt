@@ -43,20 +43,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.AddViewModel
-import com.example.spend.ui.viewmodel.AppViewModelFactory
 
 val categories = listOf("Food", "Essentials", "Entertainment", "Education")
 
 @Composable
 fun AddScreen(
     navHostController: NavHostController,
-    viewModel: AddViewModel = viewModel(factory = AppViewModelFactory.Factory)
+    viewModel: AddViewModel = hiltViewModel()
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     val uiState = viewModel.uiState.collectAsState()
@@ -154,7 +153,7 @@ fun AddScreen(
                 onValueChange = {
                     if (it == "")
                         viewModel.updateBill(0)
-                    else if (it.all {c ->  c.isDigit() })
+                    else if (it.all { c -> c.isDigit() })
                         viewModel.updateBill(it.toInt())
                 },
                 label = {

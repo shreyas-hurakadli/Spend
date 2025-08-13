@@ -14,26 +14,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.spend.LongToDate
 import com.example.spend.R
-import com.example.spend.ui.viewmodel.AppViewModelFactory
+import com.example.spend.longToDate
 import com.example.spend.ui.viewmodel.EntryViewModel
 
 @Composable
 fun EntryScreen(
     navHostController: NavHostController,
-    viewModel: EntryViewModel = viewModel(
-        factory = AppViewModelFactory.Factory
-    )
+    viewModel: EntryViewModel = hiltViewModel()
 ) {
     val list = viewModel.transactions.collectAsState()
 
@@ -56,10 +49,10 @@ fun EntryScreen(
         ) {
             items(items = list.value) { entry ->
                 Column {
-                    if (date != LongToDate(entry.date)) {
-                        date = LongToDate(entry.date)
+                    if (date != longToDate(entry.date)) {
+                        date = longToDate(entry.date)
                         Text(
-                            text = LongToDate(entry.date),
+                            text = longToDate(entry.date),
                             style = MaterialTheme.typography.titleLarge,
                             color = Color.Black,
                             fontWeight = FontWeight.ExtraBold,

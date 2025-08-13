@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,20 +28,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
 import com.example.spend.data.room.Entry
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.theme.SpendTheme
-import com.example.spend.ui.viewmodel.AppViewModelFactory
 import com.example.spend.ui.viewmodel.ExpenseViewModel
 
 @Composable
 fun ExpensesScreen(
     navHostController: NavHostController,
-    viewModel: ExpenseViewModel = viewModel(factory = AppViewModelFactory.Factory)
+    viewModel: ExpenseViewModel = hiltViewModel()
 ) {
     val list = viewModel.list.collectAsState()
 

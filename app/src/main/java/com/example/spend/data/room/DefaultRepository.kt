@@ -1,8 +1,9 @@
 package com.example.spend.data.room
 
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class DefaultRepository(private val entryDao: EntryDao): EntryRepository {
+class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : EntryRepository {
     override suspend fun insert(entry: Entry) = entryDao.insert(entry)
 
     override suspend fun update(entry: Entry) = entryDao.update(entry)

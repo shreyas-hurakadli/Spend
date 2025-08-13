@@ -40,7 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.spend.LongToDate
+import com.example.spend.longToDate
 import com.example.spend.R
 import com.example.spend.data.room.Entry
 
@@ -286,7 +286,7 @@ fun TransactionCard(
                 if (showDate) {
                     Spacer(Modifier.padding(4.dp))
                     Text(
-                        text = LongToDate(entry.date),
+                        text = longToDate(entry.date),
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.DarkGray
                     )

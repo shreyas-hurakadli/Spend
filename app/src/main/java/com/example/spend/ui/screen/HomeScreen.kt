@@ -20,7 +20,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -39,9 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -49,24 +46,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.spend.LongToDate
 import com.example.spend.R
-import com.example.spend.data.room.Entry
-import com.example.spend.getTodayStart
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.theme.SpendTheme
-import com.example.spend.ui.viewmodel.AppViewModelFactory
 import com.example.spend.ui.viewmodel.HomeViewModel
 
 @Composable
 fun HomeScreen(
     navHostController: NavHostController,
-    viewModel: HomeViewModel = viewModel(
-        factory = AppViewModelFactory.Factory
-    )
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     var openDialog by remember { mutableStateOf(false) }
 
