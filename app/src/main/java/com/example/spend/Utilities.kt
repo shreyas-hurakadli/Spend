@@ -4,14 +4,13 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.util.Calendar
-import java.util.Date
 
 fun getTodayStart(): Long {
     val today = LocalDate.now()
     return today.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
 }
 
-fun LongToDate(longDate: Long): String {
+fun longToDate(longDate: Long): String {
     val dateFormat = SimpleDateFormat("dd/MM/yyyy")
     return dateFormat.format(longDate)
 }
