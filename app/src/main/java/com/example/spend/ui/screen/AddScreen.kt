@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -87,19 +88,26 @@ fun AddScreen(
                     label = {
                         Text(
                             text = "Category",
-                            style = MaterialTheme.typography.labelSmall
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text
                     ),
                     textStyle = TextStyle(
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp
+                    ),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onBackground,
                     ),
                     trailingIcon = {
                         IconButton(onClick = { isExpanded = !isExpanded }) {
                             Icon(
                                 imageVector = Icons.Default.ArrowDropDown,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 contentDescription = null
                             )
                         }
@@ -107,6 +115,7 @@ fun AddScreen(
                     leadingIcon = {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.baseline_label),
+                            tint = MaterialTheme.colorScheme.onBackground,
                             contentDescription = null
                         )
                     },
@@ -156,19 +165,25 @@ fun AddScreen(
                     else if (it.all { c -> c.isDigit() })
                         viewModel.updateBill(it.toInt())
                 },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                ),
                 label = {
                     Text(
                         text = "Bill",
+                        color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.labelSmall
                     )
                 },
                 textStyle = TextStyle(
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 16.sp
                 ),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
                 ),
-                leadingIcon = { Text("₹") },
+                leadingIcon = { Text("₹", color = MaterialTheme.colorScheme.onBackground) },
                 singleLine = true,
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -183,19 +198,26 @@ fun AddScreen(
                 label = {
                     Text(
                         text = "Description (Optional)",
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                ),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text
                 ),
                 textStyle = TextStyle(
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 16.sp
                 ),
                 singleLine = false,
                 leadingIcon = {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.baseline_pencil),
+                        tint = MaterialTheme.colorScheme.onBackground,
                         contentDescription = null
                     )
                 },

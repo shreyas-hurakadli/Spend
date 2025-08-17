@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -80,11 +82,11 @@ fun AppTopBar(
             )
         },
         colors = TopAppBarColors(
-            containerColor = Color.White,
-            scrolledContainerColor = Color.White,
-            navigationIconContentColor = Color(0xFF8C6EFF),
-            titleContentColor = Color.Black,
-            actionIconContentColor = Color(0xFF8C6EFF)
+            containerColor = MaterialTheme.colorScheme.background,
+            scrolledContainerColor = MaterialTheme.colorScheme.onBackground,
+            navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
+            titleContentColor = MaterialTheme.colorScheme.onBackground,
+            actionIconContentColor = MaterialTheme.colorScheme.onBackground
         ),
         navigationIcon = {
             if (canNavigateBack) {
@@ -111,7 +113,7 @@ fun AppBottomBar(
     BottomAppBar(
         modifier = modifier.fillMaxWidth(),
         tonalElevation = 8.dp,
-        containerColor = Color(0xFFF5F5F5)
+        containerColor = MaterialTheme.colorScheme.background
     ) {
         Row(
             modifier = modifier.fillMaxWidth(),
@@ -125,7 +127,7 @@ fun AppBottomBar(
                         Icon(
                             imageVector = ImageVector.vectorResource(navigationIcons[i].baseLineIcon),
                             contentDescription = navigationIcons[i].contentDescription,
-                            tint = Color(0xFF8C6EFF),
+                            tint = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier.size(30.dp)
                         )
                     }
@@ -134,7 +136,7 @@ fun AppBottomBar(
                         Icon(
                             imageVector = ImageVector.vectorResource(navigationIcons[i].outlinedIcon),
                             contentDescription = navigationIcons[i].contentDescription,
-                            tint = Color(0xFF8C6EFF),
+                            tint = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier.size(30.dp)
                         )
                     }
@@ -154,7 +156,7 @@ fun SegmentedControl(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color(0xFF353839), shape = RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(16.dp))
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -162,17 +164,20 @@ fun SegmentedControl(
             val isSelected = selectedIndex == index
             Text(
                 text = text,
-                color = if (isSelected) Color.Black else Color.White,
+                color = if (isSelected) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onPrimary,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier
                     .weight(1f)
                     .background(
-                        if (isSelected) Color.White else Color.Transparent,
-                        shape = RoundedCornerShape(8.dp)
+                        if (isSelected) MaterialTheme.colorScheme.background else Color.Transparent,
+                        shape = RoundedCornerShape(16.dp)
                     )
                     .padding(vertical = 8.dp)
-                    .clickable { onSegmentSelected(index) },
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { onSegmentSelected(index) },
             )
         }
     }
@@ -186,7 +191,7 @@ fun InfoBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFF5F5F5), shape = RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(16.dp))
             .padding(16.dp)
             .animateContentSize(),
         horizontalArrangement = Arrangement.SpaceAround
@@ -250,9 +255,14 @@ fun TransactionCard(
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
+        colors = CardColors(
+            containerColor = MaterialTheme.colorScheme.tertiary,
+            contentColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent,
+            disabledContentColor = Color.Transparent
+        ),
         modifier = modifier
             .padding(bottom = 16.dp)
-            .background(color = Color.Transparent)
             .fillMaxWidth()
     ) {
         Row(
@@ -267,28 +277,30 @@ fun TransactionCard(
                 Text(
                     text = entry.tag,
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onTertiary
                 )
                 Spacer(Modifier.padding(4.dp))
                 Text(
                     text = entry.description,
+                    color = MaterialTheme.colorScheme.onTertiary,
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color.DarkGray
                 )
             }
             Column {
                 Text(
-                    text = "- ₹" + entry.bill.toString(),
+                    text = "₹" + entry.bill.toString(),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.End,
                     color = Color.Red
                 )
                 if (showDate) {
                     Spacer(Modifier.padding(4.dp))
                     Text(
                         text = longToDate(entry.date),
+                        color = MaterialTheme.colorScheme.onTertiary,
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color.DarkGray
                     )
                 }
             }

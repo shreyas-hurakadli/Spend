@@ -89,7 +89,7 @@ fun HomeScreen(
                 Box(
                     modifier = Modifier
                         .background(
-                            color = Color(0xFF8C6EFF),
+                            color = MaterialTheme.colorScheme.primary,
                             shape = RoundedCornerShape(16.dp)
                         )
                         .fillMaxWidth()
@@ -99,21 +99,24 @@ fun HomeScreen(
                         onClick = { openDialog = true },
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .size(24.dp)
+                            .size(24.dp),
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Edit,
                             contentDescription = stringResource(R.string.update_balance),
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                     Column {
                         Text(
                             text = stringResource(R.string.total_balance),
+                            color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.labelLarge,
                         )
                         Spacer(Modifier.padding(8.dp))
                         Text(
                             text = "₹ ${balance.value}",
+                            color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.bodyLarge,
                             fontSize = 24.sp
                         )
