@@ -74,6 +74,12 @@ fun AddScreen(
                 canNavigateBack = true,
                 onBackClick = { navHostController.popBackStack() }
             )
+        },
+        bottomBar = {
+            AppBottomBar(
+                currentScreenIndex = 1,
+                navHostController = navHostController,
+            )
         }
     ) { innerPadding ->
 

@@ -42,13 +42,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.spend.longToDate
+import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.data.room.Entry
+import com.example.spend.longToDate
+import com.example.spend.ui.navigation.Routes
 
 data class NavigationIcon(
     @DrawableRes val baseLineIcon: Int,
     @DrawableRes val outlinedIcon: Int,
+    val route: Routes,
     val contentDescription: String?
 )
 
@@ -56,11 +59,19 @@ val navigationIcon = listOf<NavigationIcon>(
     NavigationIcon(
         baseLineIcon = R.drawable.baseline_home,
         outlinedIcon = R.drawable.outline_home,
+        route = Routes.HomeScreen,
         contentDescription = "Home"
+    ),
+    NavigationIcon(
+        baseLineIcon = R.drawable.baseline_add_circle,
+        outlinedIcon = R.drawable.outline_add_circle,
+        route = Routes.AddScreen,
+        contentDescription = "Add Entry"
     ),
     NavigationIcon(
         baseLineIcon = R.drawable.baseline_insert_chart,
         outlinedIcon = R.drawable.outlined_insert_chart,
+        route = Routes.ExpensesScreen,
         contentDescription = "Expenses"
     ),
 )
@@ -106,7 +117,7 @@ fun AppTopBar(
 @Composable
 fun AppBottomBar(
     currentScreenIndex: Int,
-    onClick: () -> Unit,
+    navHostController: NavHostController,
     modifier: Modifier = Modifier,
     navigationIcons: List<NavigationIcon> = navigationIcon
 ) {
@@ -132,7 +143,7 @@ fun AppBottomBar(
                         )
                     }
                 } else {
-                    IconButton(onClick = onClick) {
+                    IconButton(onClick = { navHostController.navigate(navigationIcons[i].route) }) {
                         Icon(
                             imageVector = ImageVector.vectorResource(navigationIcons[i].outlinedIcon),
                             contentDescription = navigationIcons[i].contentDescription,

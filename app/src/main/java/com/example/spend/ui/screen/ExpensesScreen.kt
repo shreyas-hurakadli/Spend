@@ -90,8 +90,8 @@ fun ExpensesScreen(
         },
         bottomBar = {
             AppBottomBar(
-                currentScreenIndex = 1,
-                onClick = { navHostController.navigate(Routes.HomeScreen) },
+                currentScreenIndex = 2,
+                navHostController = navHostController
             )
         },
         modifier = Modifier.safeContentPadding()

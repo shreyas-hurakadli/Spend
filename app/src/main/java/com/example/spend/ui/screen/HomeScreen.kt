@@ -68,7 +68,7 @@ fun HomeScreen(
         bottomBar = {
             AppBottomBar(
                 currentScreenIndex = 0,
-                onClick = { navHostController.navigate(Routes.ExpensesScreen) }
+                navHostController
             )
         },
         modifier = Modifier.safeContentPadding()
