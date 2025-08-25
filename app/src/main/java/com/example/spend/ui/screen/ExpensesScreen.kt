@@ -1,13 +1,17 @@
 package com.example.spend.ui.screen
 
 import android.util.Log
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
@@ -34,13 +38,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
+import com.example.spend.getFormattedAmount
+import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.ExpenseViewModel
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -175,7 +183,91 @@ fun ExpensesScreen(
 }
 
 @Composable
-fun ScrollIndicator(index: Int, total: Int, size: Dp, modifier: Modifier = Modifier) {
+private fun SegmentedControl(
+    selectedIndex: Int,
+    onSegmentSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val options = listOf("Daily", "Weekly", "Monthly")
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(16.dp))
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        options.forEachIndexed { index, text ->
+            val isSelected = selectedIndex == index
+            Text(
+                text = text,
+                color = if (isSelected) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onPrimary,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier
+                    .weight(1f)
+                    .background(
+                        if (isSelected) MaterialTheme.colorScheme.background else Color.Transparent,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .padding(vertical = 8.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { onSegmentSelected(index) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun InfoBar(
+    balance: Double,
+    expense: Double
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(16.dp))
+            .padding(16.dp)
+            .animateContentSize(),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = stringResource(R.string.total_balance),
+                color = Color(0xFF4CAF50),
+                style = MaterialTheme.typography.labelLarge,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "${getLocalCurrencySymbol()} ${getFormattedAmount(balance)}",
+                color = Color(0xFF4CAF50),
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 24.sp,
+                textAlign = TextAlign.Center
+            )
+        }
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = stringResource(R.string.total_expense),
+                color = Color(0xFFF44336),
+                style = MaterialTheme.typography.labelLarge,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "${getLocalCurrencySymbol()} ${getFormattedAmount(expense)}",
+                color = Color(0xFFF44336),
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 24.sp,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+private fun ScrollIndicator(index: Int, total: Int, size: Dp, modifier: Modifier = Modifier) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -202,7 +294,7 @@ fun ScrollIndicator(index: Int, total: Int, size: Dp, modifier: Modifier = Modif
 }
 
 @Composable
-fun ExpensesGraph(
+private fun ExpensesGraph(
     list: StateFlow<List<Double>>,
     modifier: Modifier = Modifier
 ) {
@@ -242,7 +334,7 @@ fun ExpensesGraph(
 }
 
 @Composable
-fun IncomeGraph(
+private fun IncomeGraph(
     list: StateFlow<List<Double>>,
     modifier: Modifier = Modifier
 ) {
@@ -282,7 +374,7 @@ fun IncomeGraph(
 }
 
 @Composable
-fun ExpensesByCategoryGraph(map: StateFlow<Map<String, Double>>, modifier: Modifier = Modifier) {
+private fun ExpensesByCategoryGraph(map: StateFlow<Map<String, Double>>, modifier: Modifier = Modifier) {
     val data by map.collectAsState()
     val labelListKey = Key<List<String>>()
     val modelProducer = remember { CartesianChartModelProducer() }
@@ -350,7 +442,7 @@ fun ExpensesByCategoryGraph(map: StateFlow<Map<String, Double>>, modifier: Modif
 }
 
 @Composable
-fun IncomeByCategoryGraph(map: StateFlow<Map<String, Double>>, modifier: Modifier = Modifier) {
+private fun IncomeByCategoryGraph(map: StateFlow<Map<String, Double>>, modifier: Modifier = Modifier) {
     val modelProducer = remember { CartesianChartModelProducer() }
     val data by map.collectAsState()
     val labelListKey = Key<List<String>>()

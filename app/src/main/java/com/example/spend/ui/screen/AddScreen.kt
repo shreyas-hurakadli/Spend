@@ -48,6 +48,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
+import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.AddViewModel
 import com.example.spend.validateCurrency
@@ -190,7 +191,7 @@ fun AddScreen(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
                 ),
-                leadingIcon = { Text("₹", color = MaterialTheme.colorScheme.onBackground) },
+                leadingIcon = { Text(getLocalCurrencySymbol()!!, color = MaterialTheme.colorScheme.onBackground) },
                 singleLine = true,
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 8.dp)
