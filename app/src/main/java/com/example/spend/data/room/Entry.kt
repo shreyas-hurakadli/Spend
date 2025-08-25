@@ -7,8 +7,9 @@ import androidx.room.PrimaryKey
 data class Entry(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val amount: Double = 0.00,
+    val isExpense: Boolean = true,
+    val epochSeconds: Long = 0L,
+    val category: String = "",
     val description: String = "",
-    val tag: String = "",
-    val bill: Int = 0,
-    val date: Long = 0L
 )
