@@ -3,6 +3,7 @@ package com.example.spend.data.datastore
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -16,17 +17,17 @@ class BalanceRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
     private companion object {
-        val BALANCE_AMOUNT = intPreferencesKey("balance")
+        val BALANCE_AMOUNT = doublePreferencesKey("balance")
         const val TAG = "BalanceRepository"
     }
 
-    suspend fun saveBalance(balance: Int) {
+    suspend fun saveBalance(balance: Double) {
         dataStore.edit { preferences ->
             preferences[BALANCE_AMOUNT] = balance
         }
     }
 
-    val balance: Flow<Int> = dataStore.data
+    val balance: Flow<Double> = dataStore.data
         .catch {
             if (it is IOException) {
                 Log.e(TAG, "Error reading preference", it)
@@ -35,6 +36,6 @@ class BalanceRepository @Inject constructor(
                 throw it
         }
         .map {  preferences ->
-            preferences[BALANCE_AMOUNT] ?: 0
+            preferences[BALANCE_AMOUNT] ?: 0.00
         }
 }
