@@ -17,12 +17,12 @@ class HomeViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
     private val dataStoreRepository: BalanceRepository
 ) : ViewModel() {
-    val balance: StateFlow<Int> =
+    val balance: StateFlow<Double> =
         dataStoreRepository.balance
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000L),
-                initialValue = 0
+                initialValue = 0.00
             )
 
     val transactions: StateFlow<List<Entry>> =
@@ -36,7 +36,7 @@ class HomeViewModel @Inject constructor(
     fun updateBalance(balance: String) {
         if (balance != "") {
             viewModelScope.launch {
-                dataStoreRepository.saveBalance(balance.toInt())
+                dataStoreRepository.saveBalance(balance.toDouble())
             }
         }
     }
@@ -45,7 +45,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             defaultRepository.deleteAll()
             defaultRepository.resetAutoincrement()
-            dataStoreRepository.saveBalance(0)
+            dataStoreRepository.saveBalance(0.00)
         }
     }
 }

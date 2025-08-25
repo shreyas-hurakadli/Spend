@@ -6,6 +6,7 @@ import com.example.spend.data.datastore.BalanceRepository
 import com.example.spend.data.room.Entry
 import com.example.spend.data.room.EntryRepository
 import com.example.spend.getTodayStart
+import com.example.spend.validateCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -23,28 +24,31 @@ class AddViewModel @Inject constructor(
     var showSnackBar = MutableStateFlow(false)
         private set
 
+    var amount = MutableStateFlow("")
+        private set
+
+    fun updateAmount(amount: String) {
+        this.amount.value = amount
+    }
+
     fun updateSnackBarStatus() {
         showSnackBar.value = !showSnackBar.value
     }
 
     fun updateTag(tag: String) {
-        uiState.value = uiState.value.copy(tag = tag)
+        uiState.value = uiState.value.copy(category = tag)
     }
 
     fun updateDescription(description: String) {
         uiState.value = uiState.value.copy(description = description)
     }
 
-    fun updateBill(bill: Int) {
-        uiState.value = uiState.value.copy(bill = bill)
+    fun updateBill(amount: Double) {
+        uiState.value = uiState.value.copy(amount = amount)
     }
 
     fun updateDate() {
-        uiState.value = uiState.value.copy(date = getTodayStart())
-    }
-
-    fun inputIsValid(): Boolean {
-        return (uiState.value.bill != 0)
+        uiState.value = uiState.value.copy(epochSeconds = getTodayStart())
     }
 
     private fun clear() {
@@ -54,7 +58,7 @@ class AddViewModel @Inject constructor(
     fun insertData() {
         viewModelScope.launch {
             defaultRepository.insert(uiState.value)
-            dataStoreRepository.saveBalance(dataStoreRepository.balance.first() - uiState.value.bill)
+            dataStoreRepository.saveBalance(dataStoreRepository.balance.first() - uiState.value.amount)
             clear()
             updateSnackBarStatus()
         }

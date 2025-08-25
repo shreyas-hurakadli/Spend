@@ -49,10 +49,10 @@ fun EntryScreen(
         ) {
             items(items = list.value) { entry ->
                 Column {
-                    if (date != longToDate(entry.date)) {
-                        date = longToDate(entry.date)
+                    if (date != longToDate(entry.epochSeconds)) {
+                        date = longToDate(entry.epochSeconds)
                         Text(
-                            text = longToDate(entry.date),
+                            text = longToDate(entry.epochSeconds),
                             style = MaterialTheme.typography.titleLarge,
                             color = Color.Black,
                             fontWeight = FontWeight.ExtraBold,

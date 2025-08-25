@@ -275,7 +275,7 @@ fun TransactionCard(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = entry.tag,
+                    text = entry.category,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onTertiary
@@ -289,7 +289,7 @@ fun TransactionCard(
             }
             Column {
                 Text(
-                    text = "₹" + entry.bill.toString(),
+                    text = "₹" + entry.amount.toString(),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.End,
@@ -298,7 +298,7 @@ fun TransactionCard(
                 if (showDate) {
                     Spacer(Modifier.padding(4.dp))
                     Text(
-                        text = longToDate(entry.date),
+                        text = longToDate(entry.epochSeconds),
                         color = MaterialTheme.colorScheme.onTertiary,
                         style = MaterialTheme.typography.labelSmall,
                     )

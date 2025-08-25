@@ -1,5 +1,6 @@
 package com.example.spend.ui.screen
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -50,6 +51,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.AddViewModel
+import com.example.spend.validateCurrency
 
 val categories = listOf("Food", "Essentials", "Entertainment", "Education")
 
@@ -59,6 +61,8 @@ fun AddScreen(
     viewModel: AddViewModel = hiltViewModel()
 ) {
     var isExpanded by remember { mutableStateOf(false) }
+    var isError by remember { mutableStateOf(false) }
+    val amount by viewModel.amount.collectAsState()
     val uiState = viewModel.uiState.collectAsState()
     val showSnackBar by viewModel.showSnackBar.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -83,7 +87,7 @@ fun AddScreen(
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
-                    value = uiState.value.tag,
+                    value = uiState.value.category,
                     onValueChange = {},
                     label = {
                         Text(
@@ -158,12 +162,11 @@ fun AddScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = if (uiState.value.bill == 0) "" else uiState.value.bill.toString(),
+                value = amount,
                 onValueChange = {
-                    if (it == "")
-                        viewModel.updateBill(0)
-                    else if (it.all { c -> c.isDigit() })
-                        viewModel.updateBill(it.toInt())
+                    isError = !validateCurrency(it)
+                    viewModel.updateAmount(it)
+
                 },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.onBackground,
@@ -176,6 +179,7 @@ fun AddScreen(
                         style = MaterialTheme.typography.labelSmall
                     )
                 },
+                isError = isError,
                 textStyle = TextStyle(
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 16.sp
@@ -193,6 +197,7 @@ fun AddScreen(
             OutlinedTextField(
                 value = uiState.value.description,
                 onValueChange = {
+                    if (!validateCurrency(it))
                     viewModel.updateDescription(it)
                 },
                 label = {
@@ -228,11 +233,13 @@ fun AddScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (viewModel.inputIsValid()) {
+            if (!isError && amount != "") {
+                viewModel.updateBill(amount.toDouble())
                 FloatingActionButton(
                     onClick = {
                         keyboardController?.hide()
                         viewModel.updateDate()
+                        viewModel.updateAmount("")
                         viewModel.insertData()
                     }
                 ) {
