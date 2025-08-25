@@ -45,3 +45,8 @@ fun getSunday(): Long {
     calendar.set(Calendar.MILLISECOND, 0);
     return calendar.timeInMillis
 }
+
+fun validateCurrency(input: String): Boolean {
+    val regex = """^\+?\d+(\.\d\d?)?$""".toRegex()
+    return regex.matches(input)
+}
