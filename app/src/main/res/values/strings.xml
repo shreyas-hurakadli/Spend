@@ -16,4 +16,6 @@
     <string name="transactions">Transactions</string>
     <string name="delete_everything">Delete Everything</string>
     <string name="transaction_success_message">Successfully inserted transaction</string>
+    <string name="previous">previous</string>
+    <string name="next">next</string>
 </resources>
