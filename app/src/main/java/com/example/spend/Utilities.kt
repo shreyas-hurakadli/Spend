@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.util.Calendar
+import java.util.Currency
+import java.util.Locale
 
 fun getTodayStart(): Long {
     val today = LocalDate.now()
@@ -50,3 +52,8 @@ fun validateCurrency(input: String): Boolean {
     val regex = """^\+?\d+(\.\d\d?)?$""".toRegex()
     return regex.matches(input)
 }
+
+fun getLocalCurrencySymbol(locale: Locale = Locale.getDefault()): String? =
+    Currency.getInstance(locale).symbol
+
+fun getFormattedAmount(value: Double): String = String.format(Locale.US, "%.2f", value)

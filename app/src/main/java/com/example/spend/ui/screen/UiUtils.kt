@@ -45,6 +45,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.data.room.Entry
+import com.example.spend.getFormattedAmount
+import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.longToDate
 import com.example.spend.ui.navigation.Routes
 
@@ -196,8 +198,8 @@ fun SegmentedControl(
 
 @Composable
 fun InfoBar(
-    balance: String,
-    expense: String,
+    balance: Double,
+    expense: Double
 ) {
     Row(
         modifier = Modifier
@@ -215,7 +217,7 @@ fun InfoBar(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = balance,
+                text = "${getLocalCurrencySymbol()} ${getFormattedAmount(balance)}",
                 color = Color(0xFF4CAF50),
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 24.sp,
@@ -231,7 +233,7 @@ fun InfoBar(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = expense,
+                text = "${getLocalCurrencySymbol()} ${getFormattedAmount(expense)}",
                 color = Color(0xFFF44336),
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 24.sp,
@@ -300,11 +302,11 @@ fun TransactionCard(
             }
             Column {
                 Text(
-                    text = "₹" + entry.amount.toString(),
+                    text = "${getLocalCurrencySymbol()} ${getFormattedAmount(entry.amount)}",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.End,
-                    color = Color.Red
+                    color = if (entry.isExpense) Color(0xFFF44336) else Color(0xFF4CAF50)
                 )
                 if (showDate) {
                     Spacer(Modifier.padding(4.dp))

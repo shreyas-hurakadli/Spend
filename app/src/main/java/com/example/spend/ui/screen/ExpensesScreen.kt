@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +41,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
-import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.ExpenseViewModel
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -108,8 +106,8 @@ fun ExpensesScreen(
                 )
                 Spacer(Modifier.padding(8.dp))
                 InfoBar(
-                    balance = uiState.balance.toString(),
-                    expense = uiState.expense.toString()
+                    balance = uiState.balance,
+                    expense = uiState.expense
                 )
                 Spacer(Modifier.padding(16.dp))
                 Text(

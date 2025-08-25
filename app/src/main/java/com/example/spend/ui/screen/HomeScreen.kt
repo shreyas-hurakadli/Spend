@@ -50,6 +50,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
+import com.example.spend.getFormattedAmount
+import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.HomeViewModel
@@ -115,7 +117,7 @@ fun HomeScreen(
                         )
                         Spacer(Modifier.padding(8.dp))
                         Text(
-                            text = "₹ ${balance.value}",
+                            text = "${getLocalCurrencySymbol()} ${getFormattedAmount(balance.value)}",
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.bodyLarge,
                             fontSize = 24.sp
