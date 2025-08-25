@@ -1,6 +1,5 @@
 package com.example.spend.ui.screen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -71,8 +70,6 @@ fun AddScreen(
         topBar = {
             AppTopBar(
                 title = stringResource(R.string.add_entry),
-                canNavigateBack = true,
-                onBackClick = { navHostController.popBackStack() }
             )
         },
         bottomBar = {
@@ -204,7 +201,7 @@ fun AddScreen(
                 value = uiState.value.description,
                 onValueChange = {
                     if (!validateCurrency(it))
-                    viewModel.updateDescription(it)
+                        viewModel.updateDescription(it)
                 },
                 label = {
                     Text(
