@@ -140,7 +140,7 @@ fun AppBottomBar(
                         Icon(
                             imageVector = ImageVector.vectorResource(navigationIcons[i].baseLineIcon),
                             contentDescription = navigationIcons[i].contentDescription,
-                            tint = MaterialTheme.colorScheme.secondary,
+                            tint = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.size(30.dp)
                         )
                     }
@@ -149,7 +149,7 @@ fun AppBottomBar(
                         Icon(
                             imageVector = ImageVector.vectorResource(navigationIcons[i].outlinedIcon),
                             contentDescription = navigationIcons[i].contentDescription,
-                            tint = MaterialTheme.colorScheme.secondary,
+                            tint = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.size(30.dp)
                         )
                     }
