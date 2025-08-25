@@ -18,7 +18,17 @@ class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : En
 
     override suspend fun resetAutoincrement() = entryDao.resetAutoIncrement("entries")
 
-    override fun getExpense(from: Long): Flow<Int> = entryDao.getExpense(from)
+    override fun getExpense(from: Long): Flow<Double> = entryDao.getExpense(from)
 
-    // override fun getTagList(): Flow<List<Entry>> = entryDao.getTagList()
+    override fun getIncome(from: Long): Flow<Double> = entryDao.getIncome(from)
+
+    override fun getExpenseByCategory(): Flow<Map<String, Double>> = entryDao.getExpenseByCategory()
+
+    override fun getIncomeByCategory(): Flow<Map<String, Double>> = entryDao.getIncomeByCategory()
+
+    override fun areEntriesPresent(): Flow<Boolean> = entryDao.areEntriesPresent()
+
+    override fun getAllExpenseAmount(): Flow<List<Double>> = entryDao.getAllExpenseAmount()
+
+    override fun getAllIncomeAmount(): Flow<List<Double>> = entryDao.getAllIncomeAmount()
 }

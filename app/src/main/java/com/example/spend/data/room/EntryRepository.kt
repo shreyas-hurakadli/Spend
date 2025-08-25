@@ -1,5 +1,6 @@
 package com.example.spend.data.room
 
+import com.example.spend.model.TagBillSum
 import kotlinx.coroutines.flow.Flow
 
 interface EntryRepository {
@@ -17,5 +18,17 @@ interface EntryRepository {
 
     suspend fun resetAutoincrement()
 
-    fun getExpense(from: Long): Flow<Int>
+    fun getExpense(from: Long): Flow<Double>
+
+    fun getIncome(from: Long): Flow<Double>
+
+    fun getExpenseByCategory(): Flow<Map<String, Double>>
+
+    fun getIncomeByCategory(): Flow<Map<String, Double>>
+
+    fun areEntriesPresent(): Flow<Boolean>
+
+    fun getAllExpenseAmount(): Flow<List<Double>>
+
+    fun getAllIncomeAmount(): Flow<List<Double>>
 }
