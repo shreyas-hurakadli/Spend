@@ -79,14 +79,7 @@ fun ExpensesScreen(
         topBar = {
             AppTopBar(
                 title = stringResource(R.string.expenses)
-            ) {
-                IconButton(onClick = { navHostController.navigate(Routes.AddScreen) }) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.add_entry)
-                    )
-                }
-            }
+            )
         },
         bottomBar = {
             AppBottomBar(
