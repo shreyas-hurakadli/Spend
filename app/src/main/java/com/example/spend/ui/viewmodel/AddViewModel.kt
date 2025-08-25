@@ -6,7 +6,6 @@ import com.example.spend.data.datastore.BalanceRepository
 import com.example.spend.data.room.Entry
 import com.example.spend.data.room.EntryRepository
 import com.example.spend.getTodayStart
-import com.example.spend.validateCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -17,7 +16,7 @@ import javax.inject.Inject
 class AddViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
     private val dataStoreRepository: BalanceRepository
-): ViewModel() {
+) : ViewModel() {
     var uiState = MutableStateFlow(Entry())
         private set
 
@@ -26,6 +25,11 @@ class AddViewModel @Inject constructor(
 
     var amount = MutableStateFlow("")
         private set
+
+
+    fun updateIsExpense(input: Boolean) {
+        uiState.value = uiState.value.copy(isExpense = input)
+    }
 
     fun updateAmount(amount: String) {
         this.amount.value = amount
@@ -58,7 +62,7 @@ class AddViewModel @Inject constructor(
     fun insertData() {
         viewModelScope.launch {
             defaultRepository.insert(uiState.value)
-            dataStoreRepository.saveBalance(dataStoreRepository.balance.first() - uiState.value.amount)
+            dataStoreRepository.saveBalance(dataStoreRepository.balance.first() - if (uiState.value.isExpense) uiState.value.amount else -uiState.value.amount)
             clear()
             updateSnackBarStatus()
         }

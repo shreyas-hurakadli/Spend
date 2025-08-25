@@ -1,13 +1,8 @@
 package com.example.spend.ui.screen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,15 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,17 +45,16 @@ import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.AddViewModel
 import com.example.spend.validateCurrency
 
-val categories = listOf("Food", "Essentials", "Entertainment", "Education")
-
 @Composable
 fun AddScreen(
     navHostController: NavHostController,
     viewModel: AddViewModel = hiltViewModel()
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
     var isError by remember { mutableStateOf(false) }
-    val amount by viewModel.amount.collectAsState()
+    var firstInteraction by remember { mutableStateOf(true) }
+
     val uiState = viewModel.uiState.collectAsState()
+    val amount by viewModel.amount.collectAsState()
     val showSnackBar by viewModel.showSnackBar.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -89,81 +80,79 @@ fun AddScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                OutlinedTextField(
-                    value = uiState.value.category,
-                    onValueChange = {},
-                    label = {
-                        Text(
-                            text = "Category",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text
-                    ),
-                    textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 16.sp
-                    ),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onBackground,
-                    ),
-                    trailingIcon = {
-                        IconButton(onClick = { isExpanded = !isExpanded }) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                contentDescription = null
-                            )
-                        }
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.baseline_label),
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            contentDescription = null
-                        )
-                    },
-                    singleLine = true,
-                    readOnly = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                )
-            }
-
-            AnimatedVisibility(
-                visible = isExpanded,
-                enter = slideInVertically() + fadeIn(),
-                exit = slideOutVertically() + fadeOut()
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                DropdownMenu(
-                    expanded = isExpanded,
-                    onDismissRequest = { isExpanded = false },
-                    modifier = Modifier
-                        .padding(16.dp)
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    categories.forEach { category ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = category,
-                                    style = MaterialTheme.typography.labelMedium
-                                )
-                            },
-                            onClick = {
-                                viewModel.updateTag(category)
-                                isExpanded = false
-                            }
-                        )
-                    }
+                    RadioButton(
+                        selected = uiState.value.isExpense,
+                        enabled = true,
+                        onClick = {
+                            viewModel.updateIsExpense(true)
+                        },
+                    )
+                    Text("Expense", style = MaterialTheme.typography.labelSmall)
+                }
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = !uiState.value.isExpense,
+                        enabled = true,
+                        onClick = {
+                            viewModel.updateIsExpense(false)
+                        }
+                    )
+                    Text("Income", style = MaterialTheme.typography.labelSmall)
                 }
             }
 
+            OutlinedTextField(
+                value = uiState.value.category,
+                onValueChange = {
+                    firstInteraction = false
+                    viewModel.updateTag(it)
+                },
+                label = {
+                    Text(
+                        text = "Category",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
+                isError = uiState.value.category == "" && !firstInteraction,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text
+                ),
+                textStyle = TextStyle(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 16.sp
+                ),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                ),
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.baseline_label),
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        contentDescription = null
+                    )
+                },
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
+
 
             OutlinedTextField(
                 value = amount,
@@ -178,7 +167,7 @@ fun AddScreen(
                 ),
                 label = {
                     Text(
-                        text = "Bill",
+                        text = "Amount",
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.labelSmall
                     )
@@ -191,7 +180,12 @@ fun AddScreen(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
                 ),
-                leadingIcon = { Text(getLocalCurrencySymbol()!!, color = MaterialTheme.colorScheme.onBackground) },
+                leadingIcon = {
+                    Text(
+                        getLocalCurrencySymbol()!!,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
                 singleLine = true,
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -201,8 +195,7 @@ fun AddScreen(
             OutlinedTextField(
                 value = uiState.value.description,
                 onValueChange = {
-                    if (!validateCurrency(it))
-                        viewModel.updateDescription(it)
+                    viewModel.updateDescription(it)
                 },
                 label = {
                     Text(
@@ -237,7 +230,7 @@ fun AddScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (!isError && amount != "") {
+            if (!isError && amount != "" && uiState.value.category != "") {
                 viewModel.updateBill(amount.toDouble())
                 FloatingActionButton(
                     onClick = {
