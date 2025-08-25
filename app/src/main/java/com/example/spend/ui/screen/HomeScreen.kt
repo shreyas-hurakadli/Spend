@@ -166,7 +166,7 @@ fun HomeScreen(
                 ) {
                     if (transactions.value.isEmpty()) {
                         Text(
-                            text = "No transactions yet!",
+                            text = stringResource(id = R.string.no_transactions),
                             style = MaterialTheme.typography.bodyLarge,
                             color = Color.Black,
                             modifier = Modifier.align(Alignment.Center)

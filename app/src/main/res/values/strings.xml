@@ -18,4 +18,5 @@
     <string name="transaction_success_message">Successfully inserted transaction</string>
     <string name="previous">previous</string>
     <string name="next">next</string>
+    <string name="no_transactions">No transactions</string>
 </resources>

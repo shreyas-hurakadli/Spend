@@ -173,7 +173,7 @@ fun ExpensesScreen(
                             verticalArrangement = Arrangement.Center,
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            Text("No transactions")
+                            Text(text = stringResource(R.string.no_transactions))
                         }
                     }
                 }
@@ -374,7 +374,10 @@ private fun IncomeGraph(
 }
 
 @Composable
-private fun ExpensesByCategoryGraph(map: StateFlow<Map<String, Double>>, modifier: Modifier = Modifier) {
+private fun ExpensesByCategoryGraph(
+    map: StateFlow<Map<String, Double>>,
+    modifier: Modifier = Modifier
+) {
     val data by map.collectAsState()
     val labelListKey = Key<List<String>>()
     val modelProducer = remember { CartesianChartModelProducer() }
@@ -442,7 +445,10 @@ private fun ExpensesByCategoryGraph(map: StateFlow<Map<String, Double>>, modifie
 }
 
 @Composable
-private fun IncomeByCategoryGraph(map: StateFlow<Map<String, Double>>, modifier: Modifier = Modifier) {
+private fun IncomeByCategoryGraph(
+    map: StateFlow<Map<String, Double>>,
+    modifier: Modifier = Modifier
+) {
     val modelProducer = remember { CartesianChartModelProducer() }
     val data by map.collectAsState()
     val labelListKey = Key<List<String>>()
@@ -450,7 +456,6 @@ private fun IncomeByCategoryGraph(map: StateFlow<Map<String, Double>>, modifier:
         context.model.extraStore[labelListKey][x.toInt()]
     }
     LaunchedEffect(data) {
-        Log.d("ExpenseScreen", "IncomeByCategory")
         if (data.isNotEmpty()) {
             modelProducer.runTransaction {
                 columnSeries { series(data.values.toList()) }
