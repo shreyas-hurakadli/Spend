@@ -139,7 +139,7 @@ fun HomeScreen(
                         text = stringResource(R.string.see_all),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF8C6EFF),
+                        color = MaterialTheme.colorScheme.secondary,
                         modifier = Modifier
                             .clickable { navHostController.navigate(Routes.EntryScreen) }
                     )
