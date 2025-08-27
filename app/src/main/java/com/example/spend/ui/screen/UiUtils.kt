@@ -1,11 +1,11 @@
 package com.example.spend.ui.screen
 
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -13,12 +13,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -41,7 +44,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.data.room.Entry
@@ -57,7 +59,7 @@ data class NavigationIcon(
     val contentDescription: String?
 )
 
-val navigationIcon = listOf<NavigationIcon>(
+private val navigationIcon = listOf<NavigationIcon>(
     NavigationIcon(
         baseLineIcon = R.drawable.baseline_home,
         outlinedIcon = R.drawable.outline_home,
@@ -71,10 +73,10 @@ val navigationIcon = listOf<NavigationIcon>(
         contentDescription = "Add Entry"
     ),
     NavigationIcon(
-        baseLineIcon = R.drawable.baseline_insert_chart,
-        outlinedIcon = R.drawable.outlined_insert_chart,
+        baseLineIcon = R.drawable.baseline_summarize,
+        outlinedIcon = R.drawable.outline_summarize,
         route = Routes.ExpensesScreen,
-        contentDescription = "Expenses"
+        contentDescription = "Summary"
     ),
 )
 
@@ -126,7 +128,7 @@ fun AppBottomBar(
     BottomAppBar(
         modifier = modifier.fillMaxWidth(),
         tonalElevation = 8.dp,
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.surface
     ) {
         Row(
             modifier = modifier.fillMaxWidth(),
@@ -135,22 +137,36 @@ fun AppBottomBar(
         ) {
             val n = navigationIcons.size
             for (i in 0 until n) {
-                if (i == currentScreenIndex) {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(navigationIcons[i].baseLineIcon),
-                            contentDescription = navigationIcons[i].contentDescription,
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.size(30.dp)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    if (i == currentScreenIndex) {
+                        IconButton(onClick = {}) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(navigationIcons[i].baseLineIcon),
+                                contentDescription = navigationIcons[i].contentDescription,
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
+                        Text(
+                            text = navigationIcons[i].contentDescription!!,
+                            style = MaterialTheme.typography.labelSmall
                         )
-                    }
-                } else {
-                    IconButton(onClick = { navHostController.navigate(navigationIcons[i].route) }) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(navigationIcons[i].outlinedIcon),
-                            contentDescription = navigationIcons[i].contentDescription,
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.size(30.dp)
+                    } else {
+                        IconButton(onClick = { navHostController.navigate(navigationIcons[i].route) }) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(navigationIcons[i].outlinedIcon),
+                                contentDescription = navigationIcons[i].contentDescription,
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
+                        Text(
+                            text = navigationIcons[i].contentDescription!!,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Light
                         )
                     }
                 }
@@ -167,7 +183,7 @@ fun SnackBarMessage(
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         LaunchedEffect(snackbarHostState) {
@@ -179,60 +195,99 @@ fun SnackBarMessage(
 @Composable
 fun TransactionCard(
     entry: Entry,
+    icon: ImageVector,
+    iconTint: Color,
+    backgroundColor: Color,
     modifier: Modifier = Modifier,
-    showDate: Boolean = false
 ) {
     Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardColors(
-            containerColor = MaterialTheme.colorScheme.tertiary,
-            contentColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-            disabledContentColor = Color.Transparent
-        ),
-        modifier = modifier
-            .padding(bottom = 16.dp)
-            .fillMaxWidth()
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background
+        ), modifier = modifier
     ) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(
-                modifier = Modifier.weight(1f)
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(50.dp)
+                    .background(color = backgroundColor),
+                contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = entry.category,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onTertiary
-                )
-                Spacer(Modifier.padding(4.dp))
-                Text(
-                    text = entry.description,
-                    color = MaterialTheme.colorScheme.onTertiary,
-                    style = MaterialTheme.typography.labelSmall,
+                Icon(
+                    imageVector = icon,
+                    tint = iconTint,
+                    contentDescription = ""
                 )
             }
-            Column {
-                Text(
-                    text = "${getLocalCurrencySymbol()} ${getFormattedAmount(entry.amount)}",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.End,
-                    color = if (entry.isExpense) Color(0xFFF44336) else Color(0xFF4CAF50)
-                )
-                if (showDate) {
-                    Spacer(Modifier.padding(4.dp))
+            Spacer(Modifier.width(12.dp))
+            Column(
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Text(
-                        text = longToDate(entry.epochSeconds),
-                        color = MaterialTheme.colorScheme.onTertiary,
-                        style = MaterialTheme.typography.labelSmall,
+                        entry.category,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = (if (entry.isExpense) "- " else "") + getLocalCurrencySymbol() + " " + getFormattedAmount(
+                            entry.amount
+                        ),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Row(
+                    horizontalArrangement = Arrangement.Absolute.Left,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        longToDate(entry.epochSeconds),
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Thin
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun SegmentedControl(
+    options: List<String>,
+    selectedIndex: Int,
+    onSegmentSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(16.dp))
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        options.forEachIndexed { index, label ->
+            Text(
+                text = label,
+                color = if (selectedIndex == index) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onPrimary,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier
+                    .weight(1f)
+                    .background(
+                        if (selectedIndex == index) MaterialTheme.colorScheme.background else Color.Transparent,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .padding(vertical = 8.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { onSegmentSelected(index) },
+            )
         }
     }
 }

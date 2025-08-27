@@ -13,7 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -53,7 +55,7 @@ fun EntryScreen(
                         date = longToDate(entry.epochSeconds)
                         Text(
                             text = longToDate(entry.epochSeconds),
-                            style = MaterialTheme.typography.titleLarge,
+                            style = MaterialTheme.typography.titleMedium,
                             color = Color.Black,
                             fontWeight = FontWeight.ExtraBold,
                             textAlign = TextAlign.Start,
@@ -62,7 +64,9 @@ fun EntryScreen(
                     }
                     TransactionCard(
                         entry = entry,
-                        showDate = false
+                        icon = ImageVector.vectorResource(R.drawable.baseline_label),
+                        iconTint = MaterialTheme.colorScheme.onSecondary,
+                        backgroundColor = MaterialTheme.colorScheme.secondary,
                     )
                 }
             }

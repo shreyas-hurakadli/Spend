@@ -18,6 +18,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -45,6 +48,8 @@ import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.AddViewModel
 import com.example.spend.validateCurrency
 
+private val options = listOf<String>("Expense", "Income")
+
 @Composable
 fun AddScreen(
     navHostController: NavHostController,
@@ -53,7 +58,7 @@ fun AddScreen(
     var isError by remember { mutableStateOf(false) }
     var firstInteraction by remember { mutableStateOf(true) }
 
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val amount by viewModel.amount.collectAsState()
     val showSnackBar by viewModel.showSnackBar.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -71,7 +76,6 @@ fun AddScreen(
             )
         }
     ) { innerPadding ->
-
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -80,41 +84,16 @@ fun AddScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = uiState.value.isExpense,
-                        enabled = true,
-                        onClick = {
-                            viewModel.updateIsExpense(true)
-                        },
-                    )
-                    Text("Expense", style = MaterialTheme.typography.labelSmall)
+            SegmentedControl(
+                options = options,
+                selectedIndex = if (uiState.isExpense) 0 else 1,
+                onSegmentSelected = { index ->
+                    viewModel.updateIsExpense(input = index == 0)
                 }
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = !uiState.value.isExpense,
-                        enabled = true,
-                        onClick = {
-                            viewModel.updateIsExpense(false)
-                        }
-                    )
-                    Text("Income", style = MaterialTheme.typography.labelSmall)
-                }
-            }
-
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = uiState.value.category,
+                value = uiState.category,
                 onValueChange = {
                     firstInteraction = false
                     viewModel.updateTag(it)
@@ -126,7 +105,7 @@ fun AddScreen(
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 },
-                isError = uiState.value.category == "" && !firstInteraction,
+                isError = uiState.category == "" && !firstInteraction,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text
                 ),
@@ -193,7 +172,7 @@ fun AddScreen(
             )
 
             OutlinedTextField(
-                value = uiState.value.description,
+                value = uiState.description,
                 onValueChange = {
                     viewModel.updateDescription(it)
                 },
@@ -230,10 +209,11 @@ fun AddScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (!isError && amount != "" && uiState.value.category != "") {
+            if (!isError && amount != "" && uiState.category != "") {
                 viewModel.updateBill(amount.toDouble())
                 FloatingActionButton(
                     onClick = {
+                        firstInteraction = true
                         keyboardController?.hide()
                         viewModel.updateDate()
                         viewModel.updateAmount("")
@@ -253,6 +233,29 @@ fun AddScreen(
                     modifier = Modifier
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun EntryTypeSegmentedButton(
+    selectedIndex: Int,
+    onClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val options = listOf<String>("Expense", "Income")
+    SingleChoiceSegmentedButtonRow {
+        options.forEachIndexed { index, label ->
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = index,
+                    count = options.size
+                ),
+                onClick = { onClick(index) },
+                selected = selectedIndex == index,
+                enabled = true,
+                label = { Text(label) }
+            )
         }
     }
 }

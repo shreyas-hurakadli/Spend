@@ -2,9 +2,8 @@
     <string name="app_name">Expenditure</string>
     <string name="home">Home</string>
     <string name="total_balance">Total Balance</string>
-    <string name="transaction_history">Transaction History</string>
+    <string name="recent_transaction">Recent Transaction</string>
     <string name="see_all">See All</string>
-    <string name="expenses">Expenses</string>
     <string name="total_expense">Total Expense</string>
     <string name="analytics">Analytics</string>
     <string name="add_entry">Add Entry</string>
@@ -19,4 +18,5 @@
     <string name="previous">previous</string>
     <string name="next">next</string>
     <string name="no_transactions">No transactions</string>
+    <string name="summary">Summary</string>
 </resources>

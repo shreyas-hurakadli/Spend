@@ -2,8 +2,6 @@ package com.example.spend.ui.screen
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,6 +69,8 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore.Key
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape.Companion.rounded
 import kotlinx.coroutines.flow.StateFlow
 
+private val options = listOf("Day", "Week", "Month")
+
 @Composable
 fun SummaryScreen(
     navHostController: NavHostController,
@@ -106,6 +106,7 @@ fun SummaryScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 SegmentedControl(
+                    options = options,
                     selectedIndex = selectedIndex.value,
                     onSegmentSelected = { viewModel.updateIndex(it) },
                     modifier = Modifier.padding(horizontal = 8.dp)
@@ -176,43 +177,6 @@ fun SummaryScreen(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun SegmentedControl(
-    selectedIndex: Int,
-    onSegmentSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val options = listOf("Today", "Week", "Month")
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(16.dp))
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        options.forEachIndexed { index, text ->
-            val isSelected = selectedIndex == index
-            Text(
-                text = text,
-                color = if (isSelected) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onPrimary,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier
-                    .weight(1f)
-                    .background(
-                        if (isSelected) MaterialTheme.colorScheme.background else Color.Transparent,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .padding(vertical = 8.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) { onSegmentSelected(index) },
-            )
         }
     }
 }

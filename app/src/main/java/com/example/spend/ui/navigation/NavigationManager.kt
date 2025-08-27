@@ -9,10 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.spend.ui.screen.AddScreen
 import com.example.spend.ui.screen.EntryScreen
-import com.example.spend.ui.screen.ExpensesScreen
+import com.example.spend.ui.screen.SummaryScreen
 import com.example.spend.ui.screen.HomeScreen
 
-private const val durationMillis = 300
+private const val durationMillis = 150
 @Composable
 fun NavigationManager(navHostController: NavHostController) {
     NavHost(
@@ -47,7 +47,7 @@ fun NavigationManager(navHostController: NavHostController) {
             HomeScreen(navHostController = navHostController)
         }
         composable<Routes.ExpensesScreen> {
-            ExpensesScreen(navHostController = navHostController)
+            SummaryScreen(navHostController = navHostController)
         }
         composable<Routes.AddScreen> {
             AddScreen(navHostController = navHostController)

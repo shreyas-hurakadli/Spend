@@ -9,43 +9,28 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Card
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -55,14 +40,13 @@ import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.HomeViewModel
+import kotlin.math.abs
 
 @Composable
 fun HomeScreen(
     navHostController: NavHostController,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    var openDialog by remember { mutableStateOf(false) }
-
     Scaffold(
         topBar = {
             AppTopBar(title = stringResource(id = R.string.home))
@@ -75,8 +59,8 @@ fun HomeScreen(
         },
         modifier = Modifier.safeContentPadding()
     ) { innerPadding ->
-        val balance = viewModel.balance.collectAsState()
-        val transactions = viewModel.transactions.collectAsState()
+        val balance by viewModel.balance.collectAsState()
+        val transactions by viewModel.transactions.collectAsState()
 
         Box(
             modifier = Modifier
@@ -88,49 +72,14 @@ fun HomeScreen(
                     .padding(16.dp)
                     .fillMaxSize()
             ) {
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                ) {
-                    IconButton(
-                        onClick = { openDialog = true },
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .size(24.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Edit,
-                            contentDescription = stringResource(R.string.update_balance),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                    Column {
-                        Text(
-                            text = stringResource(R.string.total_balance),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            style = MaterialTheme.typography.labelLarge,
-                        )
-                        Spacer(Modifier.padding(8.dp))
-                        Text(
-                            text = "${getLocalCurrencySymbol()} ${getFormattedAmount(balance.value)}",
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontSize = 24.sp
-                        )
-                    }
-                }
+                BalanceBar(balance = balance)
                 Spacer(Modifier.padding(16.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = stringResource(R.string.transaction_history),
+                        text = stringResource(R.string.recent_transaction),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
@@ -145,15 +94,6 @@ fun HomeScreen(
                     )
                 }
 
-                if (openDialog) {
-                    DialogBox(
-                        onDismissRequest = {
-                            viewModel.updateBalance(it)
-                            openDialog = false
-                        },
-                    )
-                }
-
                 Spacer(Modifier.padding(8.dp))
                 Box(
                     modifier = Modifier
@@ -164,7 +104,7 @@ fun HomeScreen(
                         .fillMaxSize(),
                     contentAlignment = Alignment.TopCenter
                 ) {
-                    if (transactions.value.isEmpty()) {
+                    if (transactions.isEmpty()) {
                         Text(
                             text = stringResource(id = R.string.no_transactions),
                             style = MaterialTheme.typography.bodyLarge,
@@ -173,10 +113,12 @@ fun HomeScreen(
                         )
                     } else {
                         LazyColumn {
-                            items(transactions.value) { entry ->
+                            items(transactions) { entry ->
                                 TransactionCard(
                                     entry = entry,
-                                    showDate = true
+                                    icon = ImageVector.vectorResource(R.drawable.baseline_pencil),
+                                    iconTint = MaterialTheme.colorScheme.onSecondary,
+                                    backgroundColor = MaterialTheme.colorScheme.secondary,
                                 )
                             }
                         }
@@ -187,60 +129,42 @@ fun HomeScreen(
     }
 }
 
-
 @Composable
-fun DialogBox(
-    onDismissRequest: (String) -> Unit,
+private fun BalanceBar(
+    balance: Double,
     modifier: Modifier = Modifier
 ) {
-    var balance by rememberSaveable { mutableStateOf("") }
-
-    Dialog(onDismissRequest = { onDismissRequest(balance) }) {
-        Card(
-            modifier = modifier
+    Surface(
+        tonalElevation = 8.dp,
+        shadowElevation = 8.dp,
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(16.dp)
+                )
                 .fillMaxWidth()
-                .height(220.dp)
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
+                .padding(24.dp),
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
+            Column {
                 Text(
-                    text = stringResource(R.string.enter_new_balance),
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    text = stringResource(R.string.total_balance),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    style = MaterialTheme.typography.labelLarge,
                 )
-                OutlinedTextField(
-                    value = balance,
-                    onValueChange = {
-                        if (it == "")
-                            balance = ""
-                        else if (it.all { c -> c.isDigit() }) {
-                            balance = it
-                        }
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number
-                    ),
-                    textStyle = TextStyle(
-                        fontSize = 16.sp
-                    )
-                )
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.BottomEnd
-                ) {
-                    FloatingActionButton(
-                        onClick = { onDismissRequest(balance) },
-                        modifier = Modifier.padding(4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = stringResource(R.string.done),
+                Spacer(Modifier.padding(8.dp))
+                Text(
+                    text = (if (balance < 0) "- " else "") + "${getLocalCurrencySymbol()} ${
+                        getFormattedAmount(
+                            value = balance
                         )
-                    }
-                }
+                    }",
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 24.sp
+                )
             }
         }
     }

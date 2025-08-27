@@ -1,12 +1,10 @@
 package com.example.spend.data.datastore
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.intPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -30,7 +28,6 @@ class BalanceRepository @Inject constructor(
     val balance: Flow<Double> = dataStore.data
         .catch {
             if (it is IOException) {
-                Log.e(TAG, "Error reading preference", it)
                 emit(emptyPreferences())
             } else
                 throw it
