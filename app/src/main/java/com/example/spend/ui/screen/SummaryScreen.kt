@@ -1,6 +1,5 @@
 package com.example.spend.ui.screen
 
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,7 +41,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -74,7 +72,7 @@ import com.patrykandpatrick.vico.core.common.shape.CorneredShape.Companion.round
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun ExpensesScreen(
+fun SummaryScreen(
     navHostController: NavHostController,
     viewModel: ExpenseViewModel = hiltViewModel()
 ) {
@@ -84,7 +82,7 @@ fun ExpensesScreen(
     Scaffold(
         topBar = {
             AppTopBar(
-                title = stringResource(R.string.expenses)
+                title = stringResource(R.string.summary)
             )
         },
         bottomBar = {
@@ -188,7 +186,7 @@ private fun SegmentedControl(
     onSegmentSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val options = listOf("Daily", "Weekly", "Monthly")
+    val options = listOf("Today", "Week", "Month")
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -225,12 +223,12 @@ private fun InfoBar(
     expense: Double
 ) {
     Row(
+        horizontalArrangement = Arrangement.SpaceAround,
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(16.dp))
             .padding(16.dp)
-            .animateContentSize(),
-        horizontalArrangement = Arrangement.SpaceAround
+            .animateContentSize()
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -243,7 +241,6 @@ private fun InfoBar(
                 text = "${getLocalCurrencySymbol()} ${getFormattedAmount(balance)}",
                 color = Color(0xFF4CAF50),
                 style = MaterialTheme.typography.bodyLarge,
-                fontSize = 24.sp,
                 textAlign = TextAlign.Center
             )
         }
@@ -259,7 +256,6 @@ private fun InfoBar(
                 text = "${getLocalCurrencySymbol()} ${getFormattedAmount(expense)}",
                 color = Color(0xFFF44336),
                 style = MaterialTheme.typography.bodyLarge,
-                fontSize = 24.sp,
                 textAlign = TextAlign.Center
             )
         }
@@ -301,7 +297,6 @@ private fun ExpensesGraph(
     val modelProducer = remember { CartesianChartModelProducer() }
     val expenses by list.collectAsState()
     LaunchedEffect(expenses) {
-        Log.d("ExpenseScreen", "Expenses")
         if (expenses.isNotEmpty()) {
             modelProducer.runTransaction {
                 lineSeries { series(expenses) }
@@ -341,7 +336,6 @@ private fun IncomeGraph(
     val modelProducer = remember { CartesianChartModelProducer() }
     val income by list.collectAsState()
     LaunchedEffect(income) {
-        Log.d("ExpenseScreen", "Income")
         if (income.isNotEmpty()) {
             modelProducer.runTransaction {
                 lineSeries { series(income) }
@@ -386,7 +380,6 @@ private fun ExpensesByCategoryGraph(
     }
 
     LaunchedEffect(data) {
-        Log.d("ExpenseScreen", "ExpensesByCategory")
         if (data.isNotEmpty()) {
             modelProducer.runTransaction {
                 columnSeries { series(data.values.toList()) }
@@ -515,6 +508,6 @@ private fun IncomeByCategoryGraph(
 @Composable
 private fun ExpensesScreenPreview() {
     SpendTheme {
-        ExpensesScreen(navHostController = rememberNavController())
+        SummaryScreen(navHostController = rememberNavController())
     }
 }
