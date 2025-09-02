@@ -166,7 +166,7 @@ fun AppBottomBar(
                         Text(
                             text = navigationIcons[i].contentDescription!!,
                             style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Light
+                            fontWeight = FontWeight.Normal
                         )
                     }
                 }
@@ -198,6 +198,7 @@ fun TransactionCard(
     icon: ImageVector,
     iconTint: Color,
     backgroundColor: Color,
+    showDate: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -241,15 +242,17 @@ fun TransactionCard(
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Row(
-                    horizontalArrangement = Arrangement.Absolute.Left,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        longToDate(entry.epochSeconds),
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Thin
-                    )
+                if (showDate) {
+                    Row(
+                        horizontalArrangement = Arrangement.Absolute.Left,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            longToDate(entry.epochSeconds),
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Thin
+                        )
+                    }
                 }
             }
         }

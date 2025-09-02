@@ -118,6 +118,7 @@ fun HomeScreen(
                                     entry = entry,
                                     icon = ImageVector.vectorResource(R.drawable.baseline_pencil),
                                     iconTint = MaterialTheme.colorScheme.onSecondary,
+                                    showDate = true,
                                     backgroundColor = MaterialTheme.colorScheme.secondary,
                                 )
                             }

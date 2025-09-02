@@ -22,13 +22,21 @@ class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : En
 
     override fun getIncome(from: Long): Flow<Double> = entryDao.getIncome(from)
 
-    override fun getExpenseByCategory(): Flow<Map<String, Double>> = entryDao.getExpenseByCategory()
+    override fun getExpenseByCategory(from: Long, to: Long): Flow<Map<String, Double>> =
+        entryDao.getExpenseByCategory(from, to)
 
-    override fun getIncomeByCategory(): Flow<Map<String, Double>> = entryDao.getIncomeByCategory()
+    override fun getIncomeByCategory(from: Long, to: Long): Flow<Map<String, Double>> =
+        entryDao.getIncomeByCategory(from, to)
 
     override fun areEntriesPresent(): Flow<Boolean> = entryDao.areEntriesPresent()
 
     override fun getAllExpenseAmount(): Flow<List<Double>> = entryDao.getAllExpenseAmount()
 
     override fun getAllIncomeAmount(): Flow<List<Double>> = entryDao.getAllIncomeAmount()
+
+    override fun getIncomeByTime(from: Long, to: Long): Flow<Map<Long, Double>> =
+        entryDao.getIncomeByTime(from, to)
+
+    override fun getExpenseByTime(from: Long, to: Long): Flow<Map<Long, Double>> =
+        entryDao.getExpenseByTime(from, to)
 }

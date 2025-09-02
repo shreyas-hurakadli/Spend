@@ -52,7 +52,7 @@ class AddViewModel @Inject constructor(
     }
 
     fun updateDate() {
-        uiState.value = uiState.value.copy(epochSeconds = getTodayStart())
+        uiState.value = uiState.value.copy(epochSeconds = java.time.Instant.now().epochSecond)
     }
 
     private fun clear() {

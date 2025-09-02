@@ -1,16 +1,23 @@
 package com.example.spend.ui.viewmodel
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.yml.charts.ui.piechart.models.PieChartData
 import com.example.spend.data.datastore.BalanceRepository
 import com.example.spend.data.room.EntryRepository
 import com.example.spend.getMonthStart
 import com.example.spend.getSunday
 import com.example.spend.getTodayStart
+import com.example.spend.longToDate
+import com.example.spend.longToTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,7 +30,7 @@ data class ExpenseUiState(
 )
 
 @HiltViewModel
-class ExpenseViewModel @Inject constructor(
+class SummaryViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
     private val dataStoreRepository: BalanceRepository
 ) : ViewModel() {
@@ -37,33 +44,89 @@ class ExpenseViewModel @Inject constructor(
         updateIndex(0)
     }
 
-    fun getExpenseByCategory() = defaultRepository.getExpenseByCategory()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(subscriptionDuration),
-            initialValue = emptyMap()
-        )
+    fun getExpenseByCategory(from: Long, to: Long = System.currentTimeMillis() / 1000) =
+        defaultRepository.getExpenseByCategory(from, to)
+            .map { mp ->
+                mp.map {
+                    PieChartData.Slice(
+                        label = it.key,
+                        value = it.value.toFloat(),
+                        color = Color(0xFF353839)
+                    )
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(subscriptionDuration),
+                initialValue = emptyList()
+            )
 
-    fun getIncomeByCategory() = defaultRepository.getIncomeByCategory()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(subscriptionDuration),
-            initialValue = emptyMap()
-        )
+    fun getIncomeByCategory(from: Long, to: Long = System.currentTimeMillis() / 1000) =
+        defaultRepository.getIncomeByCategory(from, to)
+            .map { mp ->
+                mp.map {
+                    PieChartData.Slice(
+                        label = it.key,
+                        value = it.value.toFloat(),
+                        color = Color(0xFF353839)
+                    )
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(subscriptionDuration),
+                initialValue = emptyList()
+            )
 
-    fun getAllIncomeAmount() = defaultRepository.getAllIncomeAmount()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(subscriptionDuration),
-            initialValue = emptyList()
+    fun getIncomeByTime(): StateFlow<Map<String, Double>> {
+        val from: Long = when (selectedIndex.value) {
+            0 -> getTodayStart()
+            1 -> getSunday()
+            2 -> getMonthStart()
+            else -> System.currentTimeMillis() / 1000
+        }
+        return defaultRepository.getIncomeByTime(
+            from = from,
+            to = System.currentTimeMillis() / 1000
         )
+            .map {
+                when (selectedIndex.value) {
+                    0 -> it.mapKeys { key -> longToTime(key.key) }
+                    1, 2 -> it.mapKeys { key -> longToDate(key.key) }
+                    else -> it.mapKeys { key -> key.key.toString() }
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(subscriptionDuration),
+                initialValue = emptyMap()
+            )
+    }
 
-    fun getAllExpenseAmount() = defaultRepository.getAllExpenseAmount()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(subscriptionDuration),
-            initialValue = emptyList()
+    fun getExpensesByTime(): StateFlow<Map<String, Double>> {
+        val from: Long = when (selectedIndex.value) {
+            0 -> getTodayStart()
+            1 -> getSunday()
+            2 -> getMonthStart()
+            else -> System.currentTimeMillis() / 1000
+        }
+        return defaultRepository.getExpenseByTime(
+            from = from,
+            to = System.currentTimeMillis() / 1000
         )
+            .map {
+                when (selectedIndex.value) {
+                    0 -> it.mapKeys { key -> longToTime(key.key) }
+                    1, 2 -> it.mapKeys { key -> longToDate(key.key) }
+                    else -> it.mapKeys { key -> longToDate(key.key) }
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(subscriptionDuration),
+                initialValue = emptyMap()
+            )
+    }
 
     fun transactionsPresent() = defaultRepository.areEntriesPresent()
         .stateIn(
