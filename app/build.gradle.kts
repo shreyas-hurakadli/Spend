@@ -85,8 +85,8 @@ dependencies {
     ksp("com.google.dagger:hilt-android-compiler:2.57")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-    // Vico
-    implementation(libs.vico.compose.m3)
+    // YCharts
+    implementation("co.yml:ycharts:2.1.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
