@@ -2,13 +2,18 @@ package com.example.spend.ui.screen
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
@@ -17,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -81,108 +88,145 @@ fun SummaryScreen(
         },
         bottomBar = {
             AppBottomBar(
-                currentScreenIndex = 2,
+                currentScreenIndex = 1,
                 navHostController = navHostController
             )
         },
-        modifier = Modifier.safeContentPadding()
     ) { innerPadding ->
         val selectedIndex by viewModel.selectedIndex.collectAsState()
         val uiState by viewModel.uiState.collectAsState()
 
-        Box(
-            modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(innerPadding)
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                SegmentedControl(
-                    options = options,
-                    selectedIndex = selectedIndex,
-                    onSegmentSelected = { viewModel.updateIndex(it) },
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-                Spacer(Modifier.padding(8.dp))
-                InfoBar(
-                    balance = uiState.balance,
-                    expense = uiState.expense
-                )
-                Spacer(Modifier.padding(16.dp))
-                Text(
-                    text = stringResource(R.string.analytics),
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    modifier = Modifier.align(Alignment.Start)
-                )
-                Spacer(Modifier.padding(8.dp))
+            if (thereAreEntries) {
                 Box(
-                    contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .padding(16.dp)
-                        .background(color = MaterialTheme.colorScheme.background)
+                        .verticalScroll(rememberScrollState())
                 ) {
-                    if (thereAreEntries) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.SpaceAround,
-                            modifier = Modifier.fillMaxSize()
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        SegmentedControl(
+                            options = options,
+                            selectedIndex = selectedIndex,
+                            onSegmentSelected = { viewModel.updateIndex(it) },
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                        Spacer(Modifier.padding(8.dp))
+                        InfoBar(
+                            balance = uiState.balance,
+                            expense = uiState.expense
+                        )
+                        Spacer(Modifier.padding(16.dp))
+                        Text(
+                            text = stringResource(R.string.analytics),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            modifier = Modifier.align(Alignment.Start)
+                        )
+                        Spacer(Modifier.padding(8.dp))
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .padding(bottom = 16.dp)
+                                .background(color = MaterialTheme.colorScheme.background)
                         ) {
-                            when (index) {
-                                1 -> ExpensesByCategoryGraph(
-                                    slices = when (selectedIndex) {
-                                        0 -> viewModel.getExpenseByCategory(getTodayStart())
-                                        1 -> viewModel.getExpenseByCategory(getSunday())
-                                        2 -> viewModel.getExpenseByCategory(getMonthStart())
-                                        else -> viewModel.getExpenseByCategory(getMonthStart())
-                                    }
-                                )
-
-                                else -> IncomeByCategoryGraph(
-                                    slices = when (selectedIndex) {
-                                        0 -> viewModel.getIncomeByCategory(getTodayStart())
-                                        1 -> viewModel.getIncomeByCategory(getSunday())
-                                        2 -> viewModel.getIncomeByCategory(getMonthStart())
-                                        else -> viewModel.getIncomeByCategory(getMonthStart())
-                                    }
-                                )
-                            }
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceAround,
-                                verticalAlignment = Alignment.CenterVertically,
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.SpaceAround,
                                 modifier = Modifier.fillMaxSize()
                             ) {
-                                IconButton(onClick = {
-                                    index = if (index == 1) total else index - 1
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
-                                        contentDescription = stringResource(R.string.previous)
+                                when (index) {
+                                    1 -> ExpensesByCategoryGraph(
+                                        slices = when (selectedIndex) {
+                                            0 -> viewModel.getExpenseByCategory(getTodayStart())
+                                            1 -> viewModel.getExpenseByCategory(getSunday())
+                                            2 -> viewModel.getExpenseByCategory(getMonthStart())
+                                            else -> viewModel.getExpenseByCategory(getMonthStart())
+                                        }
+                                    )
+
+                                    else -> IncomeByCategoryGraph(
+                                        slices = when (selectedIndex) {
+                                            0 -> viewModel.getIncomeByCategory(getTodayStart())
+                                            1 -> viewModel.getIncomeByCategory(getSunday())
+                                            2 -> viewModel.getIncomeByCategory(getMonthStart())
+                                            else -> viewModel.getIncomeByCategory(getMonthStart())
+                                        }
                                     )
                                 }
-                                ScrollIndicator(index = index, total = total, size = 4.dp)
-                                IconButton(onClick = {
-                                    index = if (index == total) 1 else index + 1
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                                        contentDescription = stringResource(R.string.next)
-                                    )
+                                Spacer(Modifier.height(8.dp))
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceAround,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    IconButton(onClick = {
+                                        index = if (index == 1) total else index - 1
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
+                                            contentDescription = stringResource(R.string.previous)
+                                        )
+                                    }
+                                    ScrollIndicator(index = index, total = total, size = 4.dp)
+                                    IconButton(onClick = {
+                                        index = if (index == total) 1 else index + 1
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                                            contentDescription = stringResource(R.string.next)
+                                        )
+                                    }
                                 }
                             }
                         }
-                    } else {
+                    }
+                }
+            } else {
+                Box(contentAlignment = Alignment.Center) {
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        SegmentedControl(
+                            options = options,
+                            selectedIndex = selectedIndex,
+                            onSegmentSelected = { viewModel.updateIndex(it) },
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                        Spacer(Modifier.padding(8.dp))
+                        InfoBar(
+                            balance = uiState.balance,
+                            expense = uiState.expense
+                        )
+                        Spacer(Modifier.padding(16.dp))
+                        Text(
+                            text = stringResource(R.string.analytics),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            modifier = Modifier.align(Alignment.Start)
+                        )
+                        Spacer(Modifier.padding(8.dp))
                         Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            Text(text = stringResource(R.string.no_transactions))
+                            Text(
+                                text = stringResource(R.string.no_transactions),
+                                style = MaterialTheme.typography.headlineSmall
+                            )
                         }
                     }
                 }
@@ -269,22 +313,22 @@ fun LegendGrid(
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Fixed(if (slices.size == 1) 1 else 2),
         userScrollEnabled = false,
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalArrangement = Arrangement.Center,
         modifier = modifier
-            .heightIn(min = 20.dp, max = 100.dp)
+            .heightIn(min = 0.dp, max = (((slices.size + (slices.size % 2)) / 2) * 50).dp)
             .padding(bottom = 16.dp)
     ) {
-        items(slices) { slice ->
+        itemsIndexed(slices) { index, slice ->
             Row(
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = if (index % 2 == 0) Arrangement.Start else Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = modifier
+                modifier = Modifier.padding(bottom = 4.dp)
             ) {
                 Box(
-                    modifier = modifier
+                    modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
                         .background(slice.color)
                         .size(30.dp)
@@ -308,24 +352,28 @@ private fun ExpensesByCategoryGraph(
     val data by slices.collectAsState()
 
     if (data.isNotEmpty()) {
-        LegendGrid(data)
-        PieChart(
-            pieChartData = PieChartData(
-                slices = data,
-                plotType = PlotType.Pie
-            ),
-            pieChartConfig = PieChartConfig(
-                isAnimationEnable = true,
-                showSliceLabels = false,
-                isClickOnSliceEnabled = false,
-                chartPadding = 0,
-                backgroundColor = Color.Transparent
-            ),
-            modifier = modifier
-                .background(color = Color.Transparent)
-        )
+        Box(contentAlignment = Alignment.Center) {
+            LegendGrid(data)
+            PieChart(
+                pieChartData = PieChartData(
+                    slices = data,
+                    plotType = PlotType.Pie
+                ),
+                pieChartConfig = PieChartConfig(
+                    isAnimationEnable = true,
+                    showSliceLabels = false,
+                    isClickOnSliceEnabled = false,
+                    chartPadding = 0,
+                    backgroundColor = MaterialTheme.colorScheme.background
+                ),
+                modifier = Modifier
+                    .background(color = MaterialTheme.colorScheme.background)
+            )
+        }
     } else {
-        Text("No Expenses")
+        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(stringResource(R.string.no_expenses))
+        }
     }
 }
 
@@ -348,19 +396,21 @@ private fun IncomeByCategoryGraph(
                 showSliceLabels = false,
                 isClickOnSliceEnabled = false,
                 chartPadding = 0,
-                backgroundColor = Color.Transparent
+                backgroundColor = MaterialTheme.colorScheme.background
             ),
             modifier = modifier
-                .background(color = Color.Transparent)
+                .background(color = MaterialTheme.colorScheme.background)
         )
     } else {
-        Text("No Income")
+        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(stringResource(R.string.no_income))
+        }
     }
 }
 
 @Preview
 @Composable
-private fun ExpensesScreenPreview() {
+private fun SummaryScreenPreview() {
     SpendTheme {
         SummaryScreen(navHostController = rememberNavController())
     }

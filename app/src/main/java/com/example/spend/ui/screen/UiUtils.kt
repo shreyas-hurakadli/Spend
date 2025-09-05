@@ -59,7 +59,7 @@ data class NavigationIcon(
     val contentDescription: String?
 )
 
-private val navigationIcon = listOf<NavigationIcon>(
+private val navigationIcon = listOf(
     NavigationIcon(
         baseLineIcon = R.drawable.baseline_home,
         outlinedIcon = R.drawable.outline_home,
@@ -67,16 +67,16 @@ private val navigationIcon = listOf<NavigationIcon>(
         contentDescription = "Home"
     ),
     NavigationIcon(
-        baseLineIcon = R.drawable.baseline_add_circle,
-        outlinedIcon = R.drawable.outline_add_circle,
-        route = Routes.AddScreen,
-        contentDescription = "Add Entry"
-    ),
-    NavigationIcon(
         baseLineIcon = R.drawable.baseline_summarize,
         outlinedIcon = R.drawable.outline_summarize,
         route = Routes.ExpensesScreen,
         contentDescription = "Summary"
+    ),
+    NavigationIcon(
+        baseLineIcon = R.drawable.baseline_settings,
+        outlinedIcon = R.drawable.outline_settings,
+        route = Routes.AccountScreen,
+        contentDescription = "Settings"
     ),
 )
 
@@ -152,6 +152,7 @@ fun AppBottomBar(
                         }
                         Text(
                             text = navigationIcons[i].contentDescription!!,
+                            fontWeight = FontWeight.ExtraBold,
                             style = MaterialTheme.typography.labelSmall
                         )
                     } else {
@@ -164,7 +165,7 @@ fun AppBottomBar(
                             )
                         }
                         Text(
-                            text = navigationIcons[i].contentDescription!!,
+                            text = navigationIcons[i].contentDescription ?: "Default",
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Normal
                         )
@@ -183,7 +184,7 @@ fun SnackBarMessage(
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().background(color = MaterialTheme.colorScheme.primary),
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         LaunchedEffect(snackbarHostState) {
@@ -198,8 +199,8 @@ fun TransactionCard(
     icon: ImageVector,
     iconTint: Color,
     backgroundColor: Color,
-    showDate: Boolean = false,
     modifier: Modifier = Modifier,
+    showDate: Boolean = false,
 ) {
     Card(
         colors = CardDefaults.cardColors(

@@ -14,4 +14,7 @@ sealed class Routes {
 
     @Serializable
     data object EntryScreen: Routes()
+
+    @Serializable
+    data object AccountScreen: Routes()
 }

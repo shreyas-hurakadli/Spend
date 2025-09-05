@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.spend.ui.screen.AccountScreen
 import com.example.spend.ui.screen.AddScreen
 import com.example.spend.ui.screen.EntryScreen
 import com.example.spend.ui.screen.SummaryScreen
@@ -54,6 +55,9 @@ fun NavigationManager(navHostController: NavHostController) {
         }
         composable<Routes.EntryScreen> {
             EntryScreen(navHostController = navHostController)
+        }
+        composable<Routes.AccountScreen> {
+            AccountScreen(navHostController = navHostController)
         }
     }
 }
