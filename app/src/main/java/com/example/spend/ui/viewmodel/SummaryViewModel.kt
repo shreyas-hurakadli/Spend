@@ -1,12 +1,11 @@
 package com.example.spend.ui.viewmodel
 
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yml.charts.ui.piechart.models.PieChartData
 import com.example.spend.data.datastore.BalanceRepository
-import com.example.spend.data.room.EntryRepository
+import com.example.spend.data.room.entry.EntryRepository
 import com.example.spend.getMonthStart
 import com.example.spend.getSunday
 import com.example.spend.getTodayStart

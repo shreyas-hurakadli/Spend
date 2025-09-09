@@ -2,9 +2,9 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.spend.data.room.Entry
-import com.example.spend.data.room.EntryDao
-import com.example.spend.data.room.EntryDatabase
+import com.example.spend.data.room.entry.Entry
+import com.example.spend.data.room.entry.EntryDao
+import com.example.spend.data.room.entry.EntryDatabase
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.take

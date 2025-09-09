@@ -1,7 +1,7 @@
 package com.example.spend.di.module
 
-import com.example.spend.data.room.DefaultRepository
-import com.example.spend.data.room.EntryRepository
+import com.example.spend.data.room.entry.DefaultRepository
+import com.example.spend.data.room.entry.EntryRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

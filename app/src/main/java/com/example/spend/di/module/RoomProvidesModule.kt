@@ -2,11 +2,8 @@ package com.example.spend.di.module
 
 import android.content.Context
 import androidx.room.Room
-import com.example.spend.data.room.DefaultRepository
-import com.example.spend.data.room.EntryDao
-import com.example.spend.data.room.EntryDatabase
-import com.example.spend.data.room.EntryRepository
-import dagger.Binds
+import com.example.spend.data.room.entry.EntryDao
+import com.example.spend.data.room.entry.EntryDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,4 +1,4 @@
-package com.example.spend.data.room
+package com.example.spend.data.room.entry
 
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

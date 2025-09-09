@@ -1,4 +1,4 @@
-package com.example.spend.data.room
+package com.example.spend.data.room.entry
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
