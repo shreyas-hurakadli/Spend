@@ -147,11 +147,11 @@ fun AppBottomBar(
                                 imageVector = ImageVector.vectorResource(navigationIcons[i].baseLineIcon),
                                 contentDescription = navigationIcons[i].contentDescription,
                                 tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(30.dp)
+                                modifier = Modifier.size(24.dp)
                             )
                         }
                         Text(
-                            text = navigationIcons[i].contentDescription!!,
+                            text = navigationIcons[i].contentDescription ?: "Default",
                             fontWeight = FontWeight.ExtraBold,
                             style = MaterialTheme.typography.labelSmall
                         )
@@ -161,7 +161,7 @@ fun AppBottomBar(
                                 imageVector = ImageVector.vectorResource(navigationIcons[i].outlinedIcon),
                                 contentDescription = navigationIcons[i].contentDescription,
                                 tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(30.dp)
+                                modifier = Modifier.size(24.dp)
                             )
                         }
                         Text(
