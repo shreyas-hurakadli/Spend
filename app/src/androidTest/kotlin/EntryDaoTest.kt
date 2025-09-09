@@ -4,7 +4,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryDao
-import com.example.spend.data.room.entry.EntryDatabase
+import com.example.spend.data.room.RoomDatabaseClass
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.take
@@ -19,23 +19,23 @@ import java.io.IOException
 @RunWith(AndroidJUnit4::class)
 class EntryDaoTest {
     private lateinit var entryDao: EntryDao
-    private lateinit var entryDatabase: EntryDatabase
+    private lateinit var roomDatabaseClass: RoomDatabaseClass
 
     @Before
     fun create_db() {
         val context: Context = ApplicationProvider.getApplicationContext()
 
-        entryDatabase = Room.inMemoryDatabaseBuilder(context, EntryDatabase::class.java)
+        roomDatabaseClass = Room.inMemoryDatabaseBuilder(context, RoomDatabaseClass::class.java)
             .allowMainThreadQueries()
             .build()
 
-        entryDao = entryDatabase.entryDao()
+        entryDao = roomDatabaseClass.entryDao()
     }
 
     @After
     @Throws(IOException::class)
     fun close_db() {
-        entryDatabase.close()
+        roomDatabaseClass.close()
     }
 
     private var entry1: Entry = Entry(1, "Canteen", "Food", 69.00, 1740911745724L)

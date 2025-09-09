@@ -3,7 +3,7 @@ package com.example.spend.di.module
 import android.content.Context
 import androidx.room.Room
 import com.example.spend.data.room.entry.EntryDao
-import com.example.spend.data.room.entry.EntryDatabase
+import com.example.spend.data.room.RoomDatabaseClass
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,15 +16,15 @@ import javax.inject.Singleton
 object RoomProvidesModule {
     @Provides
     @Singleton
-    fun provideDatabaseInstance(@ApplicationContext context: Context): EntryDatabase =
+    fun provideDatabaseInstance(@ApplicationContext context: Context): RoomDatabaseClass =
         Room.databaseBuilder(
             context,
-            EntryDatabase::class.java,
+            RoomDatabaseClass::class.java,
             "entries_database"
         ).build()
 
     @Provides
     @Singleton
-    fun provideEntryDao(entryDatabase: EntryDatabase): EntryDao =
-        entryDatabase.entryDao()
+    fun provideEntryDao(roomDatabaseClass: RoomDatabaseClass): EntryDao =
+        roomDatabaseClass.entryDao()
 }
