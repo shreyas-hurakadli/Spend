@@ -32,6 +32,6 @@ class LoginRepository @Inject constructor(
                 throw it
         }
         .map { preferences ->
-            preferences[FIRST_LOGIN] ?: false
+            preferences[FIRST_LOGIN] ?: true
         }
 }
