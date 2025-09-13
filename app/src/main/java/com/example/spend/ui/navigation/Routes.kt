@@ -4,8 +4,6 @@ import kotlinx.serialization.Serializable
 
 sealed class Routes {
     @Serializable
-    data object SetupScreen: Routes()
-    @Serializable
     data object HomeScreen: Routes()
 
     @Serializable

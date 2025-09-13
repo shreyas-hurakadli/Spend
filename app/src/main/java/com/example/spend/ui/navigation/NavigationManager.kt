@@ -12,7 +12,6 @@ import com.example.spend.ui.screen.AddScreen
 import com.example.spend.ui.screen.EntryScreen
 import com.example.spend.ui.screen.HomeScreen
 import com.example.spend.ui.screen.SettingsScreen
-import com.example.spend.ui.screen.SetupScreen
 import com.example.spend.ui.screen.SummaryScreen
 
 private const val durationMillis = 150
@@ -23,7 +22,7 @@ fun NavigationManager(
 ) {
     NavHost(
         navController = navHostController,
-        startDestination = Routes.SetupScreen,
+        startDestination = Routes.HomeScreen,
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },
@@ -49,9 +48,6 @@ fun NavigationManager(
             )
         }
     ) {
-        composable<Routes.SetupScreen> {
-            SetupScreen(navHostController = navHostController)
-        }
         composable<Routes.HomeScreen> {
             HomeScreen(navHostController = navHostController)
         }
