@@ -1,5 +1,6 @@
 package com.example.spend.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -71,7 +72,7 @@ fun AddScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(8.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -137,7 +138,7 @@ fun AddScreen(
                 ),
                 label = {
                     Text(
-                        text = "Amount",
+                        text = stringResource(R.string.amount),
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.labelSmall
                     )
@@ -221,7 +222,6 @@ fun AddScreen(
             if (showSnackBar) {
                 SnackBarMessage(
                     message = stringResource(R.string.transaction_success_message),
-                    modifier = Modifier
                 )
             }
         }

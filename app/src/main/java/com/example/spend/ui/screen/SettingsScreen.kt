@@ -29,7 +29,7 @@ import com.example.spend.R
 import com.example.spend.ui.theme.SpendTheme
 
 @Composable
-fun AccountScreen(
+fun SettingsScreen(
     navHostController: NavHostController,
 ) {
     Scaffold(
@@ -69,7 +69,7 @@ fun AccountScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(8.dp)
             ) {
                 SettingTile(
                     name = "Clear Data",
@@ -134,6 +134,6 @@ private fun SettingTile(
 @Composable
 private fun AccountScreenPreview() {
     SpendTheme {
-        AccountScreen(navHostController = rememberNavController())
+        SettingsScreen(navHostController = rememberNavController())
     }
 }

@@ -49,7 +49,7 @@ fun EntryScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(8.dp)
         ) {
             items(items = list) { entry ->
                 Column {

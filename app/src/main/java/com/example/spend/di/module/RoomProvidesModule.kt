@@ -2,8 +2,11 @@ package com.example.spend.di.module
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.spend.data.room.entry.EntryDao
 import com.example.spend.data.room.RoomDatabaseClass
+import com.example.spend.data.room.account.AccountDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +17,17 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RoomProvidesModule {
+    private val callback = object : RoomDatabase.Callback() {
+        override fun onCreate(db: SupportSQLiteDatabase) {
+            super.onCreate(db)
+            db.execSQL("INSERT INTO accounts (name, balance) VALUES ('All', 0.0)")
+        }
+
+        override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
+            super.onDestructiveMigration(db)
+            db.execSQL("INSERT INTO accounts (name, balance) VALUES ('All', 0.0)")
+        }
+    }
     @Provides
     @Singleton
     fun provideDatabaseInstance(@ApplicationContext context: Context): RoomDatabaseClass =
@@ -21,10 +35,17 @@ object RoomProvidesModule {
             context,
             RoomDatabaseClass::class.java,
             "entries_database"
-        ).build()
+        )
+            .addCallback(callback = callback)
+            .build()
 
     @Provides
     @Singleton
     fun provideEntryDao(roomDatabaseClass: RoomDatabaseClass): EntryDao =
         roomDatabaseClass.entryDao()
+
+    @Provides
+    @Singleton
+    fun provideAccountDao(roomDatabaseClass: RoomDatabaseClass): AccountDao =
+        roomDatabaseClass.accountDao()
 }

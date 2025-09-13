@@ -8,7 +8,7 @@ import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryDao
 
 @Database(entities = [Entry::class, Account::class], version = 2)
-abstract class RoomDatabaseClass: RoomDatabase() {
+abstract class RoomDatabaseClass : RoomDatabase() {
     abstract fun entryDao(): EntryDao
     abstract fun accountDao(): AccountDao
 }

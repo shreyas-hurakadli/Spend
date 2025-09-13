@@ -108,7 +108,7 @@ fun SummaryScreen(
                 ) {
                     Column(
                         modifier = Modifier
-                            .padding(16.dp)
+                            .padding(8.dp)
                             .fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {

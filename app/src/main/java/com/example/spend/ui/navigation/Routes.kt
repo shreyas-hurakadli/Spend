@@ -4,6 +4,8 @@ import kotlinx.serialization.Serializable
 
 sealed class Routes {
     @Serializable
+    data object SetupScreen: Routes()
+    @Serializable
     data object HomeScreen: Routes()
 
     @Serializable
@@ -16,5 +18,8 @@ sealed class Routes {
     data object EntryScreen: Routes()
 
     @Serializable
-    data object AccountScreen: Routes()
+    data object SettingsScreen: Routes()
+
+    @Serializable
+    data object AddAccountScreen: Routes()
 }

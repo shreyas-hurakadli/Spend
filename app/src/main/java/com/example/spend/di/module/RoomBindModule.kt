@@ -1,5 +1,7 @@
 package com.example.spend.di.module
 
+import com.example.spend.data.room.account.AccountRepository
+import com.example.spend.data.room.account.DefaultAccountRepository
 import com.example.spend.data.room.entry.DefaultRepository
 import com.example.spend.data.room.entry.EntryRepository
 import dagger.Binds
@@ -12,4 +14,7 @@ import dagger.hilt.components.SingletonComponent
 abstract class RoomBindModule {
     @Binds
     abstract fun bindEntryRepository(defaultRepository: DefaultRepository): EntryRepository
+
+    @Binds
+    abstract fun bindAccountRepository(defaultAccountRepository: DefaultAccountRepository): AccountRepository
 }

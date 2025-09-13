@@ -16,7 +16,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SpendTheme {
-                NavigationManager(rememberNavController())
+                NavigationManager(
+                    navHostController = rememberNavController(),
+                )
             }
         }
     }

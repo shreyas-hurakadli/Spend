@@ -93,3 +93,17 @@ fun getLocalCurrencySymbol(locale: Locale = Locale.getDefault()): String? =
  * Truncates the Double value to two decimal digits
  */
 fun getFormattedAmount(value: Double): String = String.format(Locale.US, "%.2f", abs(value))
+
+/**
+ * Checks if a double value has two decimal points which are zero.
+ * Useful while handling currency
+ */
+fun Double.hasTwoDecimalZeroPoints(): Boolean {
+    var value = (this * 100).toInt()
+    for (i in 0 .. 1) {
+        if (value % 10 != 0)
+            return false
+        value /= 10
+    }
+    return true
+}

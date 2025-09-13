@@ -75,7 +75,7 @@ private val navigationIcon = listOf(
     NavigationIcon(
         baseLineIcon = R.drawable.baseline_settings,
         outlinedIcon = R.drawable.outline_settings,
-        route = Routes.AccountScreen,
+        route = Routes.SettingsScreen,
         contentDescription = "Settings"
     ),
 )

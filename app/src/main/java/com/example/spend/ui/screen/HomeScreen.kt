@@ -1,6 +1,6 @@
 package com.example.spend.ui.screen
 
-import android.text.Layout
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -13,12 +13,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,6 +30,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +40,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,11 +49,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
+import com.example.spend.data.room.account.Account
 import com.example.spend.getFormattedAmount
 import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.HomeViewModel
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun HomeScreen(
@@ -65,22 +73,38 @@ fun HomeScreen(
             )
         },
     ) { innerPadding ->
-        val balance by viewModel.balance.collectAsState()
         val transactions by viewModel.transactions.collectAsState()
+        val firstAccount by viewModel.currentAccount.collectAsState()
+        var account by remember { mutableStateOf(firstAccount) }
 
-        if (transactions.isNotEmpty()) {
+        if (account?.id == 0L) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator()
+                if (firstAccount?.id != 0L)
+                    account = firstAccount
+            }
+        } else {
             Box(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
+                modifier =
+                    if (transactions.isNotEmpty())
+                        Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    else Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(8.dp)
                         .fillMaxSize()
                 ) {
-                    BalanceBar(balance = balance)
+                    BalanceBar(
+                        onClick = { account= it },
+                        account = account!!,
+                        accountList = viewModel.accountList,
+                    )
                     Spacer(Modifier.padding(16.dp))
                     Text(
                         text = stringResource(R.string.quick_actions),
@@ -103,9 +127,9 @@ fun HomeScreen(
                             onClick = { navHostController.navigate(Routes.AddScreen) }
                         )
                         ActionCard(
-                            icon = Icons.Filled.Add,
-                            label = stringResource(R.string.add_entry),
-                            onClick = {}
+                            icon = ImageVector.vectorResource(R.drawable.baseline_wallet),
+                            label = stringResource(R.string.add_account),
+                            onClick = { navHostController.navigate(Routes.AddAccountScreen) }
                         )
                         ActionCard(
                             icon = Icons.Filled.Add,
@@ -124,14 +148,16 @@ fun HomeScreen(
                             fontWeight = FontWeight.Bold,
                             color = Color.Black
                         )
-                        Text(
-                            text = stringResource(R.string.see_all),
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier
-                                .clickable { navHostController.navigate(Routes.EntryScreen) }
-                        )
+                        if (transactions.isNotEmpty()) {
+                            Text(
+                                text = stringResource(R.string.see_all),
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier
+                                    .clickable { navHostController.navigate(Routes.EntryScreen) }
+                            )
+                        }
                     }
 
                     Spacer(Modifier.padding(8.dp))
@@ -144,11 +170,11 @@ fun HomeScreen(
                             .fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (transactions.isNotEmpty()) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            if (transactions.isNotEmpty()) {
                                 transactions.forEach { entry ->
                                     TransactionCard(
                                         entry = entry,
@@ -158,76 +184,15 @@ fun HomeScreen(
                                         backgroundColor = MaterialTheme.colorScheme.secondary,
                                     )
                                 }
+                            } else {
+                                Text(text = stringResource(R.string.no_transactions))
                             }
                         }
                     }
                 }
             }
-        } else {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxSize()
-                ) {
-                    BalanceBar(balance = balance)
-                    Spacer(Modifier.padding(16.dp))
-                    Text(
-                        text = stringResource(R.string.quick_actions),
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        modifier = Modifier.align(Alignment.Start)
-                    )
-                    Spacer(Modifier.padding(8.dp))
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState())
-                    ) {
-                        ActionCard(
-                            icon = Icons.Filled.Add,
-                            label = stringResource(R.string.add_entry),
-                            onClick = { navHostController.navigate(Routes.AddScreen) }
-                        )
-                        ActionCard(
-                            icon = Icons.Filled.Add,
-                            label = stringResource(R.string.add_entry),
-                            onClick = {}
-                        )
-                        ActionCard(
-                            icon = Icons.Filled.Add,
-                            label = stringResource(R.string.add_entry),
-                            onClick = {}
-                        )
-                    }
-                    Spacer(Modifier.padding(16.dp))
-                    Text(
-                        text = stringResource(R.string.recent_transaction),
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Text(
-                            text = stringResource(R.string.no_transactions),
-                            style = MaterialTheme.typography.headlineSmall
-                        )
-                    }
-                }
-            }
         }
+
     }
 }
 
@@ -275,9 +240,14 @@ private fun ActionCard(
 
 @Composable
 private fun BalanceBar(
-    balance: Double,
-    modifier: Modifier = Modifier
+    onClick: (Account) -> Unit,
+    account: Account,
+    accountList: StateFlow<List<Account>>,
+    modifier: Modifier = Modifier,
 ) {
+    Log.d("BalanceBar", account.toString())
+    val list by accountList.collectAsState()
+    var expanded by remember { mutableStateOf(false) }
     Surface(
         tonalElevation = 8.dp,
         shadowElevation = 8.dp,
@@ -293,16 +263,58 @@ private fun BalanceBar(
                 .padding(24.dp),
         ) {
             Column {
-                Text(
-                    text = stringResource(R.string.total_balance),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.labelLarge,
-                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = stringResource(R.string.total_balance),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                    Column {
+                        Row(
+                            modifier = Modifier.clickable(
+                                enabled = true,
+                                onClick = { expanded = true })
+                        ) {
+                            Text(
+                                text = account.name,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                style = MaterialTheme.typography.labelLarge,
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.ArrowDropDown,
+                                contentDescription = stringResource(R.string.see_all),
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                list.forEach { account ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                account.name,
+                                                textAlign = TextAlign.Center,
+                                                color = MaterialTheme.colorScheme.inverseOnSurface
+                                            )
+                                        },
+                                        onClick = { onClick(account) },
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
                 Spacer(Modifier.padding(8.dp))
                 Text(
-                    text = (if (balance < 0) "- " else "") + "${getLocalCurrencySymbol()} ${
+                    text = (if (account.balance < 0) "- " else "") + "${getLocalCurrencySymbol()} ${
                         getFormattedAmount(
-                            value = balance
+                            value = account.balance
                         )
                     }",
                     color = MaterialTheme.colorScheme.onPrimary,

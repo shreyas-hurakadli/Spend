@@ -7,18 +7,23 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.spend.ui.screen.AccountScreen
+import com.example.spend.ui.screen.AddAccountScreen
 import com.example.spend.ui.screen.AddScreen
 import com.example.spend.ui.screen.EntryScreen
-import com.example.spend.ui.screen.SummaryScreen
 import com.example.spend.ui.screen.HomeScreen
+import com.example.spend.ui.screen.SettingsScreen
+import com.example.spend.ui.screen.SetupScreen
+import com.example.spend.ui.screen.SummaryScreen
 
 private const val durationMillis = 150
+
 @Composable
-fun NavigationManager(navHostController: NavHostController) {
+fun NavigationManager(
+    navHostController: NavHostController,
+) {
     NavHost(
         navController = navHostController,
-        startDestination = Routes.HomeScreen,
+        startDestination = Routes.SetupScreen,
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },
@@ -44,6 +49,9 @@ fun NavigationManager(navHostController: NavHostController) {
             )
         }
     ) {
+        composable<Routes.SetupScreen> {
+            SetupScreen(navHostController = navHostController)
+        }
         composable<Routes.HomeScreen> {
             HomeScreen(navHostController = navHostController)
         }
@@ -56,8 +64,11 @@ fun NavigationManager(navHostController: NavHostController) {
         composable<Routes.EntryScreen> {
             EntryScreen(navHostController = navHostController)
         }
-        composable<Routes.AccountScreen> {
-            AccountScreen(navHostController = navHostController)
+        composable<Routes.SettingsScreen> {
+            SettingsScreen(navHostController = navHostController)
+        }
+        composable<Routes.AddAccountScreen> {
+            AddAccountScreen(navHostController = navHostController)
         }
     }
 }
