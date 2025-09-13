@@ -102,7 +102,7 @@ fun HomeScreen(
                         .fillMaxSize()
                 ) {
                     BalanceBar(
-                        onClick = { account= it },
+                        onClick = { account = it },
                         account = account!!,
                         accountList = viewModel.accountList,
                     )
@@ -304,7 +304,10 @@ private fun BalanceBar(
                                                 color = MaterialTheme.colorScheme.inverseOnSurface
                                             )
                                         },
-                                        onClick = { onClick(account) },
+                                        onClick = {
+                                            onClick(account)
+                                            expanded = false
+                                        },
                                     )
                                 }
                             }
