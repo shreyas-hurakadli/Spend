@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
+import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.theme.SpendTheme
 
 @Composable
@@ -38,7 +39,7 @@ fun SettingsScreen(
         },
         bottomBar = {
             AppBottomBar(
-                currentScreenIndex = 2,
+                currentScreenIndex = RouteNumbers.SETTINGS_SCREEN.screenNumber,
                 navHostController
             )
         },

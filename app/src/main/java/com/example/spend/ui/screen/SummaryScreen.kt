@@ -66,6 +66,7 @@ import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.getMonthStart
 import com.example.spend.getSunday
 import com.example.spend.getTodayStart
+import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.SummaryViewModel
 import kotlinx.coroutines.flow.StateFlow
@@ -88,7 +89,7 @@ fun SummaryScreen(
         },
         bottomBar = {
             AppBottomBar(
-                currentScreenIndex = 1,
+                currentScreenIndex = RouteNumbers.SUMMARY_SCREEN.screenNumber,
                 navHostController = navHostController
             )
         },

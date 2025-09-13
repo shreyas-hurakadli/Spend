@@ -52,6 +52,7 @@ import com.example.spend.R
 import com.example.spend.data.room.account.Account
 import com.example.spend.getFormattedAmount
 import com.example.spend.getLocalCurrencySymbol
+import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.HomeViewModel
@@ -68,7 +69,7 @@ fun HomeScreen(
         },
         bottomBar = {
             AppBottomBar(
-                currentScreenIndex = 0,
+                currentScreenIndex = RouteNumbers.HOME_PAGE.screenNumber,
                 navHostController
             )
         },
