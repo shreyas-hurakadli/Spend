@@ -78,10 +78,10 @@ fun HomeScreen(
         val firstAccount by viewModel.currentAccount.collectAsState()
         var account by remember { mutableStateOf(firstAccount) }
 
-        if (account?.id == 0L) {
+        if (account.id == 0L) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator()
-                if (firstAccount?.id != 0L)
+                if (firstAccount.id != 0L)
                     account = firstAccount
             }
         } else {
@@ -103,7 +103,7 @@ fun HomeScreen(
                 ) {
                     BalanceBar(
                         onClick = { account = it },
-                        account = account!!,
+                        account = account,
                         accountList = viewModel.accountList,
                     )
                     Spacer(Modifier.padding(16.dp))
