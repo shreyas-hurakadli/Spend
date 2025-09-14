@@ -3,13 +3,14 @@ package com.example.spend.data.room.account
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy.Companion.IGNORE
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AccountDao {
-    @Insert
+    @Insert(onConflict = IGNORE)
     suspend fun insert(account: Account): Long
 
     @Delete
