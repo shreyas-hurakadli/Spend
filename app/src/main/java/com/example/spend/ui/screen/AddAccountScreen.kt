@@ -43,8 +43,6 @@ fun AddAccountScreen(
 ) {
     var balance by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
-    val message by viewModel.message.collectAsState()
-    var showSnackBar by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Scaffold(
@@ -118,10 +116,9 @@ fun AddAccountScreen(
                             viewModel.updateName(name)
                             viewModel.updateBalance(balance.toDouble())
                             viewModel.insertData()
+                            keyboardController?.hide()
                             name = ""
                             balance = ""
-                            keyboardController?.hide()
-                            showSnackBar = true
                         }
                     ) {
                         Icon(
@@ -129,8 +126,6 @@ fun AddAccountScreen(
                             contentDescription = stringResource(R.string.done),
                         )
                     }
-                    if (showSnackBar)
-                        SnackBarMessage(message)
                 }
             }
         }

@@ -15,11 +15,6 @@ class AddAccountViewModel @Inject constructor(
     private val defaultAccountRepository: AccountRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(Account())
-    val uiState = _uiState.asStateFlow()
-
-    private val _message = MutableStateFlow("")
-    val message = _message.asStateFlow()
-
     fun updateName(name: String) {
         _uiState.value = _uiState.value.copy(name = name)
     }
@@ -34,14 +29,7 @@ class AddAccountViewModel @Inject constructor(
 
     fun insertData() {
         viewModelScope.launch {
-            val id = defaultAccountRepository.insert(_uiState.value)
-            defaultAccountRepository.getAccountById(id)
-                .collect {
-                    _message.value = if (it == null || it != _uiState.value)
-                        "Insertion unsuccessful"
-                    else
-                        "Insertion successful"
-                }
+            defaultAccountRepository.insert(_uiState.value)
             clear()
         }
     }
