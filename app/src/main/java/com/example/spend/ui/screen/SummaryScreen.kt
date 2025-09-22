@@ -245,7 +245,7 @@ private fun InfoBar(
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(24.dp))
             .padding(16.dp)
             .animateContentSize()
     ) {
