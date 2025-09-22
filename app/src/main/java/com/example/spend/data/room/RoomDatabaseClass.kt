@@ -11,7 +11,7 @@ import com.example.spend.data.room.category.CategoryDao
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryDao
 
-@Database(entities = [Entry::class, Account::class, Budget::class, Category::class], version = 4)
+@Database(entities = [Entry::class, Account::class, Budget::class, Category::class], version = 6)
 abstract class RoomDatabaseClass : RoomDatabase() {
     abstract fun entryDao(): EntryDao
     abstract fun accountDao(): AccountDao

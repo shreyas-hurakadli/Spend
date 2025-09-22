@@ -23,15 +23,15 @@ object RoomProvidesModule {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
             db.execSQL("INSERT INTO accounts (name, balance) VALUES ('All', 0.0)")
-            db.execSQL("INSERT INTO categories (name, is_expense) VALUES ('All', 0)")
-            db.execSQL("INSERT INTO categories (name, is_expense) VALUES ('All', 1)")
+            db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 0, -1)")
+            db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 1, -1)")
         }
 
         override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
             super.onDestructiveMigration(db)
             db.execSQL("INSERT INTO accounts (name, balance) VALUES ('All', 0.0)")
-            db.execSQL("INSERT INTO categories (name, is_expense) VALUES ('All', 0)")
-            db.execSQL("INSERT INTO categories (name, is_expense) VALUES ('All', 1)")
+            db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 0, -1)")
+            db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 1, -1)")
         }
     }
     @Provides

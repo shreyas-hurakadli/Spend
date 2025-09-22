@@ -130,6 +130,12 @@ fun CreateCategoryScreen(
                     .padding(8.dp)
                     .fillMaxSize()
             ) {
+                SegmentedControl(
+                    options = listOf("Income", "Expenses"),
+                    selectedIndex = 0,
+                    onSegmentSelected = {}
+                )
+                Spacer(Modifier.height(8.dp))
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
