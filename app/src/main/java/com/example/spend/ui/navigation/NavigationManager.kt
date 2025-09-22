@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.spend.ui.screen.AddAccountScreen
 import com.example.spend.ui.screen.AddScreen
+import com.example.spend.ui.screen.CreateCategoryScreen
 import com.example.spend.ui.screen.EntryScreen
 import com.example.spend.ui.screen.HomeScreen
 import com.example.spend.ui.screen.SettingsScreen
@@ -65,6 +66,9 @@ fun NavigationManager(
         }
         composable<Routes.AddAccountScreen> {
             AddAccountScreen(navHostController = navHostController)
+        }
+        composable<Routes.CreateCategoryScreen> {
+            CreateCategoryScreen(navHostController = navHostController)
         }
     }
 }

@@ -20,4 +20,7 @@ sealed class Routes {
 
     @Serializable
     data object AddAccountScreen: Routes()
+
+    @Serializable
+    data object CreateCategoryScreen: Routes()
 }
