@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -128,7 +129,7 @@ fun AppBottomBar(
     BottomAppBar(
         modifier = modifier.fillMaxWidth(),
         tonalElevation = 8.dp,
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = MaterialTheme.colorScheme.surface,
     ) {
         Row(
             modifier = modifier.fillMaxWidth(),
@@ -148,12 +149,14 @@ fun AppBottomBar(
                                 contentDescription = navigationIcons[i].contentDescription,
                                 tint = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.size(24.dp)
+                                    .wrapContentSize()
                             )
                         }
                         Text(
                             text = navigationIcons[i].contentDescription ?: "Default",
                             fontWeight = FontWeight.ExtraBold,
-                            style = MaterialTheme.typography.labelSmall
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.wrapContentSize()
                         )
                     } else {
                         IconButton(onClick = { navHostController.navigate(navigationIcons[i].route) }) {
@@ -162,12 +165,14 @@ fun AppBottomBar(
                                 contentDescription = navigationIcons[i].contentDescription,
                                 tint = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.size(24.dp)
+                                    .wrapContentSize()
                             )
                         }
                         Text(
                             text = navigationIcons[i].contentDescription ?: "Default",
                             style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Normal
+                            fontWeight = FontWeight.Normal,
+                            modifier = Modifier.wrapContentSize()
                         )
                     }
                 }
@@ -231,7 +236,7 @@ fun TransactionCard(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        entry.category,
+                        "", //entry.category,
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.weight(1f)
                     )
@@ -270,7 +275,7 @@ fun SegmentedControl(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(24.dp))
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

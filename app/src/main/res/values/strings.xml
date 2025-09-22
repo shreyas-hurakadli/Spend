@@ -7,9 +7,12 @@
     <string name="total_expense">Total Expense</string>
     <string name="analytics">Analytics</string>
     <string name="add_entry">Add Entry</string>
+    <string name="add_category">Add Category</string>
     <string name="back">Back</string>
     <string name="update_balance">Update balance</string>
     <string name="new_balance">New Balance</string>
+    <string name="save">SAVE</string>
+    <string name="cancel">CANCEL</string>
     <string name="done">Done</string>
     <string name="enter_new_balance">Enter new balance</string>
     <string name="transactions">Transactions</string>

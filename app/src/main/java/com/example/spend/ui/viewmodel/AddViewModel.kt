@@ -1,69 +1,55 @@
 package com.example.spend.ui.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spend.data.room.account.AccountRepository
+import com.example.spend.data.room.account.DefaultAccountRepository
+import com.example.spend.data.room.category.DefaultCategoryRepository
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.time.ZoneId
 import javax.inject.Inject
 
 @HiltViewModel
 class AddViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
-    private val defaultAccountRepository: AccountRepository
+    private val defaultAccountRepository: DefaultAccountRepository,
+    private val defaultCategoryRepository: DefaultCategoryRepository
 ) : ViewModel() {
-    var uiState = MutableStateFlow(Entry())
+    var selectedIndex by mutableIntStateOf(1)
         private set
 
-    var showSnackBar = MutableStateFlow(false)
+    var amount by mutableStateOf("0")
         private set
 
-    var amount = MutableStateFlow("")
+    var time by mutableStateOf(System.currentTimeMillis())
         private set
 
+    var description by mutableStateOf("")
+        private set
 
-    fun updateIsExpense(input: Boolean) {
-        uiState.value = uiState.value.copy(isExpense = input)
+    fun changeTime(value: Long) {
+        time = value
     }
 
-    fun updateAmount(amount: String) {
-        this.amount.value = amount
+    fun changeSelectedIndex(index: Int) {
+        selectedIndex = index
     }
 
-    fun updateSnackBarStatus() {
-        showSnackBar.value = !showSnackBar.value
+    fun changeDescription(text: String) {
+        description = text
     }
 
-    fun updateTag(tag: String) {
-        uiState.value = uiState.value.copy(category = tag)
-    }
-
-    fun updateDescription(description: String) {
-        uiState.value = uiState.value.copy(description = description)
-    }
-
-    fun updateBill(amount: Double) {
-        uiState.value = uiState.value.copy(amount = amount)
-    }
-
-    fun updateDate() {
-        uiState.value = uiState.value.copy(epochSeconds = java.time.Instant.now().epochSecond)
-    }
-
-    private fun clear() {
-        uiState.value = Entry()
-    }
-
-    fun insertData() {
-        viewModelScope.launch {
-            var id = 1L
-            uiState.value = uiState.value.copy(accountId = id)
-            defaultRepository.insert(uiState.value)
-            clear()
-            updateSnackBarStatus()
-        }
+    fun changeAmount(value: String) {
+        amount = value
     }
 }
