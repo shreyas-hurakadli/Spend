@@ -111,6 +111,7 @@ fun CreateCategoryScreen(
     viewModel: CreateCategoryViewModel = hiltViewModel()
 ) {
     val category by viewModel.category.collectAsState()
+    val selectedIndex by viewModel.selectedIndex.collectAsState()
     Scaffold(
         topBar = {
             AppTopBar(
@@ -130,8 +131,8 @@ fun CreateCategoryScreen(
             ) {
                 SegmentedControl(
                     options = listOf("Income", "Expenses"),
-                    selectedIndex = 0,
-                    onSegmentSelected = {}
+                    selectedIndex = selectedIndex,
+                    onSegmentSelected = { viewModel.changeSelectedIndex() }
                 )
                 Spacer(Modifier.height(8.dp))
                 Row(
@@ -143,8 +144,17 @@ fun CreateCategoryScreen(
                         modifier = Modifier
                             .clip(CircleShape)
                             .size(55.dp)
-                            .background(color = Color(0xFF77DD77)),
-                    )
+                            .background(color = category.color),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (icons[category.icon] != null) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(icons[category.icon]!!),
+                                contentDescription = null,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
+                    }
                     Spacer(Modifier.width(4.dp))
                     OutlinedTextField(
                         value = category.name,
@@ -198,11 +208,14 @@ fun CreateCategoryScreen(
                                     .size(36.dp)
                                     .background(color)
                                     .border(
-                                        width = if (color == Color(0xFF77DD77)) 2.dp else 0.dp,
+                                        width = if (color == category.color) 2.dp else 0.dp,
                                         color = MaterialTheme.colorScheme.onTertiary,
                                         shape = CircleShape
                                     )
-                                    .clickable(enabled = true, onClick = {})
+                                    .clickable(
+                                        enabled = true,
+                                        onClick = { viewModel.changeColor(color) }
+                                    )
                             )
                         }
                     }
@@ -230,7 +243,7 @@ fun CreateCategoryScreen(
                     ) {
                         items(items = icons.entries.toList()) { entry ->
                             IconButton(
-                                onClick = {},
+                                onClick = { viewModel.changeLogo(entry.key) },
                                 modifier = Modifier.wrapContentSize()
                             ) {
                                 Icon(

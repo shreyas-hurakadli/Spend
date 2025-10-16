@@ -19,8 +19,12 @@ class CreateCategoryViewModel @Inject constructor(
     var category = MutableStateFlow(value = Category())
         private set
 
-    init {
-        category.value = category.value.copy()
+    var selectedIndex = MutableStateFlow(value = 0)
+        private set
+
+    fun changeSelectedIndex() {
+        selectedIndex.value = if (selectedIndex.value == 1) 0 else 1
+        category.value = category.value.copy(isExpense = selectedIndex.value == 1)
     }
 
     fun changeName(name: String) {
@@ -28,11 +32,11 @@ class CreateCategoryViewModel @Inject constructor(
     }
 
     fun changeColor(color: Color) {
-        category.value = category.value.copy()
+        category.value = category.value.copy(color = color)
     }
 
     fun changeLogo(logo: String) {
-        category.value = category.value.copy()
+        category.value = category.value.copy(icon = logo)
     }
 
     fun clear() {
