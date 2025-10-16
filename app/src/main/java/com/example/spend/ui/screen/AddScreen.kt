@@ -8,17 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -27,7 +22,6 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,7 +31,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
@@ -51,24 +44,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.autofill.contentType
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.times
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import androidx.room.util.TableInfo
 import com.example.spend.R
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.AddViewModel
@@ -92,7 +80,8 @@ fun AddScreen(
     val selectedIndex = viewModel.selectedIndex
     val amount = viewModel.amount
     val description = viewModel.description
-    val time = viewModel.time
+    val answer = viewModel.answer
+    val operator = viewModel.operator
 
     Scaffold { innerPadding ->
         BoxWithConstraints(
@@ -185,8 +174,20 @@ fun AddScreen(
                 ) {
                     CalculatorUI(
                         amount = amount,
+                        answer = answer.toString(),
                         onValueChange = { viewModel.changeAmount(it) },
-                        maxWidth = maxWidth
+                        onBackspaceClick = {
+                            if (it.isEmpty()) viewModel.changeAmount("0")
+                            else viewModel.changeAmount(it)
+                        },
+                        maxWidth = maxWidth,
+                        operation = operator,
+                        updateOperator = {
+                            if (it == "") viewModel.resetOperator()
+                            else viewModel.changeOperator(it)
+                        },
+                        calculateAmount = { viewModel.calculateAnswer() },
+                        addToAmount = { viewModel.changeAmount(amount + it) }
                     )
                     Spacer(Modifier.height(8.dp))
                     DateTimePicker(
@@ -200,7 +201,17 @@ fun AddScreen(
 }
 
 @Composable
-private fun CalculatorUI(amount: String, onValueChange: (String) -> Unit, maxWidth: Dp) {
+private fun CalculatorUI(
+    amount: String,
+    answer: String,
+    onValueChange: (String) -> Unit,
+    onBackspaceClick: (String) -> Unit,
+    updateOperator: (String) -> Unit,
+    calculateAmount: () -> Unit,
+    addToAmount: (String) -> Unit,
+    operation: String,
+    maxWidth: Dp,
+) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -211,10 +222,30 @@ private fun CalculatorUI(amount: String, onValueChange: (String) -> Unit, maxWid
             shape = RoundedCornerShape(16.dp),
             textStyle = LocalTextStyle.current.copy(
                 textAlign = TextAlign.End,
-                fontSize = 40.sp
+                fontSize = 30.sp
             ),
+            leadingIcon = {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .padding(horizontal = 2.dp)
+                ) {
+                    Text(
+                        text = (if (answer == "0.0") "" else answer) + " $operation",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Light,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    TextButton(onClick = { updateOperator("") }) {
+                        Text(
+                            text = "CE",
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+            },
             trailingIcon = {
-                IconButton(onClick = {}) {
+                IconButton(onClick = { onBackspaceClick(amount.dropLast(n = 1)) }) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.outline_backspace),
                         contentDescription = "",
@@ -222,6 +253,7 @@ private fun CalculatorUI(amount: String, onValueChange: (String) -> Unit, maxWid
                     )
                 }
             },
+            readOnly = true,
             modifier = Modifier.fillMaxWidth()
         )
         Column(
@@ -232,7 +264,13 @@ private fun CalculatorUI(amount: String, onValueChange: (String) -> Unit, maxWid
                 if (rowButtons == buttons.first()) {
                     Spacer(Modifier.height(4.dp))
                 }
-                CalculatorButtonRow(rowButtons, maxWidth)
+                CalculatorButtonRow(
+                    buttons = rowButtons,
+                    maxWidth = maxWidth,
+                    updateOperator = updateOperator,
+                    calculateAmount = calculateAmount,
+                    addToAmount = addToAmount
+                )
                 if (rowButtons != buttons.last()) {
                     Spacer(Modifier.height(4.dp))
                 }
@@ -242,7 +280,13 @@ private fun CalculatorUI(amount: String, onValueChange: (String) -> Unit, maxWid
 }
 
 @Composable
-private fun CalculatorButtonRow(buttons: List<String>, maxWidth: Dp) {
+private fun CalculatorButtonRow(
+    buttons: List<String>,
+    maxWidth: Dp,
+    updateOperator: (String) -> Unit,
+    calculateAmount: () -> Unit,
+    addToAmount: (String) -> Unit
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -254,7 +298,13 @@ private fun CalculatorButtonRow(buttons: List<String>, maxWidth: Dp) {
                 modifier = Modifier
                     .width((maxWidth - 16.dp) / 4)
                     .aspectRatio(1.1f),
-                onClick = {}
+                onClick = {
+                    when (button) {
+                        "-", "+", "x", "÷" -> updateOperator(button)
+                        "=" -> calculateAmount()
+                        else -> addToAmount(button)
+                    }
+                }
             )
         }
     }
