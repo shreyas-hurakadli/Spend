@@ -1,5 +1,6 @@
 package com.example.spend.data.room.category
 
+import androidx.compose.ui.graphics.Color
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
@@ -15,6 +16,6 @@ data class Category(
     val name: String = "",
     @ColumnInfo(name = "is_expense")
     val isExpense: Boolean = true,
-    val color: Int = 0,
+    val color: Color = Color(0xFF77DD77),
     val icon: String? = ""
 )
