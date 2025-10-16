@@ -177,7 +177,7 @@ fun AddScreen(
                         answer = answer.toString(),
                         onValueChange = { viewModel.changeAmount(it) },
                         onBackspaceClick = {
-                            if (it.isEmpty() || it == "-") viewModel.changeAmount("0")
+                            if (it.isEmpty() || it == "-" || it == "Infinit") viewModel.changeAmount("0")
                             else viewModel.changeAmount(it)
                         },
                         maxWidth = maxWidth,
@@ -245,7 +245,9 @@ private fun CalculatorUI(
                 }
             },
             trailingIcon = {
-                IconButton(onClick = { onBackspaceClick(amount.dropLast(n = 1)) }) {
+                IconButton(onClick = {
+                    onBackspaceClick(amount.dropLast(n = 1)) }
+                ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.outline_backspace),
                         contentDescription = "",

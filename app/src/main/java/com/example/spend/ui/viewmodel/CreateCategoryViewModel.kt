@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -16,37 +17,37 @@ import kotlinx.coroutines.withContext
 class CreateCategoryViewModel @Inject constructor(
     private val defaultCategoryRepository: CategoryRepository
 ) : ViewModel() {
-    var category = MutableStateFlow(value = Category())
-        private set
+    private val _category = MutableStateFlow(value = Category())
+    val category = _category.asStateFlow()
 
-    var selectedIndex = MutableStateFlow(value = 0)
-        private set
+    private val _selectedIndex = MutableStateFlow(value = 0)
+    val selectedIndex = _selectedIndex.asStateFlow()
 
     fun changeSelectedIndex() {
-        selectedIndex.value = if (selectedIndex.value == 1) 0 else 1
-        category.value = category.value.copy(isExpense = selectedIndex.value == 1)
+        _selectedIndex.value = if (_selectedIndex.value == 1) 0 else 1
     }
 
     fun changeName(name: String) {
-        category.value = category.value.copy(name = name)
+        _category.value = _category.value.copy(name = name)
     }
 
     fun changeColor(color: Color) {
-        category.value = category.value.copy(color = color)
+        _category.value = _category.value.copy(color = color)
     }
 
     fun changeLogo(logo: String) {
-        category.value = category.value.copy(icon = logo)
+        _category.value = _category.value.copy(icon = logo)
     }
 
     fun clear() {
-        category.value = Category()
+        _category.value = Category()
     }
 
     fun save() {
         viewModelScope.launch {
             withContext(context = Dispatchers.IO) {
-                defaultCategoryRepository.insert(category.value)
+                _category.value = _category.value.copy(isExpense = (_selectedIndex.value == 1))
+                defaultCategoryRepository.insert(_category.value)
                 clear()
             }
         }
