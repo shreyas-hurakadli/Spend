@@ -81,6 +81,7 @@ class AddViewModel @Inject constructor(
     fun resetOperator() {
         operator = ""
         answer = 0.00
+        amount = "0"
     }
 
     fun changeOperator(value: String) {

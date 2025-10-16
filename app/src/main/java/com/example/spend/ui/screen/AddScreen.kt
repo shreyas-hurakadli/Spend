@@ -177,7 +177,7 @@ fun AddScreen(
                         answer = answer.toString(),
                         onValueChange = { viewModel.changeAmount(it) },
                         onBackspaceClick = {
-                            if (it.isEmpty()) viewModel.changeAmount("0")
+                            if (it.isEmpty() || it == "-") viewModel.changeAmount("0")
                             else viewModel.changeAmount(it)
                         },
                         maxWidth = maxWidth,
