@@ -11,7 +11,7 @@ import kotlin.math.abs
 
 fun longToTime(longDate: Long): String {
     val dateFormat = SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault())
-    val date = Date(longDate * 1000)
+    val date = Date(longDate)
     return dateFormat.format(date).substring(startIndex = 0, endIndex = 5)
 }
 
@@ -32,7 +32,7 @@ fun getTodayStart(): Long {
  */
 fun longToDate(longDate: Long): String {
     val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-    return dateFormat.format(longDate * 1000)
+    return dateFormat.format(longDate)
 }
 
 /**

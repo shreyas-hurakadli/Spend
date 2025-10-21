@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.account.DefaultAccountRepository
 import com.example.spend.data.room.category.DefaultCategoryRepository
@@ -16,10 +17,14 @@ import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.time.ZoneId
 import javax.inject.Inject
+
+private const val TIMEOUT_MILLIS = 5_000L
 
 @HiltViewModel
 class AddViewModel @Inject constructor(
@@ -46,6 +51,14 @@ class AddViewModel @Inject constructor(
 
     var description by mutableStateOf("")
         private set
+
+    val accounts = defaultAccountRepository
+        .getAllAccounts()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),
+            initialValue = emptyList()
+        )
 
     fun changeTime(value: Long) {
         time = value

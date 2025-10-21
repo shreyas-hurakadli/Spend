@@ -1,5 +1,6 @@
 package com.example.spend.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -58,6 +59,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
+import com.example.spend.data.room.account.Account
+import com.example.spend.data.room.category.Category
+import com.example.spend.longToDate
+import com.example.spend.longToTime
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.AddViewModel
 import java.util.Calendar
@@ -79,8 +84,8 @@ fun AddScreen(
 ) {
     val selectedIndex = viewModel.selectedIndex
     val amount = viewModel.amount
+    val time = viewModel.time
     val description = viewModel.description
-    val answer = viewModel.answer
     val operator = viewModel.operator
 
     Scaffold { innerPadding ->
@@ -106,7 +111,8 @@ fun AddScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.clickable(
                             enabled = true,
-                            onClick = { navHostController.popBackStack() })
+                            onClick = { navHostController.popBackStack() }
+                        )
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -120,7 +126,10 @@ fun AddScreen(
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable(enabled = true, onClick = {})
+                        modifier = Modifier.clickable(
+                            enabled = true,
+                            onClick = {}
+                        )
                     ) {
                         Icon(
                             imageVector = Icons.Default.Done,
@@ -174,10 +183,11 @@ fun AddScreen(
                 ) {
                     CalculatorUI(
                         amount = amount,
-                        answer = answer.toString(),
                         onValueChange = { viewModel.changeAmount(it) },
                         onBackspaceClick = {
-                            if (it.isEmpty() || it == "-" || it == "Infinit") viewModel.changeAmount("0")
+                            if (it.isEmpty() || it == "-" || it == "Infinit") viewModel.changeAmount(
+                                "0"
+                            )
                             else viewModel.changeAmount(it)
                         },
                         maxWidth = maxWidth,
@@ -191,8 +201,17 @@ fun AddScreen(
                     )
                     Spacer(Modifier.height(8.dp))
                     DateTimePicker(
-                        onDateChange = {},
-                        onTimeChange = {}
+                        time = time,
+                        onDateChange = {
+                            viewModel.changeTime(
+                                value = it ?: System.currentTimeMillis()
+                            )
+                        },
+                        onTimeChange = {
+                            viewModel.changeTime(
+                                value = it ?: System.currentTimeMillis()
+                            )
+                        }
                     )
                 }
             }
@@ -203,7 +222,6 @@ fun AddScreen(
 @Composable
 private fun CalculatorUI(
     amount: String,
-    answer: String,
     onValueChange: (String) -> Unit,
     onBackspaceClick: (String) -> Unit,
     updateOperator: (String) -> Unit,
@@ -231,8 +249,7 @@ private fun CalculatorUI(
                         .padding(horizontal = 2.dp)
                 ) {
                     Text(
-                        text = (if (answer == "0.0") "" else answer) + " $operation",
-                        fontSize = 16.sp,
+                        text = operation,
                         fontWeight = FontWeight.Light,
                         color = MaterialTheme.colorScheme.onBackground
                     )
@@ -245,8 +262,8 @@ private fun CalculatorUI(
                 }
             },
             trailingIcon = {
-                IconButton(onClick = {
-                    onBackspaceClick(amount.dropLast(n = 1)) }
+                IconButton(
+                    onClick = { onBackspaceClick(amount.dropLast(n = 1)) }
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.outline_backspace),
@@ -255,6 +272,7 @@ private fun CalculatorUI(
                     )
                 }
             },
+            maxLines = 1,
             readOnly = true,
             modifier = Modifier.fillMaxWidth()
         )
@@ -344,7 +362,12 @@ private fun CalculatorButton(button: String, onClick: () -> Unit, modifier: Modi
 }
 
 @Composable
-private fun DateTimePicker(onDateChange: () -> Unit, onTimeChange: () -> Unit) {
+private fun DateTimePicker(
+    time: Long,
+    onDateChange: (Long?) -> Unit,
+    onTimeChange: (Long?) -> Unit
+) {
+    Log.d("AddScreen", time.toString())
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
 
@@ -362,7 +385,8 @@ private fun DateTimePicker(onDateChange: () -> Unit, onTimeChange: () -> Unit) {
                     onClick = { showDatePicker = true }
                 )
         ) {
-            Text(text = "16 Sept 2015", style = MaterialTheme.typography.titleMedium)
+            Log.d("AddScreen", longToDate(longDate = time))
+            Text(text = longToDate(longDate = time), style = MaterialTheme.typography.titleMedium)
         }
         VerticalDivider()
         Box(
@@ -374,7 +398,8 @@ private fun DateTimePicker(onDateChange: () -> Unit, onTimeChange: () -> Unit) {
                     onClick = { showTimePicker = true }
                 )
         ) {
-            Text(text = "09:34 AM", style = MaterialTheme.typography.titleMedium)
+            Log.d("AddScreen", longToTime(longDate = time))
+            Text(text = longToTime(longDate = time), style = MaterialTheme.typography.titleMedium)
         }
     }
 
@@ -387,6 +412,7 @@ private fun DateTimePicker(onDateChange: () -> Unit, onTimeChange: () -> Unit) {
                 Dialog(onDismissRequest = { showTimePicker = false }) {
                     TimePicker(
                         onConfirm = {
+                            onTimeChange(it)
                             showTimePicker = false
                         },
                         onDismiss = { showTimePicker = false }
@@ -394,7 +420,13 @@ private fun DateTimePicker(onDateChange: () -> Unit, onTimeChange: () -> Unit) {
                 }
             }
             if (showDatePicker) {
-                DatePicker(onDateSelected = {}, { showDatePicker = false })
+                DatePicker(
+                    onDateSelected = {
+                        onDateChange(it)
+                        showTimePicker = false
+                    },
+                    onDismiss = { showDatePicker = false }
+                )
             }
         }
     }
@@ -415,10 +447,12 @@ private fun DatePicker(
         DatePickerDialog(
             onDismissRequest = onDismiss,
             confirmButton = {
-                TextButton(onClick = {
-                    onDateSelected(datePickerState.selectedDateMillis)
-                    onDismiss()
-                }) {
+                TextButton(
+                    onClick = {
+                        onDateSelected(datePickerState.selectedDateMillis)
+                        onDismiss()
+                    }
+                ) {
                     Text("OK")
                 }
             },
@@ -438,7 +472,7 @@ private fun DatePicker(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePicker(
-    onConfirm: () -> Unit,
+    onConfirm: (Long?) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val currentTime = Calendar.getInstance()
@@ -446,7 +480,7 @@ fun TimePicker(
     val timePickerState = rememberTimePickerState(
         initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
         initialMinute = currentTime.get(Calendar.MINUTE),
-        is24Hour = false,
+        is24Hour = true,
     )
 
     Dialog(
@@ -462,7 +496,19 @@ fun TimePicker(
             Button(onClick = onDismiss) {
                 Text("Dismiss picker")
             }
-            Button(onClick = onConfirm) {
+            Button(
+                onClick = {
+                    val selectedHour = timePickerState.hour
+                    val selectedMinute = timePickerState.minute
+                    val calendar = Calendar.getInstance().apply {
+                        set(Calendar.HOUR_OF_DAY, selectedHour)
+                        set(Calendar.MINUTE, selectedMinute)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                    }
+                    onConfirm(calendar.timeInMillis)
+                }
+            ) {
                 Text("Confirm selection")
             }
         }
@@ -529,7 +575,7 @@ private fun SpecificationSelectionButton(
     contentDescription: String = "",
     onClick: () -> Unit,
 ) {
-    OutlinedButton(onClick, shape = RoundedCornerShape(16.dp)) {
+    OutlinedButton(onClick = onClick, shape = RoundedCornerShape(16.dp)) {
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
@@ -540,6 +586,26 @@ private fun SpecificationSelectionButton(
             Text(text = text, style = MaterialTheme.typography.titleMedium)
         }
     }
+}
+
+@Composable
+private fun AccountBottomSheet(
+    accounts: List<Account>,
+    onSelect: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+
+}
+
+@Composable
+private fun CategoryBottomSheet(
+    categories: List<Category>,
+    onSelect: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+
 }
 
 @Preview(showSystemUi = true)
