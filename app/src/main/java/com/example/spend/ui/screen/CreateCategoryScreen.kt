@@ -52,42 +52,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
+import com.example.spend.ui.icons
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.CreateCategoryViewModel
 
-private val icons = mapOf(
-    "groceries" to R.drawable.cart,
-    "home" to R.drawable.baseline_home,
-    "drink" to R.drawable.drink,
-    "hospital" to R.drawable.hospital,
-    "food" to R.drawable.food,
-    "family" to R.drawable.family,
-    "award" to R.drawable.award,
-    "fuel" to R.drawable.fuel,
-    "movie" to R.drawable.movie,
-    "motorcycle" to R.drawable.motorcycle,
-    "network5g" to R.drawable.network_5g,
-    "network4g" to R.drawable.network_4g,
-    "pencil" to R.drawable.baseline_pencil,
-    "gear" to R.drawable.baseline_settings,
-    "bus" to R.drawable.bus,
-    "car" to R.drawable.car,
-    "coin" to R.drawable.coin,
-    "card" to R.drawable.card,
-    "flight" to R.drawable.flight,
-    "game" to R.drawable.game,
-    "gift" to R.drawable.gift,
-    "gym" to R.drawable.gym,
-    "laptop" to R.drawable.laptop,
-    "mobile" to R.drawable.mobile,
-    "bookmark" to R.drawable.baseline_category,
-    "pet" to R.drawable.pet,
-    "power" to R.drawable.power,
-    "racket" to R.drawable.racket,
-    "shield" to R.drawable.shield,
-    "label" to R.drawable.baseline_label,
-    "world" to R.drawable.world,
-)
 
 private val colors = listOf(
     Color(0xFF77DD77),

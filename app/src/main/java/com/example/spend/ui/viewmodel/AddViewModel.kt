@@ -9,17 +9,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.account.DefaultAccountRepository
+import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.DefaultCategoryRepository
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import java.time.ZoneId
 import javax.inject.Inject
@@ -52,6 +57,15 @@ class AddViewModel @Inject constructor(
     var description by mutableStateOf("")
         private set
 
+    var fromAccount by mutableStateOf(Account())
+        private set
+
+    var toAccount by mutableStateOf(Account())
+        private set
+
+    var category by mutableStateOf(Category())
+        private set
+
     val accounts = defaultAccountRepository
         .getAllAccounts()
         .stateIn(
@@ -59,6 +73,40 @@ class AddViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),
             initialValue = emptyList()
         )
+
+    val incomeCategories = defaultCategoryRepository
+        .getAllIncomeCategories()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),
+            initialValue = emptyList()
+        )
+
+    val expenseCategories = defaultCategoryRepository
+        .getAllExpenseCategories()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),
+            initialValue = emptyList()
+        )
+
+    fun changeFromAccount(value: Account) {
+        fromAccount = value
+    }
+
+    fun changeToAccount(value: Account) {
+        toAccount = value
+    }
+
+    fun changeCategoryId(value: Category) {
+        category = value
+    }
+
+    fun resetIds() {
+        fromAccount = Account()
+        toAccount = Account()
+        category = Category()
+    }
 
     fun changeTime(value: Long) {
         time = value
@@ -114,5 +162,40 @@ class AddViewModel @Inject constructor(
 
     fun calculateAnswer() {
         changeAmount(value = operation?.invoke(answer, amount.toDouble()) ?: amount)
+    }
+
+    private fun validateInput(): Boolean {
+        return (amount.toDouble() < 0.00 && fromAccount != toAccount)
+    }
+
+    fun save() {
+        if (validateInput()) {
+            viewModelScope.launch {
+                withContext(context = Dispatchers.IO) {
+                    defaultRepository.insert(
+                        entry = Entry(
+                            amount = amount.toDouble(),
+                            isExpense = (selectedIndex > 1),
+                            epochSeconds = time,
+                            categoryId = category.id,
+                            accountId = fromAccount.id,
+                            description = description
+                        )
+                    )
+                    defaultAccountRepository.update(
+                        account = fromAccount.copy(
+                            balance = fromAccount.balance - amount.toDouble()
+                        )
+                    )
+                    if (toAccount != Account()) {
+                        defaultAccountRepository.update(
+                            account = toAccount.copy(
+                                balance = toAccount.balance + amount.toDouble()
+                            )
+                        )
+                    }
+                }
+            }
+        }
     }
 }
