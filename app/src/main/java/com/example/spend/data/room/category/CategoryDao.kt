@@ -26,4 +26,10 @@ interface CategoryDao {
 
     @Query("SELECT * FROM categories WHERE is_expense = 1")
     fun getAllExpenseCategories(): Flow<List<Category>>
+
+    @Query("SELECT * FROM categories WHERE id = :id")
+    fun findCategoryById(id: Long): Flow<Category>
+
+    @Query("SELECT * FROM categories WHERE name = :name AND is_expense = :isExpense")
+    fun findCategoryByNameAndType(name: String, isExpense: Int): Flow<Category>
 }
