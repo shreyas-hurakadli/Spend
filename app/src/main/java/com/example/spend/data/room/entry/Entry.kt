@@ -3,6 +3,7 @@ package com.example.spend.data.room.entry
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.category.Category
@@ -20,6 +21,10 @@ import com.example.spend.data.room.category.Category
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("category_id")
         )
+    ],
+    indices = [
+        Index(value = ["account_id"]),
+        Index(value = ["category_id"]),
     ]
 )
 data class Entry(

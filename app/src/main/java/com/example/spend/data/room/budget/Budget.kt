@@ -9,7 +9,12 @@ import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.category.Category
 
 @Entity(
-    tableName = "budgets", indices = [Index(value = ["name"], unique = true)],
+    tableName = "budgets",
+    indices = [
+        Index(value = ["name"], unique = true),
+        Index(value = ["account_id"]),
+        Index(value = ["category_id"]),
+    ],
     foreignKeys = [
         ForeignKey(
             entity = Account::class,
@@ -21,7 +26,7 @@ import com.example.spend.data.room.category.Category
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("category_id")
         )
-    ]
+    ],
 )
 data class Budget(
     @PrimaryKey(autoGenerate = true)
