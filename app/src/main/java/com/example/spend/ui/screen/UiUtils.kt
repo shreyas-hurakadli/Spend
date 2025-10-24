@@ -47,10 +47,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.spend.R
-import com.example.spend.data.room.entry.Entry
+import com.example.spend.data.dto.EntryCategory
 import com.example.spend.getFormattedAmount
 import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.longToDate
+import com.example.spend.ui.icons
 import com.example.spend.ui.navigation.Routes
 
 data class NavigationIcon(
@@ -200,10 +201,8 @@ fun SnackBarMessage(
 
 @Composable
 fun TransactionCard(
-    entry: Entry,
-    icon: ImageVector,
+    entryCategory: EntryCategory,
     iconTint: Color,
-    backgroundColor: Color,
     modifier: Modifier = Modifier,
     showDate: Boolean = false,
 ) {
@@ -217,14 +216,17 @@ fun TransactionCard(
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(50.dp)
-                    .background(color = backgroundColor),
+                    .background(color = entryCategory.color),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = icon,
-                    tint = iconTint,
-                    contentDescription = ""
-                )
+                if (entryCategory.icon != null) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = icons[entryCategory.icon]!!),
+                        tint = iconTint,
+                        contentDescription = entryCategory.icon,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
             }
             Spacer(Modifier.width(12.dp))
             Column(
@@ -236,13 +238,13 @@ fun TransactionCard(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        "", //entry.category,
+                        text = entryCategory.name,
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.weight(1f)
                     )
                     Text(
-                        text = (if (entry.isExpense) "- " else "") + getLocalCurrencySymbol() + " " + getFormattedAmount(
-                            entry.amount
+                        text = (if (entryCategory.entry.isExpense) "- " else "") + getLocalCurrencySymbol() + " " + getFormattedAmount(
+                            entryCategory.entry.amount
                         ),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
@@ -254,7 +256,7 @@ fun TransactionCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            longToDate(entry.epochSeconds),
+                            longToDate(entryCategory.entry.epochSeconds),
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Thin
                         )

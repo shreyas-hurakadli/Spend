@@ -57,6 +57,7 @@ import com.example.spend.R
 import com.example.spend.data.room.account.Account
 import com.example.spend.getFormattedAmount
 import com.example.spend.getLocalCurrencySymbol
+import com.example.spend.ui.icons
 import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.theme.SpendTheme
@@ -185,13 +186,11 @@ fun HomeScreen(
                             verticalArrangement = Arrangement.Center
                         ) {
                             if (transactions.isNotEmpty()) {
-                                transactions.forEach { entry ->
+                                transactions.forEach { entryCategory ->
                                     TransactionCard(
-                                        entry = entry,
-                                        icon = ImageVector.vectorResource(R.drawable.baseline_pencil),
+                                        entryCategory = entryCategory,
                                         iconTint = Color.Black,
                                         showDate = true,
-                                        backgroundColor = MaterialTheme.colorScheme.secondary,
                                     )
                                 }
                             } else {

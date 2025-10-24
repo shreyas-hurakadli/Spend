@@ -208,10 +208,22 @@ class AddViewModel @Inject constructor(
                                 balance = fromAccount.balance - amount.toDouble()
                             )
                         )
+                        if (selectedIndex == 1) {
+                            defaultAccountRepository.update(
+                                account = accounts.value.first().copy(
+                                    balance = accounts.value.first().balance - amount.toDouble()
+                                )
+                            )
+                        }
                     } else {
                         defaultAccountRepository.update(
                             account = fromAccount.copy(
                                 balance = fromAccount.balance + amount.toDouble()
+                            )
+                        )
+                        defaultAccountRepository.update(
+                            account = accounts.value.first().copy(
+                                balance = accounts.value.first().balance + amount.toDouble()
                             )
                         )
                     }
