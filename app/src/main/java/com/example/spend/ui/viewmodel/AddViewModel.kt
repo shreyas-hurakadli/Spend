@@ -1,5 +1,6 @@
 package com.example.spend.ui.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -17,6 +18,7 @@ import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.DefaultCategoryRepository
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
+import com.example.spend.ui.screen.AddAccountScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -88,6 +90,14 @@ class AddViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),
             initialValue = emptyList()
+        )
+
+    val transferCategory = defaultCategoryRepository
+        .findCategoryByNameAndId(name = "Transfer", isExpense = true)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = Category()
         )
 
     fun changeFromAccount(value: Account) {
@@ -165,7 +175,16 @@ class AddViewModel @Inject constructor(
     }
 
     private fun validateInput(): Boolean {
-        return (amount.toDouble() < 0.00 && fromAccount != toAccount)
+        return (amount.toDouble() > 0.00 && fromAccount != toAccount)
+    }
+
+    private fun clear() {
+        selectedIndex = 1;
+        operation = null
+        time = System.currentTimeMillis()
+        description = ""
+        resetIds()
+        resetOperator()
     }
 
     fun save() {
@@ -177,16 +196,26 @@ class AddViewModel @Inject constructor(
                             amount = amount.toDouble(),
                             isExpense = (selectedIndex > 1),
                             epochSeconds = time,
-                            categoryId = category.id,
+                            categoryId = if (selectedIndex == 2) transferCategory.value.id else category.id,
                             accountId = fromAccount.id,
                             description = description
                         )
                     )
-                    defaultAccountRepository.update(
-                        account = fromAccount.copy(
-                            balance = fromAccount.balance - amount.toDouble()
+
+                    if (selectedIndex > 0) {
+                        defaultAccountRepository.update(
+                            account = fromAccount.copy(
+                                balance = fromAccount.balance - amount.toDouble()
+                            )
                         )
-                    )
+                    } else {
+                        defaultAccountRepository.update(
+                            account = fromAccount.copy(
+                                balance = fromAccount.balance + amount.toDouble()
+                            )
+                        )
+                    }
+
                     if (toAccount != Account()) {
                         defaultAccountRepository.update(
                             account = toAccount.copy(
@@ -194,6 +223,7 @@ class AddViewModel @Inject constructor(
                             )
                         )
                     }
+                    clear()
                 }
             }
         }

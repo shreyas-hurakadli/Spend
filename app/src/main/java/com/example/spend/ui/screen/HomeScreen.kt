@@ -189,7 +189,7 @@ fun HomeScreen(
                                     TransactionCard(
                                         entry = entry,
                                         icon = ImageVector.vectorResource(R.drawable.baseline_pencil),
-                                        iconTint = MaterialTheme.colorScheme.onSecondary,
+                                        iconTint = Color.Black,
                                         showDate = true,
                                         backgroundColor = MaterialTheme.colorScheme.secondary,
                                     )

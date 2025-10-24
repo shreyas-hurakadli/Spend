@@ -25,6 +25,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
@@ -61,10 +63,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -115,6 +120,8 @@ fun AddScreen(
     val selectedCategory = viewModel.category.name
     val selectedToAccount = viewModel.toAccount.name
     val selectedFromAccount = viewModel.fromAccount.name
+
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Scaffold { innerPadding ->
         BoxWithConstraints(
@@ -215,6 +222,12 @@ fun AddScreen(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         },
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = { keyboardController?.hide() }
+                        ),
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier
                             .weight(1f)
@@ -646,8 +659,8 @@ private fun EntrySpecificationUI(
 private fun SpecificationSelectionButton(
     text: String,
     icon: ImageVector,
-    contentDescription: String = "",
     onClick: () -> Unit,
+    contentDescription: String = ""
 ) {
     OutlinedButton(onClick = onClick, shape = RoundedCornerShape(16.dp)) {
         Row(
@@ -657,7 +670,12 @@ private fun SpecificationSelectionButton(
         ) {
             Icon(imageVector = icon, contentDescription = contentDescription)
             Spacer(Modifier.width(4.dp))
-            Text(text = text, style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = text,
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
@@ -798,7 +816,8 @@ private fun CategoryView(
             Text(
                 text = category.name,
                 color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.width(IntrinsicSize.Min)
             )
         }
     }

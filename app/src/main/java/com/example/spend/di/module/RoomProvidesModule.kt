@@ -29,6 +29,8 @@ object RoomProvidesModule {
 
             db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 0, -1)")
             db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 1, -1)")
+            db.execSQL("INSERT INTO categories (name, is_expense, color, icon) VALUES ('Transfer', 1, -14634326, 'transfer')");
+            db.execSQL("INSERT INTO categories (name, is_expense, color, icon) VALUES ('Transfer', 0, -14634326, 'transfer')");
             db.execSQL("INSERT INTO categories (name, is_expense, color, icon) VALUES ('Awards', 0, -8921737, 'award')");
             db.execSQL("INSERT INTO categories (name, is_expense, color, icon) VALUES ('Coupons', 0, -5323057, 'label')");
             db.execSQL("INSERT INTO categories (name, is_expense, color, icon) VALUES ('Deposit', 0, -3429685, 'coin')");
@@ -52,6 +54,8 @@ object RoomProvidesModule {
 
             db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 0, -1)")
             db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 1, -1)")
+            db.execSQL("INSERT INTO categories (name, is_expense, color, icon) VALUES ('Transfer', 1, -14634326, 'transfer')");
+            db.execSQL("INSERT INTO categories (name, is_expense, color, icon) VALUES ('Transfer', 0, -14634326, 'transfer')");
             db.execSQL("INSERT INTO categories (name, is_expense, color, icon) VALUES ('Awards', 0, -8921737, 'award')");
             db.execSQL("INSERT INTO categories (name, is_expense, color, icon) VALUES ('Coupons', 0, -5323057, 'label')");
             db.execSQL("INSERT INTO categories (name, is_expense, color, icon) VALUES ('Deposit', 0, -3429685, 'coin')");

@@ -17,4 +17,8 @@ class DefaultCategoryRepository @Inject constructor(
     override fun getAllIncomeCategories(): Flow<List<Category>> = dao.getAllIncomeCategories()
 
     override fun getAllExpenseCategories(): Flow<List<Category>> = dao.getAllExpenseCategories()
+
+    override fun findCategoryById(id: Long): Flow<Category> = dao.findCategoryById(id)
+
+    override fun findCategoryByNameAndId(name: String, isExpense: Boolean): Flow<Category> = dao.findCategoryByNameAndType(name, if (isExpense) 1 else 0)
 }

@@ -14,4 +14,8 @@ interface CategoryRepository {
     fun getAllIncomeCategories(): Flow<List<Category>>
 
     fun getAllExpenseCategories(): Flow<List<Category>>
+
+    fun findCategoryById(id: Long): Flow<Category>
+
+    fun findCategoryByNameAndId(name: String, isExpense: Boolean): Flow<Category>
 }
