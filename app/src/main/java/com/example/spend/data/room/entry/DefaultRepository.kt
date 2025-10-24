@@ -1,5 +1,6 @@
 package com.example.spend.data.room.entry
 
+import com.example.spend.data.dto.EntryCategory
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -39,4 +40,7 @@ class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : En
 
     override fun getExpenseByTime(from: Long, to: Long): Flow<Map<Long, Double>> =
         entryDao.getExpenseByTime(from, to)
+
+    override fun getEntryIconAndColor(limit: Long): Flow<List<EntryCategory>> =
+        entryDao.getEntryIconAndColor(limit)
 }

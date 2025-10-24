@@ -1,5 +1,6 @@
 package com.example.spend.data.room.entry
 
+import com.example.spend.data.dto.EntryCategory
 import kotlinx.coroutines.flow.Flow
 
 interface EntryRepository {
@@ -34,4 +35,6 @@ interface EntryRepository {
     fun getIncomeByTime(from: Long, to: Long): Flow<Map<Long, Double>>
 
     fun getExpenseByTime(from: Long, to: Long): Flow<Map<Long, Double>>
+
+    fun getEntryIconAndColor(limit: Long = Long.MAX_VALUE): Flow<List<EntryCategory>>
 }

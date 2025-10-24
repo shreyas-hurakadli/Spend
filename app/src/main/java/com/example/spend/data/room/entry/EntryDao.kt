@@ -5,7 +5,9 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.MapColumn
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
+import com.example.spend.data.dto.EntryCategory
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -38,10 +40,16 @@ interface EntryDao {
     fun getIncome(from: Long): Flow<Double>
 
     @Query("SELECT c.name, SUM(e.amount) FROM categories c, entries e WHERE e.is_expense = 1 AND e.category_id = c.id AND e.epochSeconds >= :from AND e.epochSeconds <= :to GROUP BY c.name")
-    fun getExpenseByCategory(from: Long, to: Long): Flow<Map<@MapColumn("name") String, @MapColumn("SUM(e.amount)") Double>>
+    fun getExpenseByCategory(
+        from: Long,
+        to: Long
+    ): Flow<Map<@MapColumn("name") String, @MapColumn("SUM(e.amount)") Double>>
 
     @Query("SELECT c.name, SUM(e.amount) FROM categories c, entries e WHERE e.is_expense = 0 AND  e.category_id = c.id AND e.epochSeconds >= :from AND e.epochSeconds <= :to GROUP BY c.name")
-    fun getIncomeByCategory(from: Long, to: Long): Flow<Map<@MapColumn("name") String, @MapColumn("SUM(e.amount)") Double>>
+    fun getIncomeByCategory(
+        from: Long,
+        to: Long
+    ): Flow<Map<@MapColumn("name") String, @MapColumn("SUM(e.amount)") Double>>
 
     @Query("SELECT EXISTS (SELECT 1 FROM entries WHERE id IS NOT NULL)")
     fun areEntriesPresent(): Flow<Boolean>
@@ -63,4 +71,16 @@ interface EntryDao {
         from: Long,
         to: Long
     ): Flow<Map<@MapColumn("timeStamp") Long, @MapColumn("amount") Double>>
+
+    @Transaction
+    @Query(
+        """
+        SELECT e.*, c.name, c.icon, c.color
+        FROM entries e
+        INNER JOIN categories c ON e.category_id = c.id
+        ORDER BY epochSeconds DESC
+        LIMIT :limit
+    """
+    )
+    fun getEntryIconAndColor(limit: Long = Long.MAX_VALUE): Flow<List<EntryCategory>>
 }
