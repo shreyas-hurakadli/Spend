@@ -32,6 +32,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -116,6 +118,7 @@ fun AppTopBar(
             }
         },
         actions = actions,
+        scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
         modifier = modifier
     )
 }
