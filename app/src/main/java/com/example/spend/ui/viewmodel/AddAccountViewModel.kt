@@ -1,13 +1,11 @@
 package com.example.spend.ui.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
+import com.example.spend.ui.icons
 import com.example.spend.validateCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -46,8 +44,16 @@ class AddAccountViewModel @Inject constructor(
         }
     }
 
+    fun updateColor(value: Color) {
+        _uiState.value = _uiState.value.copy(color = value)
+    }
+
+    fun updateIcon(value: String) {
+        _uiState.value = _uiState.value.copy(icon = value)
+    }
+
     fun clear() {
-        _uiState.value = _uiState.value.copy(name = "")
+        _uiState.value = Account()
         _balance.value = ""
     }
 
@@ -56,7 +62,7 @@ class AddAccountViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(balance = balance.toDouble())
         }
         viewModelScope.launch {
-            if (allAccount != Account()) {
+            if (allAccount.value != Account()) {
                 defaultAccountRepository.insert(_uiState.value)
                 defaultAccountRepository.update(
                     account = allAccount.value.copy(

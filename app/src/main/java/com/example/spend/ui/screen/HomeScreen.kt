@@ -22,8 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -43,7 +41,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -57,12 +54,10 @@ import com.example.spend.R
 import com.example.spend.data.room.account.Account
 import com.example.spend.getFormattedAmount
 import com.example.spend.getLocalCurrencySymbol
-import com.example.spend.ui.icons
 import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.HomeViewModel
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun HomeScreen(
@@ -82,6 +77,9 @@ fun HomeScreen(
     ) { innerPadding ->
         val transactions by viewModel.transactions.collectAsState()
         val firstAccount by viewModel.currentAccount.collectAsState()
+        val accountList by viewModel.accountList.collectAsState()
+
+        var showAccountsBottomSheet by remember { mutableStateOf(false) }
         var account by remember { mutableStateOf(firstAccount) }
 
         if (account.id == 0L) {
@@ -109,9 +107,8 @@ fun HomeScreen(
                         .fillMaxSize()
                 ) {
                     BalanceBar(
-                        onClick = { account = it },
                         account = account,
-                        accountList = viewModel.accountList,
+                        onDropDownClick = { showAccountsBottomSheet = true },
                     )
                     Spacer(Modifier.padding(16.dp))
                     Text(
@@ -198,6 +195,13 @@ fun HomeScreen(
                             }
                         }
                     }
+                    if (showAccountsBottomSheet) {
+                        AccountBottomSheet(
+                            accounts = accountList,
+                            onSelect = { account = it },
+                            onDismiss = { showAccountsBottomSheet = false },
+                        )
+                    }
                 }
             }
         }
@@ -261,12 +265,9 @@ private fun ActionCard(
 
 @Composable
 private fun BalanceBar(
-    onClick: (Account) -> Unit,
     account: Account,
-    accountList: StateFlow<List<Account>>,
+    onDropDownClick: () -> Unit
 ) {
-    val list by accountList.collectAsState()
-    var expanded by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .background(
@@ -299,7 +300,8 @@ private fun BalanceBar(
                     Row(
                         modifier = Modifier.clickable(
                             enabled = true,
-                            onClick = { expanded = true })
+                            onClick = onDropDownClick
+                        )
                     ) {
                         Text(
                             text = account.name,
@@ -311,28 +313,6 @@ private fun BalanceBar(
                             contentDescription = stringResource(R.string.see_all),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
-                    }
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            list.forEach { account ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            account.name,
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.inverseOnSurface
-                                        )
-                                    },
-                                    onClick = {
-                                        onClick(account)
-                                        expanded = false
-                                    },
-                                )
-                            }
-                        }
                     }
                 }
             }

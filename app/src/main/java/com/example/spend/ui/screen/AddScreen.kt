@@ -84,6 +84,7 @@ import com.example.spend.data.room.category.Category
 import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.longToDate
 import com.example.spend.longToTime
+import com.example.spend.ui.accountIcons
 import com.example.spend.ui.icons
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.AddViewModel
@@ -275,7 +276,7 @@ fun AddScreen(
                 }
                 if (showAccountsBottomSheet) {
                     AccountBottomSheet(
-                        accounts = accounts,
+                        accounts = accounts.filter { it.name != "All" },
                         onSelect = {
                             if (accountIndex == 0)
                                 viewModel.changeFromAccount(value = it)
@@ -680,71 +681,6 @@ private fun SpecificationSelectionButton(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun AccountBottomSheet(
-    accounts: List<Account>,
-    onSelect: (Account) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
-
-    ModalBottomSheet(
-        sheetState = sheetState,
-        onDismissRequest = onDismiss,
-    ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items(items = accounts) { account ->
-                AccountView(account = account) {
-                    onSelect(account)
-                    scope.launch {
-                        sheetState.hide()
-                    }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            onDismiss()
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun AccountView(
-    account: Account,
-    onClick: () -> Unit
-) {
-    if (account.name == "All") {
-        return
-    }
-    TextButton(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = account.name,
-                color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = getLocalCurrencySymbol() + " " + account.balance.toString(),
-                style = MaterialTheme.typography.titleMedium,
-                color = if (account.balance >= 0.00) Color.Green else Color.Red
-            )
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

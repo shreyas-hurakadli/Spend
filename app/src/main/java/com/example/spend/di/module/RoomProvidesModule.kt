@@ -22,10 +22,10 @@ object RoomProvidesModule {
     private val callback = object : RoomDatabase.Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
-            db.execSQL("INSERT INTO accounts (name, balance) VALUES ('All', 0.0)")
-            db.execSQL("INSERT INTO accounts (name, balance) VALUES ('Cash', 0.0)")
-            db.execSQL("INSERT INTO accounts (name, balance) VALUES ('Card', 0.0)")
-            db.execSQL("INSERT INTO accounts (name, balance) VALUES ('Savings', 0.0)")
+            db.execSQL("INSERT INTO accounts (name, balance, color) VALUES ('All', 0.0, -14634326)")
+            db.execSQL("INSERT INTO accounts (name, balance, color, icon) VALUES ('Cash', 0.0, -8921737, 'cash')")
+            db.execSQL("INSERT INTO accounts (name, balance, color, icon) VALUES ('Card', 0.0, -5323057, 'card')")
+            db.execSQL("INSERT INTO accounts (name, balance, color, icon) VALUES ('Savings', 0.0, -19641, 'piggybank')")
 
             db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 0, -1)")
             db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 1, -1)")
@@ -47,10 +47,10 @@ object RoomProvidesModule {
 
         override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
             super.onDestructiveMigration(db)
-            db.execSQL("INSERT INTO accounts (name, balance) VALUES ('All', 0.0)")
-            db.execSQL("INSERT INTO accounts (name, balance) VALUES ('Cash', 0.0)")
-            db.execSQL("INSERT INTO accounts (name, balance) VALUES ('Card', 0.0)")
-            db.execSQL("INSERT INTO accounts (name, balance) VALUES ('Savings', 0.0)")
+            db.execSQL("INSERT INTO accounts (name, balance, color) VALUES ('All', 0.0, -14634326)")
+            db.execSQL("INSERT INTO accounts (name, balance, color, icon) VALUES ('Cash', 0.0, -8921737, 'cash')")
+            db.execSQL("INSERT INTO accounts (name, balance, color, icon) VALUES ('Card', 0.0, -5323057, 'card')")
+            db.execSQL("INSERT INTO accounts (name, balance, color, icon) VALUES ('Savings', 0.0, -19641, 'piggybank')")
 
             db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 0, -1)")
             db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 1, -1)")

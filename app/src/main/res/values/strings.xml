@@ -28,7 +28,7 @@
     <string name="no_income">No Income</string>
     <string name="display_picture">Display Picture</string>
     <string name="login">Login</string>
-    <string name="account">Account</string>
+    <string name="account_name">Account Name</string>
     <string name="initial_amount">Initial Amount</string>
     <string name="setup">Setup</string>
     <string name="add_account">Add Account</string>

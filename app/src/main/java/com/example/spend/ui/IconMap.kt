@@ -36,3 +36,13 @@ val icons = mapOf(
     "label" to R.drawable.baseline_label,
     "world" to R.drawable.world,
 )
+
+val accountIcons = mapOf(
+    "cash" to R.drawable.baseline_wallet,
+    "piggybank" to R.drawable.piggy_bank,
+    "card" to R.drawable.card,
+    "bank" to R.drawable.bank,
+    "gpay" to R.drawable.google_pay,
+    "paytm" to R.drawable.paytm,
+    "mobile" to R.drawable.mobile,
+)

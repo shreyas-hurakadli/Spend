@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -27,16 +29,20 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,11 +56,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.data.dto.EntryCategory
+import com.example.spend.data.room.account.Account
 import com.example.spend.getFormattedAmount
 import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.longToDate
+import com.example.spend.ui.accountIcons
 import com.example.spend.ui.icons
 import com.example.spend.ui.navigation.Routes
+import kotlinx.coroutines.launch
+import kotlin.collections.get
 
 data class NavigationIcon(
     @DrawableRes val baseLineIcon: Int,
@@ -300,6 +310,91 @@ fun SegmentedControl(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     ) { onSegmentSelected(index) },
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AccountBottomSheet(
+    accounts: List<Account>,
+    onSelect: (Account) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = onDismiss,
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            items(items = accounts) { account ->
+                AccountView(account = account) {
+                    onSelect(account)
+                    scope.launch {
+                        sheetState.hide()
+                    }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            onDismiss()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AccountView(
+    account: Account,
+    onClick: () -> Unit
+) {
+    TextButton(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.wrapContentSize()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(45.dp)
+                        .background(color = account.color),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (accountIcons[account.icon] != null) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(accountIcons[account.icon]!!),
+                            contentDescription = null,
+                            modifier = Modifier.size(25.dp)
+                        )
+                    }
+                }
+                Spacer(Modifier.width(2.dp))
+                Text(
+                    text = account.name,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+            Text(
+                text = getLocalCurrencySymbol() + " " + account.balance.toString(),
+                style = MaterialTheme.typography.titleMedium,
+                color = if (account.balance >= 0.00) Color.Green else Color.Red
             )
         }
     }

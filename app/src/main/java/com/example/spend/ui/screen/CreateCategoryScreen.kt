@@ -51,26 +51,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.spend.R
 import com.example.spend.ui.icons
+import com.example.spend.ui.pastelColors
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.CreateCategoryViewModel
-
-
-private val colors = listOf(
-    Color(0xFF77DD77),
-    Color(0xFFAEC6CF),
-    Color(0xFFCBAACB),
-    Color(0xFFFFB347),
-    Color(0xFFB39EB5),
-    Color(0xFFFF6961),
-    Color(0xFF8FBC8F),
-    Color(0xFF87CEEB),
-    Color(0xFFDAA520),
-    Color(0xFFD2691E),
-    Color(0xFFBA55D3),
-    Color(0xFF20B2AA)
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -168,7 +152,7 @@ fun CreateCategoryScreen(
                             .fillMaxWidth()
                             .horizontalScroll(state = rememberScrollState())
                     ) {
-                        colors.forEach { color ->
+                        pastelColors.forEach { color ->
                             Box(
                                 modifier = Modifier
                                     .padding(8.dp)
