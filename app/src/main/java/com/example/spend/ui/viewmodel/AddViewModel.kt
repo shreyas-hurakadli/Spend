@@ -175,7 +175,10 @@ class AddViewModel @Inject constructor(
     }
 
     private fun validateInput(): Boolean {
-        return (amount.toDouble() > 0.00 && fromAccount != toAccount)
+        if (amount.toDouble() <= 0.00) return false
+        if (fromAccount == toAccount) return false
+        if (selectedIndex != 2 && category == Category()) return false
+        return true
     }
 
     private fun clear() {
