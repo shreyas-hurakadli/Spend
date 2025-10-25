@@ -118,7 +118,6 @@ fun AppTopBar(
             }
         },
         actions = actions,
-        scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
         modifier = modifier
     )
 }
