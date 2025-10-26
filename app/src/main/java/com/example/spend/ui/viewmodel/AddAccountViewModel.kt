@@ -41,6 +41,8 @@ class AddAccountViewModel @Inject constructor(
     fun updateBalance(value: String) {
         if (validateCurrency(value)) {
             _balance.value = value
+        } else if (value.isEmpty()) {
+            _balance.value = ""
         }
     }
 
@@ -58,19 +60,19 @@ class AddAccountViewModel @Inject constructor(
     }
 
     fun save(balance: String) {
-        if (validateCurrency(balance)) {
+        if (balance.trim() != "" && validateCurrency(balance)) {
             _uiState.value = _uiState.value.copy(balance = balance.toDouble())
-        }
-        viewModelScope.launch {
-            if (allAccount.value != Account()) {
-                defaultAccountRepository.insert(_uiState.value)
-                defaultAccountRepository.update(
-                    account = allAccount.value.copy(
-                        balance = balance.toDouble() + allAccount.value.balance
+            viewModelScope.launch {
+                if (allAccount.value != Account()) {
+                    defaultAccountRepository.insert(_uiState.value)
+                    defaultAccountRepository.update(
+                        account = allAccount.value.copy(
+                            balance = balance.toDouble() + allAccount.value.balance
+                        )
                     )
-                )
+                }
+                clear()
             }
-            clear()
         }
     }
 }
