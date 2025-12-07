@@ -137,6 +137,27 @@ class AddBudgetViewModel @Inject constructor(
     fun clear() {
         _period.value = Period.NONE
         _uiState.value = Budget()
+        viewModelScope.launch {
+            withContext(context = Dispatchers.IO) {
+                launch {
+                    accountRepository.getFirstAccount()
+                        .collect {
+                            _selectedAccount.value = it
+                            setAccount(it)
+                        }
+                }
+                launch {
+                    categoryRepository.findCategoryByNameAndId(
+                        name = "All",
+                        isExpense = true
+                    )
+                        .collect {
+                            _selectedCategory.value = it
+                            setCategory(it)
+                        }
+                }
+            }
+        }
     }
 
     fun toggleShowSnackBar() {

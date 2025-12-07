@@ -135,7 +135,7 @@ fun CreateCategoryScreen(
                     text = "Select Color",
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Box(
                     modifier = Modifier

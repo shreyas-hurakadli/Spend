@@ -109,7 +109,7 @@ fun AddBudgetScreen(
     val isToDatePressed by toDateInteractionSource.collectIsPressedAsState()
     var isFromDate by rememberSaveable { mutableStateOf(false) }
 
-    LaunchedEffect (showSnackBar) {
+    LaunchedEffect(showSnackBar) {
         if (showSnackBar && snackBarMessage.isNotEmpty()) {
             snackBarScope.launch {
                 snackBarHostState.showSnackbar(message = snackBarMessage)
@@ -223,7 +223,9 @@ fun AddBudgetScreen(
                     ) {
                         OutlinedTextField(
                             value = if (fromDate == null) ""
-                            else longToDate(fromDate ?: getTodayStart()),
+                            else longToDate(
+                                longDate = fromDate?.div(other = 1000L) ?: getTodayStart()
+                            ),
                             onValueChange = {},
                             label = {
                                 Text(
@@ -245,7 +247,9 @@ fun AddBudgetScreen(
                         Spacer(Modifier.weight(0.1f))
                         OutlinedTextField(
                             value = if (toDate == null) ""
-                            else longToDate(toDate ?: getTodayStart()),
+                            else longToDate(
+                                longDate = toDate?.div(other = 1000L) ?: getTodayStart()
+                            ),
                             onValueChange = {},
                             interactionSource = toDateInteractionSource,
                             label = {
