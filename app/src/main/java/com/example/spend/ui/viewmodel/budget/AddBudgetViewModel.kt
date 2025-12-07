@@ -177,7 +177,7 @@ class AddBudgetViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(context = Dispatchers.IO) {
                 try {
-                    _uiState.value = _uiState.value.copy(startTimeStamp = getTodayStart())
+                    _uiState.value = _uiState.value.copy(startTimeStamp = System.currentTimeMillis() / 1000L)
                     if (uiState.value.period == 0L) {
                         if (_toDate.value != null && _fromDate.value != null) {
                             _uiState.value = _uiState.value.copy(
