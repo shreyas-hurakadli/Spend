@@ -251,14 +251,14 @@ private fun BudgetView(
                 Text(
                     text = "Spent: ${getLocalCurrencySymbol()} $expense",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFFF44336),
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     text = (if (budget.amount >= expense) "Remaining" else "Overspent") + ": ${getLocalCurrencySymbol()} ${(budget.amount - expense).absoluteValue}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
-                    color = if (progress >= 1f) MaterialTheme.colorScheme.error
-                    else MaterialTheme.colorScheme.onSurface
+                    color = if (progress > 1f || budget.amount < expense) Color(color = 0xFFF44336)
+                    else MaterialTheme.colorScheme.onBackground
                 )
             }
         }
