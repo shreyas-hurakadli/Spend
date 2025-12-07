@@ -23,6 +23,18 @@ class CreateCategoryViewModel @Inject constructor(
     private val _selectedIndex = MutableStateFlow(value = 0)
     val selectedIndex = _selectedIndex.asStateFlow()
 
+    private val _showSnackBar = MutableStateFlow(value = false)
+    val showSnackBar = _showSnackBar.asStateFlow()
+
+    private val _snackBarMessage = MutableStateFlow(value = "")
+    val snackBarMessage = _snackBarMessage.asStateFlow()
+
+    fun toggleShowSnackBar() {
+        viewModelScope.launch {
+            _showSnackBar.value = !(_showSnackBar.value)
+        }
+    }
+
     fun changeSelectedIndex() {
         _selectedIndex.value = if (_selectedIndex.value == 1) 0 else 1
     }
@@ -43,13 +55,22 @@ class CreateCategoryViewModel @Inject constructor(
         _category.value = Category()
     }
 
+    fun validateInput(): Boolean = _category.value.name != ""
+
     fun save() {
-        viewModelScope.launch {
-            withContext(context = Dispatchers.IO) {
-                _category.value = _category.value.copy(isExpense = (_selectedIndex.value == 1))
-                defaultCategoryRepository.insert(_category.value)
-                clear()
+        if (validateInput()) {
+            viewModelScope.launch {
+                withContext(context = Dispatchers.IO) {
+                    _category.value = _category.value.copy(isExpense = (_selectedIndex.value == 1))
+                    defaultCategoryRepository.insert(_category.value)
+                    clear()
+                    _snackBarMessage.value = "Successful Insertion"
+                    _showSnackBar.value = true
+                }
             }
+        } else {
+            _snackBarMessage.value = "Error: Specify the name"
+            _showSnackBar.value = true
         }
     }
 }

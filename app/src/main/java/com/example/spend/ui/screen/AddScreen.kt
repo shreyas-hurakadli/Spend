@@ -1,7 +1,6 @@
 package com.example.spend.ui.screen
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,42 +14,29 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -60,8 +46,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -79,17 +63,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
-import com.example.spend.data.room.account.Account
-import com.example.spend.data.room.category.Category
-import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.longToDate
 import com.example.spend.longToTime
-import com.example.spend.ui.accountIcons
-import com.example.spend.ui.icons
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.AddViewModel
 import kotlinx.coroutines.launch
-import java.util.Calendar
 
 private val options = listOf("Income", "Expense", "Transfer")
 
@@ -110,6 +88,8 @@ fun AddScreen(
     var showCategoryBottomSheet by remember { mutableStateOf(false) }
     var accountIndex by remember { mutableIntStateOf(0) }
 
+    val showSnackBar by viewModel.showSnackBar.collectAsState()
+    val snackBarMessage by viewModel.snackBarMessage.collectAsState()
     val selectedIndex = viewModel.selectedIndex
     val amount = viewModel.amount
     val time = viewModel.time
@@ -123,8 +103,21 @@ fun AddScreen(
     val selectedFromAccount = viewModel.fromAccount.name
 
     val keyboardController = LocalSoftwareKeyboardController.current
+    val snackBarScope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
 
-    Scaffold { innerPadding ->
+    LaunchedEffect(showSnackBar) {
+        if (showSnackBar && snackBarMessage.isNotEmpty()) {
+            snackBarScope.launch {
+                snackBarHostState.showSnackbar(message = snackBarMessage)
+                viewModel.toggleShowSnackBar()
+            }
+        }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) }
+    ) { innerPadding ->
         BoxWithConstraints(
             contentAlignment = Alignment.Center,
             modifier = Modifier

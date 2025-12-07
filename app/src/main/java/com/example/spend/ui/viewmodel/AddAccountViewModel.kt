@@ -9,11 +9,13 @@ import com.example.spend.ui.icons
 import com.example.spend.validateCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val durationMillis = 1_000L
 
@@ -27,12 +29,24 @@ class AddAccountViewModel @Inject constructor(
     private var _balance = MutableStateFlow("")
     val balance = _balance.asStateFlow()
 
-    private val allAccount = defaultAccountRepository.getFirstAccount()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(durationMillis),
-            initialValue = Account()
-        )
+    private val _showSnackBar = MutableStateFlow(value = false)
+    val showSnackBar = _showSnackBar.asStateFlow()
+
+    private val _snackBarMessage = MutableStateFlow(value = "")
+    val snackBarMessage = _snackBarMessage.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            withContext(context = Dispatchers.IO) {
+                defaultAccountRepository.getFirstAccount()
+                    .collect {
+                        allAccount.value = it
+                    }
+            }
+        }
+    }
+
+    private val allAccount = MutableStateFlow(value = Account())
 
     fun updateName(name: String) {
         _uiState.value = _uiState.value.copy(name = name)
@@ -54,25 +68,43 @@ class AddAccountViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(icon = value)
     }
 
+    fun toggleShowSnackBar() {
+        viewModelScope.launch {
+            _showSnackBar.value = !(_showSnackBar.value)
+        }
+    }
+
     fun clear() {
         _uiState.value = Account()
         _balance.value = ""
     }
 
+    private fun validateInput(balance: String): Boolean {
+        return balance.trim() != "" && validateCurrency(balance) && _uiState.value.name != ""
+    }
+
     fun save(balance: String) {
-        if (balance.trim() != "" && validateCurrency(balance)) {
+        if (validateInput(balance)) {
             _uiState.value = _uiState.value.copy(balance = balance.toDouble())
             viewModelScope.launch {
                 if (allAccount.value != Account()) {
-                    defaultAccountRepository.insert(_uiState.value)
-                    defaultAccountRepository.update(
-                        account = allAccount.value.copy(
-                            balance = balance.toDouble() + allAccount.value.balance
+                    withContext(context = Dispatchers.IO) {
+                        defaultAccountRepository.insert(_uiState.value)
+                        defaultAccountRepository.update(
+                            account = allAccount.value.copy(
+                                balance = balance.toDouble() + allAccount.value.balance
+                            )
                         )
-                    )
+                        clear()
+                    }
+                } else {
+                    _snackBarMessage.value = "Internal error"
+                    _showSnackBar.value = true
                 }
-                clear()
             }
+        } else {
+            _snackBarMessage.value = "Error: Specify all the fields correctly"
+            _showSnackBar.value = true
         }
     }
 }

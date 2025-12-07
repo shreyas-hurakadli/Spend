@@ -32,11 +32,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,17 +62,34 @@ import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.accountIcons
 import com.example.spend.ui.pastelColors
 import com.example.spend.ui.viewmodel.AddAccountViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 @Composable
 fun AddAccountScreen(
     navHostController: NavHostController,
     viewModel: AddAccountViewModel = hiltViewModel()
 ) {
+    val showSnackBar by viewModel.showSnackBar.collectAsState()
+    val snackBarMessage by viewModel.snackBarMessage.collectAsState()
+
     val uiState by viewModel.uiState.collectAsState()
     val balance by viewModel.balance.collectAsState()
 
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
+    val snackBarScope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(showSnackBar) {
+        if (showSnackBar && snackBarMessage.isNotEmpty()) {
+            snackBarScope.launch {
+                snackBarHostState.showSnackbar(message = snackBarMessage)
+                viewModel.toggleShowSnackBar()
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -77,6 +99,7 @@ fun AddAccountScreen(
                 onBackClick = { navHostController.popBackStack() },
             )
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Box(
             contentAlignment = Alignment.Center,

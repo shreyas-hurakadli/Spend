@@ -16,7 +16,9 @@ import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -91,6 +93,12 @@ class AddViewModel @Inject constructor(
             initialValue = Category()
         )
 
+    private val _showSnackBar = MutableStateFlow(value = false)
+    val showSnackBar = _showSnackBar.asStateFlow()
+
+    private val _snackBarMessage = MutableStateFlow(value = "")
+    val snackBarMessage = _snackBarMessage.asStateFlow()
+
     fun changeFromAccount(value: Account) {
         fromAccount = value
     }
@@ -101,6 +109,12 @@ class AddViewModel @Inject constructor(
 
     fun changeCategoryId(value: Category) {
         category = value
+    }
+
+    fun toggleShowSnackBar() {
+        viewModelScope.launch {
+            _showSnackBar.value = !(_showSnackBar.value)
+        }
     }
 
     fun resetIds() {
@@ -230,8 +244,13 @@ class AddViewModel @Inject constructor(
                         )
                     }
                     clear()
+                    _snackBarMessage.value = "Successful insertion"
+                    _showSnackBar.value = true
                 }
             }
+        } else {
+            _snackBarMessage.value = "Insertion failed"
+            _showSnackBar.value = true
         }
     }
 }
