@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.spend.data.room.entry.EntryDao
 import com.example.spend.data.room.RoomDatabaseClass
 import com.example.spend.data.room.account.AccountDao
 import com.example.spend.data.room.budget.BudgetDao
 import com.example.spend.data.room.category.CategoryDao
+import com.example.spend.data.room.entry.EntryDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,8 +27,8 @@ object RoomProvidesModule {
             db.execSQL("INSERT INTO accounts (name, balance, color, icon) VALUES ('Card', 0.0, -5323057, 'card')")
             db.execSQL("INSERT INTO accounts (name, balance, color, icon) VALUES ('Savings', 0.0, -19641, 'piggybank')")
 
-            db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 0, -1)")
-            db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 1, -1)")
+            db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 0, -14634326)")
+            db.execSQL("INSERT INTO categories (name, is_expense, color) VALUES ('All', 1, -14634326)")
             db.execSQL("INSERT INTO categories (name, is_expense, color, icon) VALUES ('Transfer', 1, -14634326, 'transfer')");
             db.execSQL("INSERT INTO categories (name, is_expense, color, icon) VALUES ('Transfer', 0, -14634326, 'transfer')");
             db.execSQL("INSERT INTO categories (name, is_expense, color, icon) VALUES ('Awards', 0, -8921737, 'award')");

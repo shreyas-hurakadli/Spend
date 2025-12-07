@@ -13,7 +13,7 @@ import com.example.spend.data.room.converters.ColorConverter
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryDao
 
-@Database(entities = [Entry::class, Account::class, Budget::class, Category::class], version = 9)
+@Database(entities = [Entry::class, Account::class, Budget::class, Category::class], version = 11)
 @TypeConverters(ColorConverter::class)
 abstract class RoomDatabaseClass : RoomDatabase() {
     abstract fun entryDao(): EntryDao

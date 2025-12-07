@@ -1,34 +1,25 @@
 package com.example.spend.ui.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.spend.data.room.account.Account
-import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.account.DefaultAccountRepository
 import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.DefaultCategoryRepository
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
-import com.example.spend.ui.screen.AddAccountScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.math.BigDecimal
-import java.time.ZoneId
 import javax.inject.Inject
 
 private const val TIMEOUT_MILLIS = 5_000L
@@ -53,7 +44,7 @@ class AddViewModel @Inject constructor(
 
     private var operation: ((Double, Double) -> String)? by mutableStateOf(null)
 
-    var time by mutableLongStateOf(System.currentTimeMillis())
+    var time by mutableLongStateOf(System.currentTimeMillis() / 1000L)
         private set
 
     var description by mutableStateOf("")
@@ -184,7 +175,7 @@ class AddViewModel @Inject constructor(
     private fun clear() {
         selectedIndex = 1;
         operation = null
-        time = System.currentTimeMillis()
+        time = System.currentTimeMillis() / 1000L
         description = ""
         resetIds()
         resetOperator()
@@ -197,7 +188,7 @@ class AddViewModel @Inject constructor(
                     defaultRepository.insert(
                         entry = Entry(
                             amount = amount.toDouble(),
-                            isExpense = (selectedIndex > 1),
+                            isExpense = (selectedIndex >= 1),
                             epochSeconds = time,
                             categoryId = if (selectedIndex == 2) transferCategory.value.id else category.id,
                             accountId = fromAccount.id,

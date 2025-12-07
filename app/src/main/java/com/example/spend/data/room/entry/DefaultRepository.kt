@@ -1,6 +1,8 @@
 package com.example.spend.data.room.entry
 
+import com.example.spend.data.dto.CategoryAmount
 import com.example.spend.data.dto.EntryCategory
+import com.example.spend.ui.accountIcons
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -23,10 +25,10 @@ class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : En
 
     override fun getIncome(from: Long): Flow<Double> = entryDao.getIncome(from)
 
-    override fun getExpenseByCategory(from: Long, to: Long): Flow<Map<String, Double>> =
+    override fun getExpenseByCategory(from: Long, to: Long): Flow<List<CategoryAmount>> =
         entryDao.getExpenseByCategory(from, to)
 
-    override fun getIncomeByCategory(from: Long, to: Long): Flow<Map<String, Double>> =
+    override fun getIncomeByCategory(from: Long, to: Long): Flow<List<CategoryAmount>> =
         entryDao.getIncomeByCategory(from, to)
 
     override fun areEntriesPresent(): Flow<Boolean> = entryDao.areEntriesPresent()
@@ -43,4 +45,84 @@ class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : En
 
     override fun getEntryIconAndColor(limit: Long): Flow<List<EntryCategory>> =
         entryDao.getEntryIconAndColor(limit)
+
+    override fun getExpenseByBudgetConstraintsUsingAccount(
+        accountId: Long,
+        startTime: Long,
+        endTime: Long
+    ): Flow<Double> = entryDao.getExpenseByBudgetConstraintsUsingAccount(
+        accountId = accountId,
+        startTime = startTime,
+        endTime = endTime
+    )
+
+    override fun getExpenseByBudgetConstraintsUsingCategory(
+        categoryId: Long,
+        startTime: Long,
+        endTime: Long
+    ): Flow<Double> = entryDao.getExpenseByBudgetConstraintsUsingCategory(
+        categoryId = categoryId,
+        startTime = startTime,
+        endTime = endTime
+    )
+
+    override fun getExpenseByBudgetConstraintsUsingOnlyTime(
+        startTime: Long,
+        endTime: Long
+    ): Flow<Double> = entryDao.getExpenseByBudgetConstraintsUsingOnlyTime(
+        startTime = startTime,
+        endTime = endTime
+    )
+
+    override fun getExpenseByBudgetConstraints(
+        accountId: Long,
+        categoryId: Long,
+        startTime: Long,
+        endTime: Long
+    ): Flow<Double> = entryDao.getExpenseByBudgetConstraints(
+        accountId = accountId,
+        categoryId = categoryId,
+        startTime = startTime,
+        endTime = endTime
+    )
+
+    override fun getEntriesByBudgetConstraintsUsingAccount(
+        accountId: Long,
+        startTime: Long,
+        endTime: Long
+    ): Flow<List<Entry>> = entryDao.getEntriesByBudgetConstraintsUsingAccount(
+        accountId = accountId,
+        startTime = startTime,
+        endTime = endTime
+    )
+
+    override fun getEntriesByBudgetConstraintsUsingCategory(
+        categoryId: Long,
+        startTime: Long,
+        endTime: Long
+    ): Flow<List<Entry>> = entryDao.getEntriesByBudgetConstraintsUsingCategory(
+        categoryId = categoryId,
+        startTime = startTime,
+        endTime = endTime
+    )
+
+    override fun getEntriesByBudgetConstraintsUsingOnlyTime(
+        startTime: Long,
+        endTime: Long
+    ): Flow<List<Entry>> = entryDao.getEntriesByBudgetConstraintsUsingOnlyTime(
+        startTime = startTime,
+        endTime = endTime
+    )
+
+    override fun getEntriesByBudgetConstraints(
+        accountId: Long,
+        categoryId: Long,
+        startTime: Long,
+        endTime: Long
+    ): Flow<List<Entry>> = entryDao.getEntriesByBudgetConstraints(
+        accountId = accountId,
+        categoryId = categoryId,
+        startTime = startTime,
+        endTime = endTime
+    )
 }

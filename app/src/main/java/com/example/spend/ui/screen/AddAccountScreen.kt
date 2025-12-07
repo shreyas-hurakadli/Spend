@@ -74,7 +74,7 @@ fun AddAccountScreen(
             AppTopBar(
                 title = stringResource(id = R.string.add_account),
                 canNavigateBack = true,
-                onBackClick = { navHostController.popBackStack() }
+                onBackClick = { navHostController.popBackStack() },
             )
         },
     ) { innerPadding ->

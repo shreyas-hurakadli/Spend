@@ -12,6 +12,7 @@ import com.example.spend.getTodayStart
 import com.example.spend.longToDate
 import com.example.spend.longToTime
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 private const val subscriptionDuration = 5_000L
@@ -48,9 +50,9 @@ class SummaryViewModel @Inject constructor(
             .map { mp ->
                 mp.map {
                     PieChartData.Slice(
-                        label = it.key,
-                        value = it.value.toFloat(),
-                        color = Color(0xFF353839)
+                        label = it.name,
+                        value = it.totalAmount.toFloat(),
+                        color = Color(it.color)
                     )
                 }
             }
@@ -65,9 +67,9 @@ class SummaryViewModel @Inject constructor(
             .map { mp ->
                 mp.map {
                     PieChartData.Slice(
-                        label = it.key,
-                        value = it.value.toFloat(),
-                        color = Color(0xFF353839)
+                        label = it.name,
+                        value = it.totalAmount.toFloat(),
+                        color = Color(it.color)
                     )
                 }
             }
@@ -153,28 +155,34 @@ class SummaryViewModel @Inject constructor(
 
     private fun updateMonthlyInfo() {
         viewModelScope.launch {
-            uiState.value = ExpenseUiState(
-                balance = dataStoreRepository.balance.first(),
-                expense = defaultRepository.getExpense(getMonthStart()).first()
-            )
+            withContext(context = Dispatchers.IO) {
+                uiState.value = ExpenseUiState(
+                    balance = defaultRepository.getIncome(getMonthStart()).first() - defaultRepository.getExpense(getMonthStart()).first(),
+                    expense = defaultRepository.getExpense(getMonthStart()).first()
+                )
+            }
         }
     }
 
     private fun updateDailyInfo() {
         viewModelScope.launch {
-            uiState.value = ExpenseUiState(
-                balance = dataStoreRepository.balance.first(),
-                expense = defaultRepository.getExpense(getTodayStart()).first()
-            )
+            withContext(context = Dispatchers.IO) {
+                uiState.value = ExpenseUiState(
+                    balance = defaultRepository.getIncome(getTodayStart()).first() - defaultRepository.getExpense(getTodayStart()).first(),
+                    expense = defaultRepository.getExpense(getTodayStart()).first()
+                )
+            }
         }
     }
 
     private fun updateWeekInfo() {
         viewModelScope.launch {
-            uiState.value = ExpenseUiState(
-                balance = dataStoreRepository.balance.first(),
-                expense = defaultRepository.getExpense(getSunday()).first()
-            )
+            withContext(context = Dispatchers.IO) {
+                uiState.value = ExpenseUiState(
+                    balance = defaultRepository.getIncome(getSunday()).first() - defaultRepository.getExpense(getSunday()).first(),
+                    expense = defaultRepository.getExpense(getSunday()).first()
+                )
+            }
         }
     }
 }

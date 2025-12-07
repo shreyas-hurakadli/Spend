@@ -263,13 +263,14 @@ fun AddScreen(
                     DateTimePicker(
                         time = time,
                         onDateChange = {
+                            Log.d("AddScreen", it.toString())
                             viewModel.changeTime(
-                                value = it ?: System.currentTimeMillis()
+                                value = (it ?: System.currentTimeMillis()) / 1000L
                             )
                         },
                         onTimeChange = {
                             viewModel.changeTime(
-                                value = it ?: System.currentTimeMillis()
+                                value = (it ?: System.currentTimeMillis()) / 1000L
                             )
                         }
                     )
@@ -288,7 +289,9 @@ fun AddScreen(
                 }
                 if (showCategoryBottomSheet) {
                     CategoryBottomSheet(
-                        categories = if (selectedIndex == 0) incomeCategories else expenseCategories,
+                        categories =
+                            if (selectedIndex == 0) incomeCategories.filter { it.name != "All" }
+                            else expenseCategories.filter { it.name != "All" },
                         onSelect = { viewModel.changeCategoryId(value = it) },
                         onDismiss = { showCategoryBottomSheet = false },
                     )
@@ -446,7 +449,6 @@ private fun DateTimePicker(
     onDateChange: (Long?) -> Unit,
     onTimeChange: (Long?) -> Unit
 ) {
-    Log.d("AddScreen", time.toString())
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
 
@@ -476,7 +478,6 @@ private fun DateTimePicker(
                     onClick = { showTimePicker = true }
                 )
         ) {
-            Log.d("AddScreen", longToTime(longDate = time))
             Text(text = longToTime(longDate = time), style = MaterialTheme.typography.titleMedium)
         }
     }
@@ -505,89 +506,6 @@ private fun DateTimePicker(
                     },
                     onDismiss = { showDatePicker = false }
                 )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DatePicker(
-    onDateSelected: (Long?) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val datePickerState = rememberDatePickerState()
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.padding(16.dp)
-    ) {
-        DatePickerDialog(
-            onDismissRequest = onDismiss,
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDateSelected(datePickerState.selectedDateMillis)
-                        onDismiss()
-                    }
-                ) {
-                    Text("OK")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text("Cancel")
-                }
-            }
-        ) {
-            DatePicker(
-                state = datePickerState,
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TimePicker(
-    onConfirm: (Long?) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val currentTime = Calendar.getInstance()
-
-    val timePickerState = rememberTimePickerState(
-        initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
-        initialMinute = currentTime.get(Calendar.MINUTE),
-        is24Hour = true,
-    )
-
-    Dialog(
-        onDismissRequest = onDismiss
-    ) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            TimePicker(
-                state = timePickerState,
-            )
-            Button(onClick = onDismiss) {
-                Text("Dismiss picker")
-            }
-            Button(
-                onClick = {
-                    val selectedHour = timePickerState.hour
-                    val selectedMinute = timePickerState.minute
-                    val calendar = Calendar.getInstance().apply {
-                        set(Calendar.HOUR_OF_DAY, selectedHour)
-                        set(Calendar.MINUTE, selectedMinute)
-                        set(Calendar.SECOND, 0)
-                        set(Calendar.MILLISECOND, 0)
-                    }
-                    onConfirm(calendar.timeInMillis)
-                }
-            ) {
-                Text("Confirm selection")
             }
         }
     }
@@ -676,84 +594,6 @@ private fun SpecificationSelectionButton(
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun CategoryBottomSheet(
-    categories: List<Category>,
-    onSelect: (Category) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
-    val categories = categories.filter { it.name != "All" }
-
-    ModalBottomSheet(
-        sheetState = sheetState,
-        onDismissRequest = onDismiss,
-    ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(count = 3)
-        ) {
-            items(items = categories) { category ->
-                CategoryView(category = category) {
-                    onSelect(category)
-                    scope.launch {
-                        sheetState.hide()
-                    }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            onDismiss()
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun CategoryView(
-    category: Category,
-    onClick: () -> Unit
-) {
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent
-        )
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.wrapContentSize()
-        ) {
-            Box(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .clip(CircleShape)
-                    .size(55.dp)
-                    .background(color = category.color),
-                contentAlignment = Alignment.Center
-            ) {
-                if (icons[category.icon] != null) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(icons[category.icon]!!),
-                        tint = Color.Black,
-                        contentDescription = null,
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
-            }
-            Text(
-                text = category.name,
-                color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.width(IntrinsicSize.Min)
             )
         }
     }

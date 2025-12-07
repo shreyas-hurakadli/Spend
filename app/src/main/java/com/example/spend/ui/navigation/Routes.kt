@@ -23,4 +23,10 @@ sealed class Routes {
 
     @Serializable
     data object CreateCategoryScreen: Routes()
+
+    @Serializable
+    data object BudgetScreen: Routes()
+
+    @Serializable
+    data object AddBudgetScreen: Routes()
 }

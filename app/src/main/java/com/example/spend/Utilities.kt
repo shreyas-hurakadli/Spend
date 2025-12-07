@@ -32,7 +32,7 @@ fun getTodayStart(): Long {
  */
 fun longToDate(longDate: Long): String {
     val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-    return dateFormat.format(longDate)
+    return dateFormat.format(longDate * 1000L)
 }
 
 /**

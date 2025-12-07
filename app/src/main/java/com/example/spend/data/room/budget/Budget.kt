@@ -35,6 +35,7 @@ data class Budget(
     @ColumnInfo(name = "start_time_stamp")
     val startTimeStamp: Long = 0L,
     val period: Long = 0L,
+    val amount: Double = 0.00,
     @ColumnInfo(name = "account_id")
     val accountId: Long = 0L,
     @ColumnInfo(name = "category_id")

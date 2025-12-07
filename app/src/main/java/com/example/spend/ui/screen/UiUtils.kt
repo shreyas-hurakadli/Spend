@@ -7,38 +7,53 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.BottomAppBar
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBarColors
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -53,10 +68,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.data.dto.EntryCategory
 import com.example.spend.data.room.account.Account
+import com.example.spend.data.room.category.Category
 import com.example.spend.getFormattedAmount
 import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.longToDate
@@ -64,7 +81,7 @@ import com.example.spend.ui.accountIcons
 import com.example.spend.ui.icons
 import com.example.spend.ui.navigation.Routes
 import kotlinx.coroutines.launch
-import kotlin.collections.get
+import java.util.Calendar
 
 data class NavigationIcon(
     @DrawableRes val baseLineIcon: Int,
@@ -79,6 +96,12 @@ private val navigationIcon = listOf(
         outlinedIcon = R.drawable.outline_home,
         route = Routes.HomeScreen,
         contentDescription = "Home"
+    ),
+    NavigationIcon(
+        baseLineIcon = R.drawable.baseline_wallet,
+        outlinedIcon = R.drawable.baseline_wallet,
+        route = Routes.BudgetScreen,
+        contentDescription = "Budget"
     ),
     NavigationIcon(
         baseLineIcon = R.drawable.baseline_summarize,
@@ -101,6 +124,8 @@ fun AppTopBar(
     modifier: Modifier = Modifier,
     canNavigateBack: Boolean = false,
     onBackClick: () -> Unit = {},
+    hasNavigationDrawer: Boolean = false,
+    onNavigationDrawerClick: () -> Unit = {},
     actions: @Composable (RowScope.() -> Unit) = {},
 ) {
     CenterAlignedTopAppBar(
@@ -125,6 +150,13 @@ fun AppTopBar(
                         contentDescription = stringResource(R.string.back)
                     )
                 }
+            } else if (hasNavigationDrawer) {
+                IconButton(onClick = onNavigationDrawerClick) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = stringResource(R.string.menu)
+                    )
+                }
             }
         },
         actions = actions,
@@ -133,81 +165,53 @@ fun AppTopBar(
 }
 
 @Composable
-fun AppBottomBar(
+fun AppNavigationDrawer(
     currentScreenIndex: Int,
     navHostController: NavHostController,
+    drawerState: DrawerState,
     modifier: Modifier = Modifier,
-    navigationIcons: List<NavigationIcon> = navigationIcon
+    content: @Composable (() -> Unit)
 ) {
-    BottomAppBar(
-        modifier = modifier.fillMaxWidth(),
-        tonalElevation = 8.dp,
-        containerColor = MaterialTheme.colorScheme.surface,
-    ) {
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            val n = navigationIcons.size
-            for (i in 0 until n) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet(
+                drawerContainerColor = MaterialTheme.colorScheme.surface,
+                drawerContentColor = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(0.7f)
+            ) {
+                LazyColumn(
+                    modifier = Modifier.padding(8.dp)
                 ) {
-                    if (i == currentScreenIndex) {
-                        IconButton(onClick = {}) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(navigationIcons[i].baseLineIcon),
-                                contentDescription = navigationIcons[i].contentDescription,
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(24.dp)
-                                    .wrapContentSize()
-                            )
-                        }
-                        Text(
-                            text = navigationIcons[i].contentDescription ?: "Default",
-                            fontWeight = FontWeight.ExtraBold,
-                            style = MaterialTheme.typography.labelSmall,
-                            modifier = Modifier.wrapContentSize()
-                        )
-                    } else {
-                        IconButton(onClick = { navHostController.navigate(navigationIcons[i].route) }) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(navigationIcons[i].outlinedIcon),
-                                contentDescription = navigationIcons[i].contentDescription,
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(24.dp)
-                                    .wrapContentSize()
-                            )
-                        }
-                        Text(
-                            text = navigationIcons[i].contentDescription ?: "Default",
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Normal,
-                            modifier = Modifier.wrapContentSize()
+                    itemsIndexed(items = navigationIcon) { index, item ->
+                        NavigationDrawerItem(
+                            label = {
+                                Text(
+                                    text = item.contentDescription ?: "Default",
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            },
+                            selected = (currentScreenIndex == index),
+                            onClick = { navHostController.navigate(item.route) },
+                            icon = {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(item.baseLineIcon),
+                                    tint = MaterialTheme.colorScheme.onBackground,
+                                    contentDescription = item.contentDescription
+                                )
+                            },
                         )
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun SnackBarMessage(
-    message: String,
-    modifier: Modifier = Modifier
-) {
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    Scaffold(
-        modifier = modifier.fillMaxWidth().background(color = MaterialTheme.colorScheme.primary),
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { innerPadding ->
-        LaunchedEffect(snackbarHostState) {
-            snackbarHostState.showSnackbar(message)
-        }
+        },
+        modifier = modifier,
+        scrimColor = Color.Transparent
+    ) {
+        content()
     }
 }
 
@@ -399,3 +403,158 @@ private fun AccountView(
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CategoryBottomSheet(
+    categories: List<Category>,
+    onSelect: (Category) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = onDismiss,
+    ) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(count = 3)
+        ) {
+            items(items = categories) { category ->
+                CategoryView(category = category) {
+                    onSelect(category)
+                    scope.launch {
+                        sheetState.hide()
+                    }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            onDismiss()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CategoryView(
+    category: Category,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Transparent
+        )
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.wrapContentSize()
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clip(CircleShape)
+                    .size(55.dp)
+                    .background(color = category.color),
+                contentAlignment = Alignment.Center
+            ) {
+                if (icons[category.icon] != null) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(icons[category.icon]!!),
+                        tint = Color.Black,
+                        contentDescription = null,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+            }
+            Text(
+                text = category.name,
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.width(IntrinsicSize.Min)
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePicker(
+    onDateSelected: (Long?) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val datePickerState = rememberDatePickerState()
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDateSelected(datePickerState.selectedDateMillis)
+                    onDismiss()
+                }
+            ) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        },
+    ) {
+        DatePicker(
+            state = datePickerState,
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePicker(
+    onConfirm: (Long?) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val currentTime = Calendar.getInstance()
+
+    val timePickerState = rememberTimePickerState(
+        initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
+        initialMinute = currentTime.get(Calendar.MINUTE),
+        is24Hour = true,
+    )
+
+    Dialog(
+        onDismissRequest = onDismiss
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            TimePicker(
+                state = timePickerState,
+            )
+            Button(onClick = onDismiss) {
+                Text("Dismiss picker")
+            }
+            Button(
+                onClick = {
+                    val selectedHour = timePickerState.hour
+                    val selectedMinute = timePickerState.minute
+                    val calendar = Calendar.getInstance().apply {
+                        set(Calendar.HOUR_OF_DAY, selectedHour)
+                        set(Calendar.MINUTE, selectedMinute)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                    }
+                    onConfirm(calendar.timeInMillis)
+                }
+            ) {
+                Text("Confirm selection")
+            }
+        }
+    }
+}
+

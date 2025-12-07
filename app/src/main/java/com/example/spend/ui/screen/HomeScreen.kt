@@ -21,16 +21,24 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,155 +66,177 @@ import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.HomeViewModel
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navHostController: NavHostController,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    Scaffold(
-        topBar = {
-            AppTopBar(title = stringResource(id = R.string.home))
-        },
-        bottomBar = {
-            AppBottomBar(
-                currentScreenIndex = RouteNumbers.HOME_PAGE.screenNumber,
-                navHostController
-            )
-        },
-    ) { innerPadding ->
-        val transactions by viewModel.transactions.collectAsState()
-        val firstAccount by viewModel.currentAccount.collectAsState()
-        val accountList by viewModel.accountList.collectAsState()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val drawerScope = rememberCoroutineScope()
 
-        var showAccountsBottomSheet by remember { mutableStateOf(false) }
-        var account by remember { mutableStateOf(firstAccount) }
-
-        if (account.id == 0L) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                CircularProgressIndicator()
-                if (firstAccount.id != 0L)
-                    account = firstAccount
-            }
-        } else {
-            BoxWithConstraints(
-                modifier =
-                    if (transactions.isNotEmpty())
-                        Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                    else Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-            ) {
-                val maxWidth = maxWidth
-                Column(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxSize()
-                ) {
-                    BalanceBar(
-                        account = account,
-                        onDropDownClick = { showAccountsBottomSheet = true },
-                    )
-                    Spacer(Modifier.padding(16.dp))
-                    Text(
-                        text = stringResource(R.string.quick_actions),
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        modifier = Modifier.align(Alignment.Start)
-                    )
-                    Spacer(Modifier.padding(8.dp))
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState())
-                    ) {
-                        ActionCard(
-                            icon = Icons.Filled.Add,
-                            label = stringResource(R.string.add_entry),
-                            maxWidth = maxWidth,
-                            onClick = { navHostController.navigate(Routes.AddScreen) }
-                        )
-                        ActionCard(
-                            icon = ImageVector.vectorResource(R.drawable.baseline_wallet),
-                            label = stringResource(R.string.add_account),
-                            maxWidth = maxWidth,
-                            onClick = { navHostController.navigate(Routes.AddAccountScreen) }
-                        )
-                        ActionCard(
-                            icon = ImageVector.vectorResource(R.drawable.baseline_category),
-                            label = stringResource(R.string.add_category),
-                            maxWidth = maxWidth,
-                            onClick = { navHostController.navigate(Routes.CreateCategoryScreen) }
-                        )
-                    }
-                    Spacer(Modifier.padding(16.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = stringResource(R.string.recent_transaction),
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
-                        if (transactions.isNotEmpty()) {
-                            Text(
-                                text = stringResource(R.string.see_all),
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier
-                                    .clickable { navHostController.navigate(Routes.EntryScreen) }
-                            )
-                        }
-                    }
-
-                    Spacer(Modifier.padding(8.dp))
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = Color.White,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            if (transactions.isNotEmpty()) {
-                                transactions.forEach { entryCategory ->
-                                    TransactionCard(
-                                        entryCategory = entryCategory,
-                                        iconTint = Color.Black,
-                                        showDate = true,
-                                    )
-                                }
-                            } else {
-                                Text(text = stringResource(R.string.no_transactions))
+    AppNavigationDrawer(
+        currentScreenIndex = RouteNumbers.HOME_PAGE.screenNumber,
+        navHostController = navHostController,
+        drawerState = drawerState,
+    ) {
+        Scaffold(
+            topBar = {
+                AppTopBar(
+                    title = stringResource(R.string.home),
+                    hasNavigationDrawer = true,
+                    onNavigationDrawerClick = {
+                        drawerScope.launch {
+                            drawerState.apply {
+                                if (isClosed) open() else close()
                             }
                         }
                     }
-                    if (showAccountsBottomSheet) {
-                        AccountBottomSheet(
-                            accounts = accountList,
-                            onSelect = { account = it },
-                            onDismiss = { showAccountsBottomSheet = false },
+                )
+            },
+        ) { innerPadding ->
+            val transactions by viewModel.transactions.collectAsState()
+            val firstAccount by viewModel.currentAccount.collectAsState()
+            val accountList by viewModel.accountList.collectAsState()
+
+            var showAccountsBottomSheet by remember { mutableStateOf(false) }
+            var account by remember { mutableStateOf(firstAccount) }
+
+            if (account.id == 0L) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    CircularProgressIndicator()
+                    if (firstAccount.id != 0L)
+                        account = firstAccount
+                }
+            } else {
+                BoxWithConstraints(
+                    modifier =
+                        if (transactions.isNotEmpty())
+                            Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                                .verticalScroll(rememberScrollState())
+                        else Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                ) {
+                    val maxWidth = maxWidth
+                    Column(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxSize()
+                    ) {
+                        BalanceBar(
+                            account = account,
+                            onDropDownClick = { showAccountsBottomSheet = true },
                         )
+                        Spacer(Modifier.padding(16.dp))
+                        Text(
+                            text = stringResource(R.string.quick_actions),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            modifier = Modifier.align(Alignment.Start)
+                        )
+                        Spacer(Modifier.padding(8.dp))
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState())
+                        ) {
+                            ActionCard(
+                                icon = Icons.Filled.Add,
+                                label = stringResource(R.string.add_entry),
+                                maxWidth = maxWidth,
+                                onClick = { navHostController.navigate(Routes.AddScreen) }
+                            )
+                            ActionCard(
+                                icon = ImageVector.vectorResource(R.drawable.baseline_wallet),
+                                label = stringResource(R.string.add_account),
+                                maxWidth = maxWidth,
+                                onClick = { navHostController.navigate(Routes.AddAccountScreen) }
+                            )
+                            ActionCard(
+                                icon = ImageVector.vectorResource(R.drawable.baseline_category),
+                                label = stringResource(R.string.add_category),
+                                maxWidth = maxWidth,
+                                onClick = { navHostController.navigate(Routes.CreateCategoryScreen) }
+                            )
+                            ActionCard(
+                                icon = ImageVector.vectorResource(R.drawable.coin),
+                                label = stringResource(R.string.add_budget),
+                                maxWidth = maxWidth,
+                                onClick = { navHostController.navigate(Routes.AddBudgetScreen) }
+                            )
+                        }
+                        Spacer(Modifier.padding(16.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = stringResource(R.string.recent_transaction),
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                            if (transactions.isNotEmpty()) {
+                                Text(
+                                    text = stringResource(R.string.see_all),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    modifier = Modifier
+                                        .clickable { navHostController.navigate(Routes.EntryScreen) }
+                                )
+                            }
+                        }
+
+                        Spacer(Modifier.padding(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.background,
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                if (transactions.isNotEmpty()) {
+                                    transactions.forEach { entryCategory ->
+                                        TransactionCard(
+                                            entryCategory = entryCategory,
+                                            iconTint = Color.Black,
+                                            showDate = true,
+                                        )
+                                    }
+                                } else {
+                                    Text(text = stringResource(R.string.no_transactions))
+                                }
+                            }
+                        }
+                        if (showAccountsBottomSheet) {
+                            AccountBottomSheet(
+                                accounts = accountList,
+                                onSelect = { account = it },
+                                onDismiss = { showAccountsBottomSheet = false },
+                            )
+                        }
                     }
                 }
             }
-        }
 
+        }
     }
+
 }
 
 @Composable

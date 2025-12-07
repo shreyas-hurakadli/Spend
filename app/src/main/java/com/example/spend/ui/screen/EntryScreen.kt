@@ -36,7 +36,7 @@ fun EntryScreen(
             AppTopBar(
                 title = stringResource(R.string.transactions),
                 canNavigateBack = true,
-                onBackClick = { navHostController.popBackStack() }
+                onBackClick = { navHostController.popBackStack() },
             )
         }
     ) { innerPadding ->

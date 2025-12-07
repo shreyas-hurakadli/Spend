@@ -7,6 +7,7 @@ import androidx.room.MapColumn
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.example.spend.data.dto.CategoryAmount
 import com.example.spend.data.dto.EntryCategory
 import kotlinx.coroutines.flow.Flow
 
@@ -39,17 +40,17 @@ interface EntryDao {
     @Query("SELECT SUM(amount) FROM entries WHERE is_expense = 0 AND epochSeconds >= :from")
     fun getIncome(from: Long): Flow<Double>
 
-    @Query("SELECT c.name, SUM(e.amount) FROM categories c, entries e WHERE e.is_expense = 1 AND e.category_id = c.id AND e.epochSeconds >= :from AND e.epochSeconds <= :to GROUP BY c.name")
+    @Query("SELECT c.name AS name, SUM(e.amount) AS totalAmount, c.color AS color FROM categories c, entries e WHERE e.is_expense = 1 AND e.category_id = c.id AND e.epochSeconds >= :from AND e.epochSeconds <= :to GROUP BY c.name")
     fun getExpenseByCategory(
         from: Long,
         to: Long
-    ): Flow<Map<@MapColumn("name") String, @MapColumn("SUM(e.amount)") Double>>
+    ): Flow<List<CategoryAmount>>
 
-    @Query("SELECT c.name, SUM(e.amount) FROM categories c, entries e WHERE e.is_expense = 0 AND  e.category_id = c.id AND e.epochSeconds >= :from AND e.epochSeconds <= :to GROUP BY c.name")
+    @Query("SELECT c.name AS name, SUM(e.amount) AS totalAmount, c.color AS color FROM categories c, entries e WHERE e.is_expense = 0 AND  e.category_id = c.id AND e.epochSeconds >= :from AND e.epochSeconds <= :to GROUP BY c.name")
     fun getIncomeByCategory(
         from: Long,
         to: Long
-    ): Flow<Map<@MapColumn("name") String, @MapColumn("SUM(e.amount)") Double>>
+    ): Flow<List<CategoryAmount>>
 
     @Query("SELECT EXISTS (SELECT 1 FROM entries WHERE id IS NOT NULL)")
     fun areEntriesPresent(): Flow<Boolean>
@@ -83,4 +84,60 @@ interface EntryDao {
     """
     )
     fun getEntryIconAndColor(limit: Long = Long.MAX_VALUE): Flow<List<EntryCategory>>
+
+    @Query("SELECT SUM(amount) FROM entries WHERE is_expense = 1 AND account_id = :accountId AND epochSeconds >= :startTime AND epochSeconds <= :endTime")
+    fun getExpenseByBudgetConstraintsUsingAccount(
+        accountId: Long,
+        startTime: Long,
+        endTime: Long
+    ): Flow<Double>
+
+    @Query("SELECT SUM(amount) FROM entries WHERE is_expense = 1 AND category_id = :categoryId AND epochSeconds >= :startTime AND epochSeconds <= :endTime")
+    fun getExpenseByBudgetConstraintsUsingCategory(
+        categoryId: Long,
+        startTime: Long,
+        endTime: Long
+    ): Flow<Double>
+
+    @Query("SELECT SUM(amount) FROM entries WHERE is_expense = 1 AND epochSeconds >= :startTime AND epochSeconds <= :endTime")
+    fun getExpenseByBudgetConstraintsUsingOnlyTime(
+        startTime: Long,
+        endTime: Long
+    ): Flow<Double>
+
+    @Query("SELECT SUM(amount) FROM entries WHERE is_expense = 1 AND account_id = :accountId AND category_id = :categoryId AND epochSeconds >= :startTime AND epochSeconds <= :endTime")
+    fun getExpenseByBudgetConstraints(
+        accountId: Long,
+        categoryId: Long,
+        startTime: Long,
+        endTime: Long,
+    ): Flow<Double>
+
+    @Query("SELECT * FROM entries WHERE is_expense = 1 AND account_id = :accountId AND epochSeconds >= :startTime AND epochSeconds <= :endTime")
+    fun getEntriesByBudgetConstraintsUsingAccount(
+        accountId: Long,
+        startTime: Long,
+        endTime: Long
+    ): Flow<List<Entry>>
+
+    @Query("SELECT * FROM entries WHERE is_expense = 1 AND category_id = :categoryId AND epochSeconds >= :startTime AND epochSeconds <= :endTime")
+    fun getEntriesByBudgetConstraintsUsingCategory(
+        categoryId: Long,
+        startTime: Long,
+        endTime: Long
+    ): Flow<List<Entry>>
+
+    @Query("SELECT * FROM entries WHERE is_expense = 1 AND epochSeconds >= :startTime AND epochSeconds <= :endTime")
+    fun getEntriesByBudgetConstraintsUsingOnlyTime(
+        startTime: Long,
+        endTime: Long
+    ): Flow<List<Entry>>
+
+    @Query("SELECT * FROM entries WHERE is_expense = 1 AND account_id = :accountId AND category_id = :categoryId AND epochSeconds >= :startTime AND epochSeconds <= :endTime")
+    fun getEntriesByBudgetConstraints(
+        accountId: Long,
+        categoryId: Long,
+        startTime: Long,
+        endTime: Long,
+    ): Flow<List<Entry>>
 }

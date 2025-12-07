@@ -69,7 +69,7 @@ fun CreateCategoryScreen(
             AppTopBar(
                 title = "Create Category",
                 canNavigateBack = true,
-                onBackClick = { navHostController.popBackStack() }
+                onBackClick = { navHostController.popBackStack() },
             )
         }
     ) { innerPadding ->

@@ -11,12 +11,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,86 +31,100 @@ import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
 import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.theme.SpendTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(
     navHostController: NavHostController,
 ) {
-    Scaffold(
-        topBar = {
-            AppTopBar(title = stringResource(R.string.settings))
-        },
-        bottomBar = {
-            AppBottomBar(
-                currentScreenIndex = RouteNumbers.SETTINGS_SCREEN.screenNumber,
-                navHostController
-            )
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.AccountCircle,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(200.dp),
-                    contentDescription = stringResource(R.string.display_picture)
-                )
-                Text(
-                    text = "John Doe",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Medium
-                )
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val drawerScope = rememberCoroutineScope()
 
-            }
+    AppNavigationDrawer(
+        currentScreenIndex = RouteNumbers.SETTINGS_SCREEN.screenNumber,
+        navHostController = navHostController,
+        drawerState = drawerState
+    ) {
+        Scaffold(
+            topBar = {
+                AppTopBar(
+                    title = stringResource(R.string.settings),
+                    hasNavigationDrawer = true,
+                    onNavigationDrawerClick = {
+                        drawerScope.launch {
+                            drawerState.apply {
+                                if (isClosed) open() else close()
+                            }
+                        }
+                    }
+                )
+            },
+        ) { innerPadding ->
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
             ) {
-                SettingTile(
-                    name = "Clear Data",
-                    action = {}
-                )
-                SettingTile(
-                    name = "Privacy",
-                    action = {
-                        IconButton({}) {
-                            Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, "")
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.AccountCircle,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(200.dp),
+                        contentDescription = stringResource(R.string.display_picture)
+                    )
+                    Text(
+                        text = "John Doe",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Medium
+                    )
+
+                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    SettingTile(
+                        name = "Clear Data",
+                        action = {}
+                    )
+                    SettingTile(
+                        name = "Privacy",
+                        action = {
+                            IconButton({}) {
+                                Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, "")
+                            }
                         }
-                    }
-                )
-                SettingTile(
-                    name = "Currency",
-                    action = {
-                        IconButton({}) {
-                            Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, "")
+                    )
+                    SettingTile(
+                        name = "Currency",
+                        action = {
+                            IconButton({}) {
+                                Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, "")
+                            }
                         }
-                    }
-                )
-                SettingTile(
-                    name = "Country",
-                    action = {
-                        IconButton({}) {
-                            Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, "")
+                    )
+                    SettingTile(
+                        name = "Country",
+                        action = {
+                            IconButton({}) {
+                                Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, "")
+                            }
                         }
-                    }
-                )
-                SettingTile(
-                    name = "Sync",
-                    action = {
-                        IconButton({}) {
-                            Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, "")
+                    )
+                    SettingTile(
+                        name = "Sync",
+                        action = {
+                            IconButton({}) {
+                                Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, "")
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

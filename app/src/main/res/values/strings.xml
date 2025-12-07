@@ -32,4 +32,7 @@
     <string name="initial_amount">Initial Amount</string>
     <string name="setup">Setup</string>
     <string name="add_account">Add Account</string>
+    <string name="add_budget">Add budget</string>
+    <string name="menu">Menu</string>
+    <string name="budget">Budget</string>
 </resources>
