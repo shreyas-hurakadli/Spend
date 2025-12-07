@@ -59,6 +59,7 @@ import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.viewmodel.budget.BudgetViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.absoluteValue
 
 @Composable
 fun BudgetScreen(
@@ -215,7 +216,7 @@ private fun BudgetView(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "${getLocalCurrencySymbol()}${budget.amount}",
+                    text = "${getLocalCurrencySymbol()} ${budget.amount}",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onBackground
@@ -248,12 +249,12 @@ private fun BudgetView(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Spent: ${getLocalCurrencySymbol()}$expense",
+                    text = "Spent: ${getLocalCurrencySymbol()} $expense",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFFF44336),
                 )
                 Text(
-                    text = "Remaining: ${getLocalCurrencySymbol()}${budget.amount - expense}",
+                    text = (if (budget.amount >= expense) "Remaining" else "Overspent") + ": ${getLocalCurrencySymbol()} ${(budget.amount - expense).absoluteValue}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     color = if (progress >= 1f) MaterialTheme.colorScheme.error
