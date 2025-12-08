@@ -70,7 +70,7 @@ class AddBudgetViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
+            withContext(context = Dispatchers.IO) {
                 launch {
                     accountRepository.getFirstAccount()
                         .collect {
@@ -174,37 +174,39 @@ class AddBudgetViewModel @Inject constructor(
     }
 
     fun save() {
+        _uiState.value =
+            _uiState.value.copy(startTimeStamp = System.currentTimeMillis() / 1000L)
+        if (uiState.value.period == 0L) {
+            if (_toDate.value != null && _fromDate.value != null) {
+                _uiState.value = _uiState.value.copy(
+                    startTimeStamp = (_fromDate.value!! / 1000L)
+                )
+                setPeriod(Period.ONE_TIME, (_toDate.value!! - _fromDate.value!!) / 1000L)
+            } else {
+                _snackBarMessage.value = "Error: Invalid date range"
+                _showSnackBar.value = true
+                return
+            }
+        }
         viewModelScope.launch {
-            withContext(context = Dispatchers.IO) {
-                try {
-                    _uiState.value = _uiState.value.copy(startTimeStamp = System.currentTimeMillis() / 1000L)
-                    if (uiState.value.period == 0L) {
-                        if (_toDate.value != null && _fromDate.value != null) {
-                            _uiState.value = _uiState.value.copy(
-                                startTimeStamp = (_fromDate.value!! / 1000L)
-                            )
-                            setPeriod(Period.ONE_TIME, (_toDate.value!! - _fromDate.value!!) / 1000L)
-                        } else {
-                            _snackBarMessage.value = "Invalid date range"
-                            _showSnackBar.value = true
-                        }
-                    }
-                    if (validateInput()) {
+            try {
+                if (validateInput()) {
+                    withContext(context = Dispatchers.IO) {
                         budgetRepository.insert(budget = _uiState.value)
-                        clear()
-                        _snackBarMessage.value = "Successful insertion"
-                        _showSnackBar.value = true
-                    } else {
-                        _snackBarMessage.value = "Invalid input"
-                        _showSnackBar.value = true
                     }
-                } catch (e: SQLiteConstraintException) {
-                    _snackBarMessage.value = "Budget with same name exists"
+                    clear()
+                    _snackBarMessage.value = "Successful insertion"
                     _showSnackBar.value = true
-                } catch (e: Exception) {
-                    _snackBarMessage.value = "Unexpected error occurred"
+                } else {
+                    _snackBarMessage.value = "Error: Invalid input"
                     _showSnackBar.value = true
                 }
+            } catch (e: SQLiteConstraintException) {
+                _snackBarMessage.value = "Budget with same name exists"
+                _showSnackBar.value = true
+            } catch (e: Exception) {
+                _snackBarMessage.value = "Unknown error occurred"
+                _showSnackBar.value = true
             }
         }
     }
