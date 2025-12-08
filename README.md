@@ -33,7 +33,7 @@ To get a local copy up and running, follow these simple steps.
 
 1.  Clone the repository:
     ```
-    git clone https://github.com/your-username/BudgetWise.git
+    git clone https://github.com/shreyas-hurakadli/Spend.git
     ```
 2.  Open the project in Android Studio.
 3.  Let Gradle sync and download the required dependencies.
