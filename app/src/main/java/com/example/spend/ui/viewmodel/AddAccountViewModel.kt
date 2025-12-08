@@ -3,21 +3,17 @@ package com.example.spend.ui.viewmodel
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.sqlite.SQLiteException
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
-import com.example.spend.ui.icons
 import com.example.spend.validateCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-private const val durationMillis = 1_000L
 
 @HiltViewModel
 class AddAccountViewModel @Inject constructor(
@@ -89,16 +85,24 @@ class AddAccountViewModel @Inject constructor(
             viewModelScope.launch {
                 if (allAccount.value != Account()) {
                     withContext(context = Dispatchers.IO) {
-                        defaultAccountRepository.insert(_uiState.value)
-                        defaultAccountRepository.update(
-                            account = allAccount.value.copy(
-                                balance = balance.toDouble() + allAccount.value.balance
+                        try {
+                            defaultAccountRepository.insert(_uiState.value)
+                            defaultAccountRepository.update(
+                                account = allAccount.value.copy(
+                                    balance = balance.toDouble() + allAccount.value.balance
+                                )
                             )
-                        )
-                        clear()
+                            clear()
+                        } catch (e: SQLiteException) {
+                            _snackBarMessage.value = "An Account by this name already exists"
+                            _showSnackBar.value = true
+                        } catch (e: Exception) {
+                            _snackBarMessage.value = "Unknown error has occurred"
+                            _showSnackBar.value = true
+                        }
                     }
                 } else {
-                    _snackBarMessage.value = "Internal error"
+                    _snackBarMessage.value = "Unknown Error has occurred"
                     _showSnackBar.value = true
                 }
             }

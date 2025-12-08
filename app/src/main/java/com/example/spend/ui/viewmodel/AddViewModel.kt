@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.sqlite.SQLiteException
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.DefaultAccountRepository
 import com.example.spend.data.room.category.Category
@@ -198,58 +199,67 @@ class AddViewModel @Inject constructor(
     fun save() {
         if (validateInput()) {
             viewModelScope.launch {
-                withContext(context = Dispatchers.IO) {
-                    defaultRepository.insert(
-                        entry = Entry(
-                            amount = amount.toDouble(),
-                            isExpense = (selectedIndex >= 1),
-                            epochSeconds = time,
-                            categoryId = if (selectedIndex == 2) transferCategory.value.id else category.id,
-                            accountId = fromAccount.id,
-                            description = description
-                        )
-                    )
-
-                    if (selectedIndex > 0) {
-                        defaultAccountRepository.update(
-                            account = fromAccount.copy(
-                                balance = fromAccount.balance - amount.toDouble()
+                try {
+                    withContext(context = Dispatchers.IO) {
+                        defaultRepository.insert(
+                            entry = Entry(
+                                amount = amount.toDouble(),
+                                isExpense = (selectedIndex >= 1),
+                                epochSeconds = time,
+                                categoryId = if (selectedIndex == 2) transferCategory.value.id else category.id,
+                                accountId = fromAccount.id,
+                                description = description
                             )
                         )
-                        if (selectedIndex == 1) {
+                    }
+                    withContext(context = Dispatchers.Main) {
+                        if (selectedIndex > 0) {
+                            defaultAccountRepository.update(
+                                account = fromAccount.copy(
+                                    balance = fromAccount.balance - amount.toDouble()
+                                )
+                            )
+                            if (selectedIndex == 1) {
+                                defaultAccountRepository.update(
+                                    account = accounts.value.first().copy(
+                                        balance = accounts.value.first().balance - amount.toDouble()
+                                    )
+                                )
+                            }
+                        } else {
+                            defaultAccountRepository.update(
+                                account = fromAccount.copy(
+                                    balance = fromAccount.balance + amount.toDouble()
+                                )
+                            )
                             defaultAccountRepository.update(
                                 account = accounts.value.first().copy(
-                                    balance = accounts.value.first().balance - amount.toDouble()
+                                    balance = accounts.value.first().balance + amount.toDouble()
                                 )
                             )
                         }
-                    } else {
-                        defaultAccountRepository.update(
-                            account = fromAccount.copy(
-                                balance = fromAccount.balance + amount.toDouble()
-                            )
-                        )
-                        defaultAccountRepository.update(
-                            account = accounts.value.first().copy(
-                                balance = accounts.value.first().balance + amount.toDouble()
-                            )
-                        )
-                    }
 
-                    if (toAccount != Account()) {
-                        defaultAccountRepository.update(
-                            account = toAccount.copy(
-                                balance = toAccount.balance + amount.toDouble()
+                        if (toAccount != Account()) {
+                            defaultAccountRepository.update(
+                                account = toAccount.copy(
+                                    balance = toAccount.balance + amount.toDouble()
+                                )
                             )
-                        )
+                        }
+                        clear()
+                        _snackBarMessage.value = "Successful insertion"
+                        _showSnackBar.value = true
                     }
-                    clear()
-                    _snackBarMessage.value = "Successful insertion"
+                } catch (e: SQLiteException) {
+                    _snackBarMessage.value = "An entry of this name exists"
+                    _showSnackBar.value = true
+                } catch (e: Exception) {
+                    _snackBarMessage.value = "An unknown error has occurred"
                     _showSnackBar.value = true
                 }
             }
         } else {
-            _snackBarMessage.value = "Insertion failed"
+            _snackBarMessage.value = "Error: Specify all the fields"
             _showSnackBar.value = true
         }
     }

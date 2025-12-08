@@ -1,8 +1,10 @@
 package com.example.spend.ui.viewmodel
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.sqlite.SQLiteException
 import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -62,10 +64,18 @@ class CreateCategoryViewModel @Inject constructor(
             viewModelScope.launch {
                 withContext(context = Dispatchers.IO) {
                     _category.value = _category.value.copy(isExpense = (_selectedIndex.value == 1))
-                    defaultCategoryRepository.insert(_category.value)
-                    clear()
-                    _snackBarMessage.value = "Successful Insertion"
-                    _showSnackBar.value = true
+                    try {
+                        defaultCategoryRepository.insert(_category.value)
+                        clear()
+                        _snackBarMessage.value = "Successful Insertion"
+                        _showSnackBar.value = true
+                    } catch (e: SQLiteException) {
+                        _snackBarMessage.value = "A category of this name or type already exists"
+                        _showSnackBar.value = true
+                    } catch (e: Exception) {
+                        _snackBarMessage.value = "Unknown Error has occurred"
+                        _showSnackBar.value = true
+                    }
                 }
             }
         } else {
