@@ -17,5 +17,5 @@ data class Category(
     @ColumnInfo(name = "is_expense")
     val isExpense: Boolean = true,
     val color: Color = Color(0xFF77DD77),
-    val icon: String? = ""
+    val icon: String? = null
 )
