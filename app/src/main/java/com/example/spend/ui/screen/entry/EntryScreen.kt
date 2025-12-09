@@ -1,4 +1,4 @@
-package com.example.spend.ui.screen
+package com.example.spend.ui.screen.entry
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,7 +22,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.longToDate
-import com.example.spend.ui.viewmodel.EntryViewModel
+import com.example.spend.ui.screen.AppTopBar
+import com.example.spend.ui.screen.TransactionCard
+import com.example.spend.ui.viewmodel.entry.EntryViewModel
 
 @Composable
 fun EntryScreen(
