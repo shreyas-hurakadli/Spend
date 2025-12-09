@@ -11,11 +11,12 @@ import com.example.spend.ui.screen.AddAccountScreen
 import com.example.spend.ui.screen.budget.AddBudgetScreen
 import com.example.spend.ui.screen.AddScreen
 import com.example.spend.ui.screen.CreateCategoryScreen
-import com.example.spend.ui.screen.EntryScreen
+import com.example.spend.ui.screen.entry.EntryScreen
 import com.example.spend.ui.screen.HomeScreen
 import com.example.spend.ui.screen.SettingsScreen
 import com.example.spend.ui.screen.SummaryScreen
 import com.example.spend.ui.screen.budget.BudgetScreen
+import com.example.spend.ui.screen.entry.EntryDetailScreen
 
 private const val durationMillis = 150
 
@@ -77,6 +78,9 @@ fun NavigationManager(
         }
         composable<Routes.AddBudgetScreen> {
             AddBudgetScreen(navHostController = navHostController)
+        }
+        composable<Routes.EntryDetailScreen> {
+            EntryDetailScreen(navHostController = navHostController)
         }
     }
 }

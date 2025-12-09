@@ -29,4 +29,7 @@ sealed class Routes {
 
     @Serializable
     data object AddBudgetScreen: Routes()
+
+    @Serializable
+    data object EntryDetailScreen: Routes()
 }
