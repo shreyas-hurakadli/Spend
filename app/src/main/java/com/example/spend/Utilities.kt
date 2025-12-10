@@ -1,8 +1,11 @@
 package com.example.spend
 
 import java.text.SimpleDateFormat
+import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Currency
 import java.util.Date
@@ -93,6 +96,15 @@ fun getLocalCurrencySymbol(locale: Locale = Locale.getDefault()): String? =
  * Truncates the Double value to two decimal digits
  */
 fun getFormattedAmount(value: Double): String = String.format(Locale.US, "%.2f", abs(value))
+
+/**
+ * Returns the string in the format "Month Date, Year"
+ */
+fun epochSecondsToDate(epochSeconds: Long): String {
+    val dateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSeconds), ZoneId.systemDefault())
+    val formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy")
+    return dateTime.format(formatter)
+}
 
 /**
  * Checks if a double value has two decimal points which are zero.
