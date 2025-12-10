@@ -12,6 +12,8 @@ class DefaultCategoryRepository @Inject constructor(
 
     override suspend fun delete(category: Category) = dao.delete(category)
 
+    override fun getCategory(id: Long): Flow<Category> = dao.getCategory(id)
+
     override fun getAllCategories(): Flow<List<Category>> = dao.getAllCategories()
 
     override fun getAllIncomeCategories(): Flow<List<Category>> = dao.getAllIncomeCategories()

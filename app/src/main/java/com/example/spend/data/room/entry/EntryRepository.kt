@@ -1,6 +1,5 @@
 package com.example.spend.data.room.entry
 
-import androidx.room.Query
 import com.example.spend.data.dto.CategoryAmount
 import com.example.spend.data.dto.EntryCategory
 import kotlinx.coroutines.flow.Flow
