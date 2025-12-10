@@ -89,7 +89,7 @@ fun CreateCategoryScreen(
     Scaffold(
         topBar = {
             AppTopBar(
-                title = "Create Category",
+                title = "Add Category",
                 canNavigateBack = true,
                 onBackClick = { navHostController.popBackStack() },
             )

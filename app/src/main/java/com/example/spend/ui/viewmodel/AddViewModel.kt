@@ -10,8 +10,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.sqlite.SQLiteException
 import com.example.spend.data.room.account.Account
+import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.account.DefaultAccountRepository
 import com.example.spend.data.room.category.Category
+import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.category.DefaultCategoryRepository
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
@@ -30,8 +32,8 @@ private const val TIMEOUT_MILLIS = 5_000L
 @HiltViewModel
 class AddViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
-    private val defaultAccountRepository: DefaultAccountRepository,
-    private val defaultCategoryRepository: DefaultCategoryRepository
+    private val defaultAccountRepository: AccountRepository,
+    private val defaultCategoryRepository: CategoryRepository
 ) : ViewModel() {
     var selectedIndex by mutableIntStateOf(1)
         private set

@@ -4,6 +4,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -62,7 +63,10 @@ fun NavigationManager(
             AddScreen(navHostController = navHostController)
         }
         composable<Routes.EntryScreen> {
-            EntryScreen(navHostController = navHostController)
+            EntryScreen(
+                navHostController = navHostController,
+                viewModel = hiltViewModel(viewModelStoreOwner = it)
+            )
         }
         composable<Routes.SettingsScreen> {
             SettingsScreen(navHostController = navHostController)
@@ -80,7 +84,12 @@ fun NavigationManager(
             AddBudgetScreen(navHostController = navHostController)
         }
         composable<Routes.EntryDetailScreen> {
-            EntryDetailScreen(navHostController = navHostController)
+            EntryDetailScreen(
+                navHostController = navHostController,
+                viewModel = if (navHostController.previousBackStackEntry != null) hiltViewModel(
+                    viewModelStoreOwner = navHostController.previousBackStackEntry!!
+                ) else hiltViewModel()
+            )
         }
     }
 }

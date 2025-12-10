@@ -133,6 +133,7 @@ fun AppTopBar(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.ExtraBold
             )
         },
         colors = TopAppBarColors(
@@ -221,11 +222,14 @@ fun TransactionCard(
     iconTint: Color,
     modifier: Modifier = Modifier,
     showDate: Boolean = false,
+    clickable: Boolean = false,
+    onClick: () -> Unit = {}
 ) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background
-        ), modifier = modifier
+        ),
+        modifier = modifier.clickable(enabled = clickable, onClick = onClick)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
             Box(
@@ -235,13 +239,15 @@ fun TransactionCard(
                     .background(color = entryCategory.color),
                 contentAlignment = Alignment.Center
             ) {
-                if (entryCategory.icon != null) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = icons[entryCategory.icon]!!),
-                        tint = iconTint,
-                        contentDescription = entryCategory.icon,
-                        modifier = Modifier.size(30.dp)
-                    )
+                entryCategory.icon?.let {
+                    icons[it]?.let {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = it),
+                            tint = iconTint,
+                            contentDescription = entryCategory.icon,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
                 }
             }
             Spacer(Modifier.width(12.dp))

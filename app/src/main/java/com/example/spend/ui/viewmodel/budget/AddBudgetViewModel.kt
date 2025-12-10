@@ -4,10 +4,13 @@ import android.database.sqlite.SQLiteConstraintException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spend.data.room.account.Account
+import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.account.DefaultAccountRepository
 import com.example.spend.data.room.budget.Budget
+import com.example.spend.data.room.budget.BudgetRepository
 import com.example.spend.data.room.budget.DefaultBudgetRepository
 import com.example.spend.data.room.category.Category
+import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.category.DefaultCategoryRepository
 import com.example.spend.getTodayStart
 import com.example.spend.validateCurrency
@@ -26,9 +29,9 @@ private const val TIMEOUT_MILLIS = 5_000L
 
 @HiltViewModel
 class AddBudgetViewModel @Inject constructor(
-    private val budgetRepository: DefaultBudgetRepository,
-    private val accountRepository: DefaultAccountRepository,
-    private val categoryRepository: DefaultCategoryRepository
+    private val budgetRepository: BudgetRepository,
+    private val accountRepository: AccountRepository,
+    private val categoryRepository: CategoryRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(value = Budget())
     val uiState = _uiState.asStateFlow()
