@@ -35,4 +35,5 @@
     <string name="add_budget">Add budget</string>
     <string name="menu">Menu</string>
     <string name="budget">Budget</string>
+    <string name="transaction_detail">Transaction Detail</string>
 </resources>
