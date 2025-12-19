@@ -29,8 +29,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,6 +53,7 @@ import com.example.spend.epochSecondsToDate
 import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppTopBar
+import com.example.spend.ui.screen.DialogBox
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.entry.EntryViewModel
 import kotlinx.coroutines.launch
@@ -61,6 +65,8 @@ fun EntryDetailScreen(
 ) {
     val selectedEntry by viewModel.selectedEntry.collectAsState()
 
+    var showDialogBox by rememberSaveable { mutableStateOf(value = false) }
+
     Scaffold(
         topBar = {
             AppTopBar(
@@ -71,7 +77,10 @@ fun EntryDetailScreen(
                     TextButton(onClick = {
 
                     }) {
-                        Text(text = "Edit", color = MaterialTheme.colorScheme.secondary)
+                        Text(
+                            text = stringResource(R.string.edit),
+                            color = MaterialTheme.colorScheme.secondary
+                        )
                     }
                 }
             )
@@ -102,14 +111,14 @@ fun EntryDetailScreen(
                 }
                 DetailRow(
                     icon = ImageVector.vectorResource(id = R.drawable.baseline_label),
-                    detail = "Category",
+                    detail = stringResource(R.string.category),
                     information = selectedEntry?.name ?: "",
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(height = 8.dp))
                 DetailRow(
                     icon = Icons.Default.DateRange,
-                    detail = "Date",
+                    detail = stringResource(R.string.date),
                     information = epochSecondsToDate(
                         epochSeconds = selectedEntry?.entry?.epochSeconds
                             ?: (System.currentTimeMillis() / 1000L)
@@ -119,15 +128,14 @@ fun EntryDetailScreen(
                 Spacer(modifier = Modifier.height(height = 8.dp))
                 DetailRow(
                     icon = ImageVector.vectorResource(id = R.drawable.note),
-                    detail = "Description",
+                    detail = stringResource(R.string.description),
                     information = selectedEntry?.entry?.description ?: "",
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.weight(weight = 1f))
                 OutlinedButton(
                     onClick = {
-                        navHostController.popBackStack()
-                        viewModel.deleteTransaction()
+                        showDialogBox = true
                     },
                     colors = ButtonDefaults.outlinedButtonColors(
                         containerColor = MaterialTheme.colorScheme.error,
@@ -135,9 +143,22 @@ fun EntryDetailScreen(
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Delete Transaction")
+                    Text(stringResource(R.string.delete_transaction))
                 }
             }
+        }
+        if (showDialogBox) {
+            DialogBox(
+                onDismissRequest = { showDialogBox = false },
+                onConfirmation = {
+                    navHostController.popBackStack()
+                    viewModel.deleteTransaction()
+                },
+                dialogTitle = stringResource(id = R.string.delete_transaction),
+                dialogText = "Are you sure you want to delete this transaction? This action cannot be undone.",
+                confirmText = { Text(text = "Delete", color = MaterialTheme.colorScheme.error) },
+                dismissText = { Text(text = "Cancel") },
+            )
         }
     }
 }

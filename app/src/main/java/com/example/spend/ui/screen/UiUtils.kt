@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -44,9 +45,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
@@ -55,7 +53,6 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -81,6 +78,7 @@ import com.example.spend.ui.accountIcons
 import com.example.spend.ui.icons
 import com.example.spend.ui.navigation.Routes
 import kotlinx.coroutines.launch
+import org.w3c.dom.Text
 import java.util.Calendar
 
 data class NavigationIcon(
@@ -278,7 +276,7 @@ fun TransactionCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            longToDate(entryCategory.entry.epochSeconds),
+                            text = longToDate(longDate = entryCategory.entry.epochSeconds),
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Thin
                         )
@@ -287,6 +285,36 @@ fun TransactionCard(
             }
         }
     }
+}
+
+@Composable
+fun DialogBox(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+    dialogTitle: String,
+    dialogText: String,
+    confirmText: @Composable (() -> Unit),
+    dismissText: @Composable (() -> Unit),
+) {
+    AlertDialog(
+        title = { Text(text = dialogTitle) },
+        text = { Text(text = dialogText) },
+        onDismissRequest = { onDismissRequest() },
+        confirmButton = {
+            TextButton(
+                onClick = { onConfirmation() }
+            ) {
+                confirmText()
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { onDismissRequest() }
+            ) {
+                dismissText()
+            }
+        }
+    )
 }
 
 @Composable

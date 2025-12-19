@@ -36,4 +36,11 @@
     <string name="menu">Menu</string>
     <string name="budget">Budget</string>
     <string name="transaction_detail">Transaction Detail</string>
+    <string name="confirm">Confirm</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="edit">Edit</string>
+    <string name="category">Category</string>
+    <string name="date">Date</string>
+    <string name="description">Description</string>
+    <string name="delete_transaction">Delete Transaction</string>
 </resources>
