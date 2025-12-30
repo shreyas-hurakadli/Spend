@@ -43,4 +43,6 @@
     <string name="date">Date</string>
     <string name="description">Description</string>
     <string name="delete_transaction">Delete Transaction</string>
+    <string name="dismiss_picker">Dismiss picker</string>
+    <string name="confirm_selection">Confirm selection</string>
 </resources>
