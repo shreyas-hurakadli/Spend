@@ -19,6 +19,15 @@ fun longToTime(longDate: Long): String {
 }
 
 /**
+ * Calculates the time relative to a day
+ */
+fun longToDayTime(time: Long): String {
+    val hours = time / 3600L
+    val minutes = (time % 3600L) / 60L
+    return String.format("%02d:%02d", hours, minutes)
+}
+
+/**
  * Returns the epoch second representing the start of the current day (midnight 0:00)
  * in the system default time zone and system time
  */
