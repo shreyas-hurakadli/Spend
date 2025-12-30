@@ -199,7 +199,8 @@ class AddViewModel @Inject constructor(
     private fun clear() {
         selectedIndex = 1;
         operation = null
-        time = System.currentTimeMillis() / 1000L
+        date = getTodayStart()
+        time = (System.currentTimeMillis() / 1000L) - getTodayStart()
         description = ""
         resetIds()
         resetOperator()
