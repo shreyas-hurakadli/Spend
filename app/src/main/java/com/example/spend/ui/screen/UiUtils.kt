@@ -48,6 +48,7 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -78,7 +79,6 @@ import com.example.spend.ui.accountIcons
 import com.example.spend.ui.icons
 import com.example.spend.ui.navigation.Routes
 import kotlinx.coroutines.launch
-import org.w3c.dom.Text
 import java.util.Calendar
 
 data class NavigationIcon(
@@ -551,27 +551,16 @@ fun DatePicker(
 fun TimePicker(
     onConfirm: (Long?) -> Unit,
     onDismiss: () -> Unit,
+    timePickerState: TimePickerState,
 ) {
-    val currentTime = Calendar.getInstance()
-
-    val timePickerState = rememberTimePickerState(
-        initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
-        initialMinute = currentTime.get(Calendar.MINUTE),
-        is24Hour = true,
-    )
-
-    Dialog(
-        onDismissRequest = onDismiss
-    ) {
+    Dialog(onDismissRequest = onDismiss) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            TimePicker(
-                state = timePickerState,
-            )
+            TimePicker(state = timePickerState)
             Button(onClick = onDismiss) {
-                Text("Dismiss picker")
+                Text(stringResource(R.string.dismiss_picker))
             }
             Button(
                 onClick = {
@@ -586,7 +575,7 @@ fun TimePicker(
                     onConfirm(calendar.timeInMillis)
                 }
             ) {
-                Text("Confirm selection")
+                Text(stringResource(R.string.confirm_selection))
             }
         }
     }
