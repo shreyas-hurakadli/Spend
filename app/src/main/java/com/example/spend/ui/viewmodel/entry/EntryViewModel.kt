@@ -1,10 +1,12 @@
 package com.example.spend.ui.viewmodel.entry
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.room.Transaction
 import androidx.sqlite.SQLiteException
 import com.example.spend.data.dto.EntryCategory
+import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.entry.EntryRepository
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -56,7 +59,16 @@ class EntryViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 withContext(context = Dispatchers.IO) {
-                    defaultRepository.delete(_selectedEntry.value!!.entry)
+                    val account = defaultAccountRepository.getAccountById(_selectedEntry.value!!.entry.accountId)
+                        .firstOrNull()
+                    val firstAccount = defaultAccountRepository.getFirstAccount().firstOrNull()
+                    if (account != null) {
+                        defaultAccountRepository.update(account.copy(balance = account.balance + (_selectedEntry.value!!.entry.amount * if (_selectedEntry.value!!.entry.isExpense) 1 else -1)))
+                        if (firstAccount != null) {
+                            defaultAccountRepository.update(account = firstAccount.copy(balance = firstAccount.balance + (_selectedEntry.value!!.entry.amount * if (_selectedEntry.value!!.entry.isExpense) 1 else -1)))
+                        }
+                        defaultRepository.delete(_selectedEntry.value!!.entry)
+                    }
                 }
                 _snackBarMessage.value = "Successful deletion"
                 _showSnackBar.value = true

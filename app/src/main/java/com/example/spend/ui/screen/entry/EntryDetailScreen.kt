@@ -134,9 +134,7 @@ fun EntryDetailScreen(
                 )
                 Spacer(modifier = Modifier.weight(weight = 1f))
                 OutlinedButton(
-                    onClick = {
-                        showDialogBox = true
-                    },
+                    onClick = { showDialogBox = true },
                     colors = ButtonDefaults.outlinedButtonColors(
                         containerColor = MaterialTheme.colorScheme.error,
                         contentColor = MaterialTheme.colorScheme.onError
@@ -151,8 +149,8 @@ fun EntryDetailScreen(
             DialogBox(
                 onDismissRequest = { showDialogBox = false },
                 onConfirmation = {
-                    navHostController.popBackStack()
                     viewModel.deleteTransaction()
+                    navHostController.popBackStack()
                 },
                 dialogTitle = stringResource(id = R.string.delete_transaction),
                 dialogText = "Are you sure you want to delete this transaction? This action cannot be undone.",
