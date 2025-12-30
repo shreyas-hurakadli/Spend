@@ -1,5 +1,6 @@
 package com.example.spend.ui.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -11,12 +12,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.sqlite.SQLiteException
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
-import com.example.spend.data.room.account.DefaultAccountRepository
 import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
-import com.example.spend.data.room.category.DefaultCategoryRepository
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
+import com.example.spend.getTodayStart
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,9 +47,12 @@ class AddViewModel @Inject constructor(
     var operator by mutableStateOf("")
         private set
 
-    private var operation: ((Double, Double) -> String)? by mutableStateOf(null)
+    private var operation: ((Double, Double) -> String)? by mutableStateOf(value = null)
 
-    var time by mutableLongStateOf(System.currentTimeMillis() / 1000L)
+    var date by mutableLongStateOf(value = getTodayStart())
+        private set
+
+    var time by mutableLongStateOf(value = (System.currentTimeMillis() / 1000L) - getTodayStart())
         private set
 
     var description by mutableStateOf("")
@@ -130,6 +133,10 @@ class AddViewModel @Inject constructor(
         time = value
     }
 
+    fun changeDate(value: Long) {
+        date = value
+    }
+
     fun changeSelectedIndex(index: Int) {
         selectedIndex = index
     }
@@ -207,7 +214,7 @@ class AddViewModel @Inject constructor(
                             entry = Entry(
                                 amount = amount.toDouble(),
                                 isExpense = (selectedIndex >= 1),
-                                epochSeconds = time,
+                                epochSeconds = time + date,
                                 categoryId = if (selectedIndex == 2) transferCategory.value.id else category.id,
                                 accountId = fromAccount.id,
                                 description = description

@@ -1,6 +1,5 @@
 package com.example.spend.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +34,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,6 +43,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,8 +64,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
+import com.example.spend.getTodayStart
 import com.example.spend.longToDate
-import com.example.spend.longToTime
+import com.example.spend.longToDayTime
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.AddViewModel
 import kotlinx.coroutines.launch
@@ -93,6 +95,7 @@ fun AddScreen(
     val selectedIndex = viewModel.selectedIndex
     val amount = viewModel.amount
     val time = viewModel.time
+    val date = viewModel.date
     val description = viewModel.description
     val operator = viewModel.operator
     val incomeCategories by viewModel.incomeCategories.collectAsState()
@@ -254,16 +257,16 @@ fun AddScreen(
                     )
                     Spacer(Modifier.height(8.dp))
                     DateTimePicker(
+                        date = date,
                         time = time,
                         onDateChange = {
-                            Log.d("AddScreen", it.toString())
-                            viewModel.changeTime(
+                            viewModel.changeDate(
                                 value = (it ?: System.currentTimeMillis()) / 1000L
                             )
                         },
                         onTimeChange = {
                             viewModel.changeTime(
-                                value = (it ?: System.currentTimeMillis()) / 1000L
+                                value = ((it ?: System.currentTimeMillis()) / 1000L) - getTodayStart()
                             )
                         }
                     )
@@ -436,9 +439,11 @@ private fun CalculatorButton(button: String, onClick: () -> Unit, modifier: Modi
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DateTimePicker(
     time: Long,
+    date: Long,
     onDateChange: (Long?) -> Unit,
     onTimeChange: (Long?) -> Unit
 ) {
@@ -459,7 +464,7 @@ private fun DateTimePicker(
                     onClick = { showDatePicker = true }
                 )
         ) {
-            Text(text = longToDate(longDate = time), style = MaterialTheme.typography.titleMedium)
+            Text(text = longToDate(longDate = date), style = MaterialTheme.typography.titleMedium)
         }
         VerticalDivider()
         Box(
@@ -471,7 +476,7 @@ private fun DateTimePicker(
                     onClick = { showTimePicker = true }
                 )
         ) {
-            Text(text = longToTime(longDate = time), style = MaterialTheme.typography.titleMedium)
+            Text(text = longToDayTime(time), style = MaterialTheme.typography.titleMedium)
         }
     }
 
@@ -481,8 +486,19 @@ private fun DateTimePicker(
             modifier = Modifier.fillMaxSize()
         ) {
             if (showTimePicker) {
+                val (initialHour, initialMinute) = rememberSaveable {
+                    val dayRelativeSeconds = (System.currentTimeMillis() / 1000) - getTodayStart()
+                    (dayRelativeSeconds / 3600) to (dayRelativeSeconds / 216000)
+                }
+                val timePickerState = rememberTimePickerState(
+                    initialHour = initialHour.toInt(),
+                    initialMinute = initialMinute.toInt(),
+                    is24Hour = true
+                )
+
                 Dialog(onDismissRequest = { showTimePicker = false }) {
                     TimePicker(
+                        timePickerState = timePickerState,
                         onConfirm = {
                             onTimeChange(it)
                             showTimePicker = false
