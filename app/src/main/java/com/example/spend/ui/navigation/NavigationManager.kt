@@ -92,7 +92,7 @@ fun NavigationManager(
                 ) else hiltViewModel()
             )
         }
-        composable<Routes.BudgetScreen> {
+        composable<Routes.BudgetDetailScreen> {
             BudgetDetailScreen(
                 navHostController = navHostController,
                 viewModel = if (navHostController.previousBackStackEntry != null) hiltViewModel(
