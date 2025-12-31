@@ -16,6 +16,7 @@ import com.example.spend.ui.screen.entry.EntryScreen
 import com.example.spend.ui.screen.HomeScreen
 import com.example.spend.ui.screen.SettingsScreen
 import com.example.spend.ui.screen.SummaryScreen
+import com.example.spend.ui.screen.budget.BudgetDetailScreen
 import com.example.spend.ui.screen.budget.BudgetScreen
 import com.example.spend.ui.screen.entry.EntryDetailScreen
 
@@ -85,6 +86,14 @@ fun NavigationManager(
         }
         composable<Routes.EntryDetailScreen> {
             EntryDetailScreen(
+                navHostController = navHostController,
+                viewModel = if (navHostController.previousBackStackEntry != null) hiltViewModel(
+                    viewModelStoreOwner = navHostController.previousBackStackEntry!!
+                ) else hiltViewModel()
+            )
+        }
+        composable<Routes.BudgetScreen> {
+            BudgetDetailScreen(
                 navHostController = navHostController,
                 viewModel = if (navHostController.previousBackStackEntry != null) hiltViewModel(
                     viewModelStoreOwner = navHostController.previousBackStackEntry!!
