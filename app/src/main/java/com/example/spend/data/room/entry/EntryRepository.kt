@@ -67,23 +67,23 @@ interface EntryRepository {
         accountId: Long,
         startTime: Long,
         endTime: Long
-    ): Flow<List<Entry>>
+    ): Flow<List<EntryCategory>>
 
     fun getEntriesByBudgetConstraintsUsingCategory(
         categoryId: Long,
         startTime: Long,
         endTime: Long
-    ): Flow<List<Entry>>
+    ): Flow<List<EntryCategory>>
 
     fun getEntriesByBudgetConstraintsUsingOnlyTime(
         startTime: Long,
         endTime: Long
-    ): Flow<List<Entry>>
+    ): Flow<List<EntryCategory>>
 
     fun getEntriesByBudgetConstraints(
         accountId: Long,
         categoryId: Long,
         startTime: Long,
         endTime: Long,
-    ): Flow<List<Entry>>
+    ): Flow<List<EntryCategory>>
 }

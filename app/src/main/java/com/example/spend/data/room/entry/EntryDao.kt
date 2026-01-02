@@ -113,31 +113,51 @@ interface EntryDao {
         endTime: Long,
     ): Flow<Double>
 
-    @Query("SELECT * FROM entries WHERE is_expense = 1 AND account_id = :accountId AND epochSeconds >= :startTime AND epochSeconds <= :endTime")
+    @Query(
+        "SELECT e.*, c.name, c.icon, c.color " +
+                "FROM entries e " +
+                "INNER JOIN categories c ON e.category_id = c.id " +
+                "WHERE e.is_expense = 1 AND e.account_id = :accountId AND e.epochSeconds >= :startTime AND e.epochSeconds <= :endTime"
+    )
     fun getEntriesByBudgetConstraintsUsingAccount(
         accountId: Long,
         startTime: Long,
         endTime: Long
-    ): Flow<List<Entry>>
+    ): Flow<List<EntryCategory>>
 
-    @Query("SELECT * FROM entries WHERE is_expense = 1 AND category_id = :categoryId AND epochSeconds >= :startTime AND epochSeconds <= :endTime")
+    @Query(
+        "SELECT e.*, c.name, c.icon, c.color " +
+                "FROM entries e " +
+                "INNER JOIN categories c ON e.category_id = c.id " +
+                "WHERE e.is_expense = 1 AND e.category_id = :categoryId AND e.epochSeconds >= :startTime AND e.epochSeconds <= :endTime"
+    )
     fun getEntriesByBudgetConstraintsUsingCategory(
         categoryId: Long,
         startTime: Long,
         endTime: Long
-    ): Flow<List<Entry>>
+    ): Flow<List<EntryCategory>>
 
-    @Query("SELECT * FROM entries WHERE is_expense = 1 AND epochSeconds >= :startTime AND epochSeconds <= :endTime")
+    @Query(
+        "SELECT e.*, c.name, c.icon, c.color " +
+                "FROM entries e " +
+                "INNER JOIN categories c ON e.category_id = c.id " +
+                "WHERE e.is_expense = 1 AND e.epochSeconds >= :startTime AND e.epochSeconds <= :endTime"
+    )
     fun getEntriesByBudgetConstraintsUsingOnlyTime(
         startTime: Long,
         endTime: Long
-    ): Flow<List<Entry>>
+    ): Flow<List<EntryCategory>>
 
-    @Query("SELECT * FROM entries WHERE is_expense = 1 AND account_id = :accountId AND category_id = :categoryId AND epochSeconds >= :startTime AND epochSeconds <= :endTime")
+    @Query(
+        "SELECT e.*, c.name, c.icon, c.color " +
+                "FROM entries e " +
+                "INNER JOIN categories c ON e.category_id = c.id " +
+                "WHERE e.is_expense = 1 AND e.account_id = :accountId AND e.category_id = :categoryId AND e.epochSeconds >= :startTime AND e.epochSeconds <= :endTime"
+    )
     fun getEntriesByBudgetConstraints(
         accountId: Long,
         categoryId: Long,
         startTime: Long,
-        endTime: Long,
-    ): Flow<List<Entry>>
+        endTime: Long
+    ): Flow<List<EntryCategory>>
 }

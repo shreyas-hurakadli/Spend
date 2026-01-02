@@ -1,8 +1,8 @@
 package com.example.spend.data.room.entry
 
+import android.util.Log
 import com.example.spend.data.dto.CategoryAmount
 import com.example.spend.data.dto.EntryCategory
-import com.example.spend.ui.accountIcons
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -90,7 +90,7 @@ class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : En
         accountId: Long,
         startTime: Long,
         endTime: Long
-    ): Flow<List<Entry>> = entryDao.getEntriesByBudgetConstraintsUsingAccount(
+    ): Flow<List<EntryCategory>> = entryDao.getEntriesByBudgetConstraintsUsingAccount(
         accountId = accountId,
         startTime = startTime,
         endTime = endTime
@@ -100,7 +100,7 @@ class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : En
         categoryId: Long,
         startTime: Long,
         endTime: Long
-    ): Flow<List<Entry>> = entryDao.getEntriesByBudgetConstraintsUsingCategory(
+    ): Flow<List<EntryCategory>> = entryDao.getEntriesByBudgetConstraintsUsingCategory(
         categoryId = categoryId,
         startTime = startTime,
         endTime = endTime
@@ -109,17 +109,19 @@ class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : En
     override fun getEntriesByBudgetConstraintsUsingOnlyTime(
         startTime: Long,
         endTime: Long
-    ): Flow<List<Entry>> = entryDao.getEntriesByBudgetConstraintsUsingOnlyTime(
-        startTime = startTime,
-        endTime = endTime
-    )
+    ): Flow<List<EntryCategory>> {
+        return entryDao.getEntriesByBudgetConstraintsUsingOnlyTime(
+            startTime = startTime,
+            endTime = endTime
+        )
+    }
 
     override fun getEntriesByBudgetConstraints(
         accountId: Long,
         categoryId: Long,
         startTime: Long,
         endTime: Long
-    ): Flow<List<Entry>> = entryDao.getEntriesByBudgetConstraints(
+    ): Flow<List<EntryCategory>> = entryDao.getEntriesByBudgetConstraints(
         accountId = accountId,
         categoryId = categoryId,
         startTime = startTime,
