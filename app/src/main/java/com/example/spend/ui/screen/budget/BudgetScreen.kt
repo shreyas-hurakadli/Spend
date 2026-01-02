@@ -1,5 +1,6 @@
 package com.example.spend.ui.screen.budget
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -72,6 +73,8 @@ fun BudgetScreen(
     val thereAreBudgets by viewModel.thereAreBudgets.collectAsState()
     val budgets by viewModel.budgets.collectAsState()
 
+    Log.d("BudgetScreen", budgets.toString())
+
     AppNavigationDrawer(
         currentScreenIndex = RouteNumbers.BUDGET_PAGE.screenNumber,
         navHostController = navHostController,
@@ -117,16 +120,19 @@ fun BudgetScreen(
                     verticalArrangement = if (thereAreBudgets) Arrangement.Top
                     else Arrangement.Center,
                     modifier = Modifier
-                        .padding(8.dp)
+                        .padding(all = 8.dp)
                         .fillMaxSize()
                 ) {
                     if (thereAreBudgets) {
-                        LazyColumn() {
+                        LazyColumn {
                             items(items = budgets) {
                                 BudgetView(
                                     budget = it.first,
                                     expense = it.second,
-                                    onClick = {},
+                                    onClick = {
+                                        viewModel.selectBudget(budgetPair = it)
+                                        navHostController.navigate(route = Routes.BudgetDetailScreen)
+                                    },
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp)
                                         .fillMaxWidth()

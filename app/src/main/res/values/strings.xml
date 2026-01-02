@@ -45,4 +45,5 @@
     <string name="delete_transaction">Delete Transaction</string>
     <string name="dismiss_picker">Dismiss picker</string>
     <string name="confirm_selection">Confirm selection</string>
+    <string name="budget_detail">Budget Detail</string>
 </resources>

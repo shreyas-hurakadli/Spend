@@ -218,7 +218,7 @@ class AddViewModel @Inject constructor(
                                 epochSeconds = time + date,
                                 categoryId = if (selectedIndex == 2) transferCategory.value.id else category.id,
                                 accountId = fromAccount.id,
-                                description = description
+                                description = description.trim()
                             )
                         )
                     }

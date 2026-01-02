@@ -103,7 +103,7 @@ fun EntryDetailScreen(
                 ) {
                     Text(
                         text = (getLocalCurrencySymbol()
-                            ?: "$") + " " + selectedEntry?.entry?.amount.toString(),
+                            ?: "$") + "%.2f".format(selectedEntry?.entry?.amount),
                         style = MaterialTheme.typography.displayMedium,
                         color = MaterialTheme.colorScheme.secondary,
                         fontWeight = FontWeight.Bold
