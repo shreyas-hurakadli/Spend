@@ -88,6 +88,9 @@ dependencies {
     // YCharts
     implementation("co.yml:ycharts:2.1.0")
 
+    // Work Manager
+    implementation(libs.androidx.work.runtime.ktx)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
