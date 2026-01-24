@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.example.spend.di.annotations.BalanceRepository
 import com.example.spend.di.annotations.LoginRepository
+import com.example.spend.di.annotations.PermissionRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,6 +22,7 @@ import javax.inject.Singleton
 object DataStoreModule {
     private const val BALANCE = "balance"
     private const val FIRST_LOGIN = "first_login"
+    private const val POST_NOTIFICATIONS = "post_notifications"
 
     @Provides
     @Singleton
@@ -45,6 +47,19 @@ object DataStoreModule {
             ),
             produceFile = {
                 context.preferencesDataStoreFile(FIRST_LOGIN)
+            }
+        )
+
+    @Provides
+    @Singleton
+    @PermissionRepository
+    fun getPermissionDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler(
+                produceNewData = { emptyPreferences() }
+            ),
+            produceFile = {
+                context.preferencesDataStoreFile(POST_NOTIFICATIONS)
             }
         )
 }

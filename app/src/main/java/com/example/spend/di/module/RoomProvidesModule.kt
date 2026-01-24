@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.work.WorkManager
 import com.example.spend.data.room.RoomDatabaseClass
 import com.example.spend.data.room.account.AccountDao
 import com.example.spend.data.room.budget.BudgetDao
@@ -70,6 +71,7 @@ object RoomProvidesModule {
             db.execSQL("INSERT INTO categories (name, is_expense, color, icon) VALUES ('Transportation', 1, -7357297, 'bus')");
         }
     }
+
     @Provides
     @Singleton
     fun provideDatabaseInstance(@ApplicationContext context: Context): RoomDatabaseClass =
@@ -101,4 +103,9 @@ object RoomProvidesModule {
     @Singleton
     fun provideCategoryDao(roomDatabaseClass: RoomDatabaseClass): CategoryDao =
         roomDatabaseClass.categoryDao()
+
+    @Provides
+    @Singleton
+    fun provideWorkManager(@ApplicationContext context: Context): WorkManager =
+        WorkManager.getInstance(context)
 }

@@ -8,6 +8,8 @@ import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.category.DefaultCategoryRepository
 import com.example.spend.data.room.entry.DefaultRepository
 import com.example.spend.data.room.entry.EntryRepository
+import com.example.spend.data.workmanager.budget.BudgetNotificationRepository
+import com.example.spend.data.workmanager.budget.DefaultBudgetNotificationRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -27,4 +29,7 @@ abstract class RoomBindModule {
 
     @Binds
     abstract fun bindBudgetRepository(defaultBudgetRepository: DefaultBudgetRepository): BudgetRepository
+
+    @Binds
+    abstract fun bindBudgetNotificationRepository(defaultBudgetNotificationRepository: DefaultBudgetNotificationRepository): BudgetNotificationRepository
 }

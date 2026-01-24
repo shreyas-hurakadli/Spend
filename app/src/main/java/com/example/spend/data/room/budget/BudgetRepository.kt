@@ -12,4 +12,6 @@ interface BudgetRepository {
     fun thereAreBudgets(): Flow<Boolean>
 
     fun getAllBudgets(): Flow<List<Budget>>
+
+    fun getAllActiveBudgets(): Flow<List<Budget>>
 }

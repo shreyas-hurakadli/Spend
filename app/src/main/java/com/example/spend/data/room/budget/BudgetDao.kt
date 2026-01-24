@@ -23,4 +23,7 @@ interface BudgetDao {
 
     @Query("SELECT * FROM budgets ORDER BY id DESC")
     fun getAllBudgets(): Flow<List<Budget>>
+
+    @Query("SELECT * FROM budgets WHERE :time BETWEEN start_time_stamp AND start_time_stamp + period")
+    fun getBudgetsBetweenTime(time: Long): Flow<List<Budget>>
 }

@@ -1,6 +1,5 @@
 package com.example.spend.ui.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -16,6 +15,7 @@ import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
+import com.example.spend.data.workmanager.budget.BudgetNotificationRepository
 import com.example.spend.getTodayStart
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +33,8 @@ private const val TIMEOUT_MILLIS = 5_000L
 class AddViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
     private val defaultAccountRepository: AccountRepository,
-    private val defaultCategoryRepository: CategoryRepository
+    private val defaultCategoryRepository: CategoryRepository,
+    private val defaultBudgetNotificationRepository: BudgetNotificationRepository
 ) : ViewModel() {
     var selectedIndex by mutableIntStateOf(1)
         private set
@@ -255,6 +256,9 @@ class AddViewModel @Inject constructor(
                                     balance = toAccount.balance + amount.toDouble()
                                 )
                             )
+                        }
+                        if (selectedIndex >= 1) {
+                            defaultBudgetNotificationRepository.checkBudgetStatus()
                         }
                         clear()
                         _snackBarMessage.value = "Successful insertion"
