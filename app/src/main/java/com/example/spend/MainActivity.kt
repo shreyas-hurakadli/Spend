@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.ui.navigation.NavigationManager
-import com.example.spend.ui.permission.RequestPostNotificationPermission
+import com.example.spend.ui.permission.RequestPostNotificationsPermission
 import com.example.spend.ui.theme.SpendTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SpendTheme {
-                RequestPostNotificationPermission()
+                RequestPostNotificationsPermission()
                 NavigationManager(
                     navHostController = rememberNavController(),
                 )

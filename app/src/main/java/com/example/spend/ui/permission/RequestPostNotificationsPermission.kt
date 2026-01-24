@@ -11,7 +11,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.spend.ui.viewmodel.PermissionViewModel
 
 @Composable
-fun RequestPostNotificationPermission(
+fun RequestPostNotificationsPermission(
     firstRequest: Boolean = true,
     viewModel: PermissionViewModel = hiltViewModel()
 ) {
