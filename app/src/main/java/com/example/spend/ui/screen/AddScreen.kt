@@ -1,5 +1,6 @@
 package com.example.spend.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -70,6 +71,8 @@ import com.example.spend.longToDayTime
 import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.AddViewModel
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneId
 
 private val options = listOf("Income", "Expense", "Transfer")
 
@@ -260,8 +263,14 @@ fun AddScreen(
                         date = date,
                         time = time,
                         onDateChange = {
+                            val selectedDate = Instant.ofEpochMilli(it ?: System.currentTimeMillis())
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                                .atStartOfDay(ZoneId.systemDefault())
+                                .toEpochSecond()
+
                             viewModel.changeDate(
-                                value = (it ?: System.currentTimeMillis()) / 1000L
+                                value = selectedDate
                             )
                         },
                         onTimeChange = {
