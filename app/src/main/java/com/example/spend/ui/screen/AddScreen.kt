@@ -1,28 +1,27 @@
 package com.example.spend.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -49,6 +48,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -122,6 +123,22 @@ fun AddScreen(
     }
 
     Scaffold(
+        topBar = {
+            AppTopBar(
+                title = stringResource(R.string.add_entry),
+                canNavigateBack = true,
+                onBackClick = { navHostController.popBackStack() },
+                actions = {
+                    IconButton(onClick = { viewModel.save() }) {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = stringResource(R.string.save),
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+            )
+        },
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         BoxWithConstraints(
@@ -132,52 +149,8 @@ fun AddScreen(
                 .fillMaxSize()
         ) {
             val maxWidth = maxWidth
+            val maxHeight = maxHeight
             Column {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp)
-                        .height(IntrinsicSize.Min)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable(
-                            enabled = true,
-                            onClick = { navHostController.popBackStack() }
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = stringResource(R.string.cancel)
-                        )
-                        Text(
-                            text = stringResource(R.string.cancel),
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable(
-                            enabled = true,
-                            onClick = { viewModel.save() }
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = stringResource(R.string.save),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                        Text(
-                            text = stringResource(R.string.save),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
                 Column(
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -250,6 +223,7 @@ fun AddScreen(
                             else viewModel.changeAmount(it)
                         },
                         maxWidth = maxWidth,
+                        maxHeight = maxHeight,
                         operation = operator,
                         updateOperator = {
                             if (it == "") viewModel.resetOperator()
@@ -263,11 +237,12 @@ fun AddScreen(
                         date = date,
                         time = time,
                         onDateChange = {
-                            val selectedDate = Instant.ofEpochMilli(it ?: System.currentTimeMillis())
-                                .atZone(ZoneId.systemDefault())
-                                .toLocalDate()
-                                .atStartOfDay(ZoneId.systemDefault())
-                                .toEpochSecond()
+                            val selectedDate =
+                                Instant.ofEpochMilli(it ?: System.currentTimeMillis())
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate()
+                                    .atStartOfDay(ZoneId.systemDefault())
+                                    .toEpochSecond()
 
                             viewModel.changeDate(
                                 value = selectedDate
@@ -275,7 +250,8 @@ fun AddScreen(
                         },
                         onTimeChange = {
                             viewModel.changeTime(
-                                value = ((it ?: System.currentTimeMillis()) / 1000L) - getTodayStart()
+                                value = ((it
+                                    ?: System.currentTimeMillis()) / 1000L) - getTodayStart()
                             )
                         }
                     )
@@ -316,7 +292,11 @@ private fun CalculatorUI(
     addToAmount: (String) -> Unit,
     operation: String,
     maxWidth: Dp,
+    maxHeight: Dp
 ) {
+    var textFieldHeight by remember { mutableStateOf(0.dp) }
+    val density = LocalDensity.current
+
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -361,27 +341,40 @@ private fun CalculatorUI(
             },
             maxLines = 1,
             readOnly = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned { coordinates ->
+                    textFieldHeight = with(receiver = density) {
+                        coordinates.size.height.toDp()
+                    }
+                }
         )
+        val buttonWidth = (maxWidth - 16.dp) / 4
+        val availableHeightForButtons = maxHeight * 0.65f - textFieldHeight - 56.dp
+        val totalSpacerHeight = 16.dp
+        val buttonHeight = (availableHeightForButtons - totalSpacerHeight) / 4
+        val buttonAspectRatio = (buttonWidth / buttonHeight).coerceIn(0.8f, 1.5f)
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            buttons.forEach { rowButtons ->
-                if (rowButtons == buttons.first()) {
-                    Spacer(Modifier.height(4.dp))
+                buttons.forEach { rowButtons ->
+                    if (rowButtons == buttons.first()) {
+                        Spacer(Modifier.height(4.dp))
+                    }
+                    CalculatorButtonRow(
+                        buttons = rowButtons,
+                        maxWidth = maxWidth,
+                        buttonAspectRatio = buttonAspectRatio,
+                        updateOperator = updateOperator,
+                        calculateAmount = calculateAmount,
+                        addToAmount = addToAmount
+                    )
+                    if (rowButtons != buttons.last()) {
+                        Spacer(Modifier.height(4.dp))
+                    }
                 }
-                CalculatorButtonRow(
-                    buttons = rowButtons,
-                    maxWidth = maxWidth,
-                    updateOperator = updateOperator,
-                    calculateAmount = calculateAmount,
-                    addToAmount = addToAmount
-                )
-                if (rowButtons != buttons.last()) {
-                    Spacer(Modifier.height(4.dp))
-                }
-            }
         }
     }
 }
@@ -392,7 +385,8 @@ private fun CalculatorButtonRow(
     maxWidth: Dp,
     updateOperator: (String) -> Unit,
     calculateAmount: () -> Unit,
-    addToAmount: (String) -> Unit
+    addToAmount: (String) -> Unit,
+    buttonAspectRatio: Float
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -404,7 +398,7 @@ private fun CalculatorButtonRow(
                 button = button,
                 modifier = Modifier
                     .width((maxWidth - 16.dp) / 4)
-                    .aspectRatio(1.1f),
+                    .aspectRatio(buttonAspectRatio),
                 onClick = {
                     when (button) {
                         "-", "+", "x", "÷" -> updateOperator(button)
@@ -459,33 +453,39 @@ private fun DateTimePicker(
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
 
-    Row(
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .weight(1f)
-                .clickable(
-                    enabled = true,
-                    onClick = { showDatePicker = true }
-                )
+    Column {
+        HorizontalDivider()
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = longToDate(longDate = date), style = MaterialTheme.typography.titleMedium)
-        }
-        VerticalDivider()
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .weight(1f)
-                .clickable(
-                    enabled = true,
-                    onClick = { showTimePicker = true }
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable(
+                        enabled = true,
+                        onClick = { showDatePicker = true }
+                    )
+            ) {
+                Text(
+                    text = longToDate(longDate = date),
+                    style = MaterialTheme.typography.titleMedium
                 )
-        ) {
-            Text(text = longToDayTime(time), style = MaterialTheme.typography.titleMedium)
+            }
+            VerticalDivider()
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable(
+                        enabled = true,
+                        onClick = { showTimePicker = true }
+                    )
+            ) {
+                Text(text = longToDayTime(time), style = MaterialTheme.typography.titleMedium)
+            }
         }
     }
 
