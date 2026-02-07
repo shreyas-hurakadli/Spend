@@ -179,6 +179,7 @@ fun AddBudgetScreen(
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text
                     ),
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
@@ -211,7 +212,8 @@ fun AddBudgetScreen(
                                 contentDescription = null
                             )
                         }
-                    }
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 )
                 if (selectedPeriod == Period.ONE_TIME) {
                     Spacer(Modifier.height(8.dp))
