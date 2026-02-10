@@ -1,12 +1,24 @@
 package com.example.spend.ui.screen.entry
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -17,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -29,6 +42,7 @@ import com.example.spend.R
 import com.example.spend.longToDate
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppTopBar
+import com.example.spend.ui.screen.NoTransactions
 import com.example.spend.ui.screen.TransactionCard
 import com.example.spend.ui.viewmodel.entry.EntryViewModel
 import kotlinx.coroutines.launch
@@ -39,6 +53,8 @@ fun EntryScreen(
     viewModel: EntryViewModel = hiltViewModel(),
 ) {
     val list by viewModel.transactions.collectAsState()
+
+    val thereAreEntries by viewModel.thereAreEntries.collectAsState()
 
     val showSnackBar by viewModel.showSnackBar.collectAsState()
     val snackBarMessage by viewModel.snackBarMessage.collectAsState()
@@ -63,37 +79,80 @@ fun EntryScreen(
                 onBackClick = { navHostController.popBackStack() },
             )
         },
+        floatingActionButton = {
+            if (thereAreEntries) {
+                FloatingActionButton(
+                    onClick = { navHostController.navigate(Routes.AddScreen) },
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        contentDescription = stringResource(id = R.string.add_entry)
+                    )
+                }
+            }
+        },
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
-        var date = ""
-        LazyColumn(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding(8.dp)
-        ) {
-            items(items = list) { entryCategory ->
-                Column {
-                    if (date != longToDate(entryCategory.entry.epochSeconds)) {
-                        date = longToDate(entryCategory.entry.epochSeconds)
-                        Text(
-                            text = longToDate(entryCategory.entry.epochSeconds),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Color.Black,
-                            fontWeight = FontWeight.ExtraBold,
-                            textAlign = TextAlign.Start,
-                        )
-                        Spacer(Modifier.padding(top = 8.dp))
-                    }
-                    TransactionCard(
-                        entryCategory = entryCategory,
-                        iconTint = Color.Black,
-                        clickable = true,
-                        onClick = {
-                            viewModel.selectEntry(entryCategory)
-                            navHostController.navigate(Routes.EntryDetailScreen)
+        if (list.isNotEmpty()) {
+            var date = ""
+            LazyColumn(
+                modifier = Modifier
+                    .padding(paddingValues = innerPadding)
+                    .fillMaxSize()
+                    .padding(all = 8.dp)
+            ) {
+                items(items = list) { entryCategory ->
+                    Column {
+                        if (date != longToDate(entryCategory.entry.epochSeconds)) {
+                            date = longToDate(entryCategory.entry.epochSeconds)
+                            Text(
+                                text = longToDate(entryCategory.entry.epochSeconds),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Color.Black,
+                                fontWeight = FontWeight.ExtraBold,
+                                textAlign = TextAlign.Start,
+                            )
+                            Spacer(Modifier.padding(top = 8.dp))
                         }
-                    )
+                        TransactionCard(
+                            entryCategory = entryCategory,
+                            iconTint = Color.Black,
+                            clickable = true,
+                            onClick = {
+                                viewModel.selectEntry(entryCategory)
+                                navHostController.navigate(Routes.EntryDetailScreen)
+                            }
+                        )
+                    }
+                }
+            }
+        } else {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .padding(paddingValues = innerPadding)
+                    .fillMaxSize()
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(all = 8.dp)
+                ) {
+                    Spacer(Modifier.weight(0.55f))
+                    NoTransactions()
+                    Spacer(Modifier.weight(1f))
+                    OutlinedButton(
+                        onClick = { navHostController.navigate(Routes.AddScreen) },
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Add")
+                    }
                 }
             }
         }

@@ -28,6 +28,13 @@ class EntryViewModel @Inject constructor(
     private val _selectedEntry: MutableStateFlow<EntryCategory?> = MutableStateFlow(value = null)
     val selectedEntry = _selectedEntry.asStateFlow()
 
+    val thereAreEntries = defaultRepository.areEntriesPresent()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = durationMillis),
+            initialValue = false
+        )
+
     private val _showSnackBar = MutableStateFlow(value = false)
     val showSnackBar = _showSnackBar.asStateFlow()
 

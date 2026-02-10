@@ -211,31 +211,7 @@ fun HomeScreen(
                                         )
                                     }
                                 } else {
-                                    Box(
-                                        contentAlignment = Alignment.Center,
-                                        modifier = Modifier.padding(all = 32.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = ImageVector.vectorResource(R.drawable.no_transactions),
-                                            tint = Color.Gray,
-                                            contentDescription = null,
-                                            modifier = Modifier
-                                                .size(size = 150.dp)
-                                        )
-                                    }
-                                    Spacer(Modifier.height(height = 16.dp))
-                                    Text(
-                                        text = stringResource(R.string.no_transactions),
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Text(
-                                        text = stringResource(R.string.no_transactions_home_extended_message),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        textAlign = TextAlign.Center,
-                                        fontWeight = FontWeight.Light
-                                    )
-                                    Spacer(Modifier.height(height = 16.dp))
+                                    NoTransactions()
                                 }
                             }
                         }

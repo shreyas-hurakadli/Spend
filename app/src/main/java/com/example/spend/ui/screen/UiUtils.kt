@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -95,6 +96,12 @@ private val navigationIcon = listOf(
         contentDescription = "Home"
     ),
     NavigationIcon(
+        baseLineIcon = R.drawable.baseline_entries,
+        outlinedIcon = R.drawable.outline_entries,
+        route = Routes.EntryScreen,
+        contentDescription = "Transactions"
+    ),
+    NavigationIcon(
         baseLineIcon = R.drawable.baseline_wallet,
         outlinedIcon = R.drawable.baseline_wallet,
         route = Routes.BudgetScreen,
@@ -113,6 +120,35 @@ private val navigationIcon = listOf(
         contentDescription = "Settings"
     ),
 )
+
+@Composable
+fun NoTransactions(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.padding(all = 32.dp)
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.no_transactions),
+            tint = Color.Gray,
+            contentDescription = null,
+            modifier = Modifier
+                .size(size = 150.dp)
+        )
+    }
+    Spacer(Modifier.height(height = 16.dp))
+    Text(
+        text = stringResource(R.string.no_transactions),
+        style = MaterialTheme.typography.bodyLarge,
+        fontWeight = FontWeight.Bold
+    )
+    Text(
+        text = stringResource(R.string.no_transactions_home_extended_message),
+        style = MaterialTheme.typography.bodyMedium,
+        textAlign = TextAlign.Center,
+        fontWeight = FontWeight.Light
+    )
+    Spacer(Modifier.height(height = 16.dp))
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

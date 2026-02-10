@@ -194,7 +194,7 @@ class AddViewModel @Inject constructor(
     }
 
     private fun validateInput(): Boolean {
-        if (amount.toDouble() <= 0.00) return false
+        if (amount == "Infinity" || amount.toDouble() <= 0.00) return false
         if (fromAccount == toAccount) return false
         if (selectedIndex != 2 && category == Category()) return false
         return true
@@ -276,7 +276,7 @@ class AddViewModel @Inject constructor(
                 }
             }
         } else {
-            _snackBarMessage.value = "Error: Specify all the fields"
+            _snackBarMessage.value = "Error: Specify all the fields correctly"
             _showSnackBar.value = true
         }
     }
