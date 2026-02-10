@@ -21,17 +21,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -49,6 +45,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -112,15 +109,10 @@ fun HomeScreen(
                 }
             } else {
                 BoxWithConstraints(
-                    modifier =
-                        if (transactions.isNotEmpty())
-                            Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding)
-                                .verticalScroll(rememberScrollState())
-                        else Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
                 ) {
                     val maxWidth = maxWidth
                     Column(
@@ -219,7 +211,30 @@ fun HomeScreen(
                                         )
                                     }
                                 } else {
-                                    Text(text = stringResource(R.string.no_transactions))
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier.padding(all = 32.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(R.drawable.no_transactions),
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .size(size = 150.dp)
+                                        )
+                                    }
+                                    Spacer(Modifier.height(height = 16.dp))
+                                    Text(
+                                        text = stringResource(R.string.no_transactions),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.no_transactions_home_extended_message),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Light
+                                    )
+                                    Spacer(Modifier.height(height = 16.dp))
                                 }
                             }
                         }
