@@ -104,8 +104,8 @@ private val navigationIcon = listOf(
     NavigationIcon(
         baseLineIcon = R.drawable.baseline_wallet,
         outlinedIcon = R.drawable.baseline_wallet,
-        route = Routes.AddAccountScreen,
-        contentDescription = "Account"
+        route = Routes.AccountScreen,
+        contentDescription = "Accounts"
     ),
     NavigationIcon(
         baseLineIcon = R.drawable.coin,

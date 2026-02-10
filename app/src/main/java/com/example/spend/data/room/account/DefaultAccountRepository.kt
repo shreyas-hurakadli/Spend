@@ -11,6 +11,8 @@ class DefaultAccountRepository @Inject constructor(private val dao: AccountDao) 
 
     override suspend fun delete(account: Account) = dao.delete(account)
 
+    override fun thereAreAccounts(): Flow<Boolean> = dao.thereAreAccounts()
+
     override fun getAccountById(id: Long) = dao.getAccountById(id)
 
     override fun getFirstAccount() = dao.getFirstAccount()

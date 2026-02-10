@@ -1,4 +1,4 @@
-package com.example.spend.ui.viewmodel
+package com.example.spend.ui.viewmodel.account
 
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel

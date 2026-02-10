@@ -1,4 +1,4 @@
-package com.example.spend.ui.screen
+package com.example.spend.ui.screen.account
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,7 +37,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -61,10 +60,10 @@ import com.example.spend.R
 import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.accountIcons
 import com.example.spend.ui.pastelColors
-import com.example.spend.ui.viewmodel.AddAccountViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.example.spend.ui.screen.AppTopBar
+import com.example.spend.ui.viewmodel.account.AddAccountViewModel
 import kotlinx.coroutines.launch
+import kotlin.collections.get
 
 @Composable
 fun AddAccountScreen(

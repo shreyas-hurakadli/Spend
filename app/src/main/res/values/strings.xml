@@ -55,4 +55,7 @@
     <string name="no_transactions_home_extended_message">A fresh start for your finances. Start tracking to see your activity here</string>
     <string name="budget_message">Create A Budget</string>
     <string name="budget_extended_message">Budgets help you track your spending and achieve your financial goals. Get started now to take control of your finances</string>
+    <string name="account">Account</string>
+    <string name="no_account_message">No Accounts</string>
+    <string name="no_account_extended_message">Accounts help you centralize your money management and monitor all your balances. Get started now to stay on top of your finances</string>
 </resources>

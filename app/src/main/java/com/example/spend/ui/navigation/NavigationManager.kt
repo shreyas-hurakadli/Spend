@@ -8,7 +8,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.spend.ui.screen.AddAccountScreen
+import com.example.spend.ui.screen.account.AddAccountScreen
 import com.example.spend.ui.screen.budget.AddBudgetScreen
 import com.example.spend.ui.screen.AddScreen
 import com.example.spend.ui.screen.CreateCategoryScreen
@@ -16,6 +16,7 @@ import com.example.spend.ui.screen.entry.EntryScreen
 import com.example.spend.ui.screen.HomeScreen
 import com.example.spend.ui.screen.SettingsScreen
 import com.example.spend.ui.screen.SummaryScreen
+import com.example.spend.ui.screen.account.AccountScreen
 import com.example.spend.ui.screen.budget.BudgetDetailScreen
 import com.example.spend.ui.screen.budget.BudgetScreen
 import com.example.spend.ui.screen.entry.EntryDetailScreen
@@ -71,6 +72,9 @@ fun NavigationManager(
         }
         composable<Routes.SettingsScreen> {
             SettingsScreen(navHostController = navHostController)
+        }
+        composable<Routes.AccountScreen> {
+            AccountScreen(navHostController = navHostController)
         }
         composable<Routes.AddAccountScreen> {
             AddAccountScreen(navHostController = navHostController)

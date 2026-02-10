@@ -19,6 +19,9 @@ sealed class Routes {
     data object SettingsScreen: Routes()
 
     @Serializable
+    data object AccountScreen: Routes()
+
+    @Serializable
     data object AddAccountScreen: Routes()
 
     @Serializable
