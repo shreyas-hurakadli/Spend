@@ -142,7 +142,7 @@ fun BudgetScreen(
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.account_wallet),
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = Color.Gray,
                                 contentDescription = null,
                                 modifier = Modifier.size(200.dp)
                             )

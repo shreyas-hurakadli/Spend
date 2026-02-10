@@ -217,6 +217,7 @@ fun HomeScreen(
                                     ) {
                                         Icon(
                                             imageVector = ImageVector.vectorResource(R.drawable.no_transactions),
+                                            tint = Color.Gray,
                                             contentDescription = null,
                                             modifier = Modifier
                                                 .size(size = 150.dp)
