@@ -104,8 +104,14 @@ private val navigationIcon = listOf(
     NavigationIcon(
         baseLineIcon = R.drawable.baseline_wallet,
         outlinedIcon = R.drawable.baseline_wallet,
+        route = Routes.AddAccountScreen,
+        contentDescription = "Account"
+    ),
+    NavigationIcon(
+        baseLineIcon = R.drawable.coin,
+        outlinedIcon = R.drawable.coin,
         route = Routes.BudgetScreen,
-        contentDescription = "Budget"
+        contentDescription = "Budgets"
     ),
     NavigationIcon(
         baseLineIcon = R.drawable.baseline_summarize,
@@ -232,9 +238,10 @@ fun AppNavigationDrawer(
                             onClick = { navHostController.navigate(item.route) },
                             icon = {
                                 Icon(
-                                    imageVector = ImageVector.vectorResource(item.baseLineIcon),
+                                    imageVector = ImageVector.vectorResource(id = item.baseLineIcon),
                                     tint = MaterialTheme.colorScheme.onBackground,
-                                    contentDescription = item.contentDescription
+                                    contentDescription = item.contentDescription,
+                                    modifier = Modifier.size(size = 24.dp)
                                 )
                             },
                         )
