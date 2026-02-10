@@ -4,18 +4,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yml.charts.ui.piechart.models.PieChartData
-import com.example.spend.data.datastore.BalanceRepository
 import com.example.spend.data.room.entry.EntryRepository
 import com.example.spend.getMonthStart
 import com.example.spend.getSunday
 import com.example.spend.getTodayStart
-import com.example.spend.longToDate
-import com.example.spend.longToTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -26,14 +22,13 @@ import javax.inject.Inject
 private const val subscriptionDuration = 5_000L
 
 data class ExpenseUiState(
-    val balance: Double = 0.00,
+    val income: Double = 0.00,
     val expense: Double = 0.00
 )
 
 @HiltViewModel
 class SummaryViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
-    private val dataStoreRepository: BalanceRepository
 ) : ViewModel() {
     var uiState = MutableStateFlow(ExpenseUiState())
         private set
@@ -79,61 +74,32 @@ class SummaryViewModel @Inject constructor(
                 initialValue = emptyList()
             )
 
-    fun getIncomeByTime(): StateFlow<Map<String, Double>> {
-        val from: Long = when (selectedIndex.value) {
+    fun getIncomeByTime() = defaultRepository.getIncome(
+        from = when (selectedIndex.value) {
             0 -> getTodayStart()
             1 -> getSunday()
             2 -> getMonthStart()
             else -> System.currentTimeMillis() / 1000
-        }
-        return defaultRepository.getIncomeByTime(
-            from = from,
-            to = System.currentTimeMillis() / 1000
-        )
-            .map {
-                when (selectedIndex.value) {
-                    0 -> it.mapKeys { key -> longToTime(key.key) }
-                    1, 2 -> it.mapKeys { key -> longToDate(key.key) }
-                    else -> it.mapKeys { key -> key.key.toString() }
-                }
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(subscriptionDuration),
-                initialValue = emptyMap()
-            )
-    }
-
-    fun getExpensesByTime(): StateFlow<Map<String, Double>> {
-        val from: Long = when (selectedIndex.value) {
-            0 -> getTodayStart()
-            1 -> getSunday()
-            2 -> getMonthStart()
-            else -> System.currentTimeMillis() / 1000
-        }
-        return defaultRepository.getExpenseByTime(
-            from = from,
-            to = System.currentTimeMillis() / 1000
-        )
-            .map {
-                when (selectedIndex.value) {
-                    0 -> it.mapKeys { key -> longToTime(key.key) }
-                    1, 2 -> it.mapKeys { key -> longToDate(key.key) }
-                    else -> it.mapKeys { key -> longToDate(key.key) }
-                }
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(subscriptionDuration),
-                initialValue = emptyMap()
-            )
-    }
-
-    fun transactionsPresent() = defaultRepository.areEntriesPresent()
+        },
+    )
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(subscriptionDuration),
-            initialValue = false
+            initialValue = 0.00
+        )
+
+    fun getExpensesByTime() = defaultRepository.getExpense(
+        from = when (selectedIndex.value) {
+            0 -> getTodayStart()
+            1 -> getSunday()
+            2 -> getMonthStart()
+            else -> System.currentTimeMillis() / 1000
+        },
+    )
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(subscriptionDuration),
+            initialValue = 0.00
         )
 
     fun updateIndex(index: Int) {
@@ -157,7 +123,7 @@ class SummaryViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(context = Dispatchers.IO) {
                 uiState.value = ExpenseUiState(
-                    balance = defaultRepository.getIncome(getMonthStart()).first() - defaultRepository.getExpense(getMonthStart()).first(),
+                    income = defaultRepository.getIncome(getMonthStart()).first(),
                     expense = defaultRepository.getExpense(getMonthStart()).first()
                 )
             }
@@ -168,7 +134,7 @@ class SummaryViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(context = Dispatchers.IO) {
                 uiState.value = ExpenseUiState(
-                    balance = defaultRepository.getIncome(getTodayStart()).first() - defaultRepository.getExpense(getTodayStart()).first(),
+                    income = defaultRepository.getIncome(getTodayStart()).first(),
                     expense = defaultRepository.getExpense(getTodayStart()).first()
                 )
             }
@@ -179,7 +145,7 @@ class SummaryViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(context = Dispatchers.IO) {
                 uiState.value = ExpenseUiState(
-                    balance = defaultRepository.getIncome(getSunday()).first() - defaultRepository.getExpense(getSunday()).first(),
+                    income = defaultRepository.getIncome(getSunday()).first(),
                     expense = defaultRepository.getExpense(getSunday()).first()
                 )
             }

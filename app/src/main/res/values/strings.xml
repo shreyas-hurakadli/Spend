@@ -46,4 +46,10 @@
     <string name="dismiss_picker">Dismiss picker</string>
     <string name="confirm_selection">Confirm selection</string>
     <string name="budget_detail">Budget Detail</string>
+    <string name="no_transactions_main_message">No data to show for this period</string>
+    <string name="no_transactions_extended_message">Your spending habits will appear here once you start logging transactions</string>
+    <string name="top_categories">Top Categories</string>
+    <string name="no_transactions_category_main_message">Ready to take control</string>
+    <string name="no_transaction_category_extended_message">Start tracking your expenses to see a breakdown of your spending habits</string>
+    <string name="button_message">Add your first transaction</string>
 </resources>
