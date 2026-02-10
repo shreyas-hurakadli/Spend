@@ -53,4 +53,6 @@
     <string name="no_transaction_category_extended_message">Start tracking your expenses to see a breakdown of your spending habits</string>
     <string name="button_message">Add your first transaction</string>
     <string name="no_transactions_home_extended_message">A fresh start for your finances. Start tracking to see your activity here</string>
+    <string name="budget_message">Create A Budget</string>
+    <string name="budget_extended_message">Budgets help you track your spending and achieve your financial goals. Get started now to take control of your finances</string>
 </resources>

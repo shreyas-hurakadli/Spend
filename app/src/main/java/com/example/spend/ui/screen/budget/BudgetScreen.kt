@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,8 +73,6 @@ fun BudgetScreen(
 
     val thereAreBudgets by viewModel.thereAreBudgets.collectAsState()
     val budgets by viewModel.budgets.collectAsState()
-
-    Log.d("BudgetScreen", budgets.toString())
 
     AppNavigationDrawer(
         currentScreenIndex = RouteNumbers.BUDGET_PAGE.screenNumber,
@@ -109,12 +108,10 @@ fun BudgetScreen(
                 }
             },
         ) { innerPadding ->
-            BoxWithConstraints(
+            Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(paddingValues = innerPadding)
             ) {
-                val maxWidth = maxWidth
-
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = if (thereAreBudgets) Arrangement.Top
@@ -141,37 +138,27 @@ fun BudgetScreen(
                             }
                         }
                     } else {
-                        Spacer(Modifier.weight(0.4f))
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .background(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    shape = CircleShape
-                                )
-                                .size(200.dp)
-                        ) {
+                        Spacer(Modifier.weight(0.55f))
+                        Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.account_wallet),
-                                tint = MaterialTheme.colorScheme.onPrimary,
+                                tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = null,
-                                modifier = Modifier.size(100.dp)
+                                modifier = Modifier.size(200.dp)
                             )
                         }
                         Spacer(Modifier.weight(0.1f))
                         Text(
-                            text = "Create A Budget",
+                            text = stringResource(R.string.budget_message),
                             fontWeight = FontWeight.Bold,
-                            fontSize = 32.sp
+                            style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(Modifier.weight(0.05f))
                         Text(
-                            text = "Budgets help you track your spending and achieve your financial goals. Get started now to take control of your finances",
-                            overflow = TextOverflow.Clip,
-                            fontSize = if (maxWidth > 490.dp) 24.sp else 16.sp,
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .fillMaxWidth(0.95f)
+                            text = stringResource(R.string.budget_extended_message),
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Light,
+                            style = MaterialTheme.typography.bodyMedium
                         )
                         Spacer(Modifier.weight(1f))
                         OutlinedButton(
