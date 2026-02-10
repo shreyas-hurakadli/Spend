@@ -114,9 +114,8 @@ fun AddAccountScreen(
         ) {
             Column(
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(all = 8.dp)
                     .fillMaxSize()
             ) {
                 Row(
@@ -127,7 +126,7 @@ fun AddAccountScreen(
                     Box(
                         modifier = Modifier
                             .clip(CircleShape)
-                            .size(55.dp)
+                            .size(size = 55.dp)
                             .background(color = uiState.color),
                         contentAlignment = Alignment.Center
                     ) {
@@ -139,10 +138,10 @@ fun AddAccountScreen(
                             )
                         }
                     }
-                    Spacer(Modifier.width(4.dp))
+                    Spacer(Modifier.width(width = 4.dp))
                     OutlinedTextField(
                         value = uiState.name,
-                        onValueChange = { viewModel.updateName(it) },
+                        onValueChange = { viewModel.updateName(name = it) },
                         label = {
                             Text(
                                 text = stringResource(R.string.account_name),
@@ -151,7 +150,7 @@ fun AddAccountScreen(
                             )
                         },
                         singleLine = true,
-                        shape = RoundedCornerShape(24.dp),
+                        shape = RoundedCornerShape(size = 24.dp),
                         textStyle = TextStyle(
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 16.sp
@@ -162,7 +161,7 @@ fun AddAccountScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(height = 16.dp))
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
@@ -180,17 +179,17 @@ fun AddAccountScreen(
                         label = {},
                         readOnly = true,
                         singleLine = true,
-                        shape = RoundedCornerShape(24.dp),
+                        shape = RoundedCornerShape(size = 24.dp),
                         textStyle = TextStyle(
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 16.sp
                         ),
-                        modifier = Modifier.weight(0.3f)
+                        modifier = Modifier.weight(weight = 0.3f)
                     )
-                    Spacer(Modifier.weight(0.1f))
+                    Spacer(modifier = Modifier.weight(0.1f))
                     OutlinedTextField(
                         value = balance,
-                        onValueChange = { viewModel.updateBalance(it) },
+                        onValueChange = { viewModel.updateBalance(value = it) },
                         label = {
                             Text(
                                 text = stringResource(R.string.initial_amount),
@@ -297,7 +296,7 @@ fun AddAccountScreen(
                         onClick = { viewModel.clear() },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Cancel")
+                        Text(text = "Cancel")
                     }
                     Spacer(Modifier.width(8.dp))
                     OutlinedButton(
@@ -308,7 +307,7 @@ fun AddAccountScreen(
                         ),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Create")
+                        Text(text = "Add")
                     }
                 }
             }
