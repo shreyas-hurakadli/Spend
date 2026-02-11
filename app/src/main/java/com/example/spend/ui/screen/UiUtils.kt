@@ -36,6 +36,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerColors
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,9 +47,12 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerColors
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.rememberDatePickerState
@@ -341,6 +345,8 @@ fun DialogBox(
     AlertDialog(
         title = { Text(text = dialogTitle) },
         text = { Text(text = dialogText) },
+        containerColor = Color.LightGray,
+        textContentColor = MaterialTheme.colorScheme.onBackground,
         onDismissRequest = { onDismissRequest() },
         confirmButton = {
             TextButton(
@@ -581,9 +587,79 @@ fun DatePicker(
                 Text("Cancel")
             }
         },
+        colors = DatePickerColors(
+            containerColor = Color.LightGray,
+            titleContentColor = Color.Black,
+            headlineContentColor = Color.Black,
+            weekdayContentColor = Color.DarkGray,
+            subheadContentColor = Color.DarkGray,
+            navigationContentColor = Color.Black,
+            yearContentColor = Color.Black,
+            disabledYearContentColor = Color.Gray,
+            currentYearContentColor = Color.Black,
+            selectedYearContentColor = Color.White,
+            disabledSelectedYearContentColor = Color.Gray,
+            selectedYearContainerColor = Color.Black,
+            disabledSelectedYearContainerColor = Color.DarkGray,
+            dayContentColor = Color.Black,
+            disabledDayContentColor = Color.Gray,
+            selectedDayContentColor = Color.White,
+            disabledSelectedDayContentColor = Color.Gray,
+            selectedDayContainerColor = Color.Black,
+            disabledSelectedDayContainerColor = Color.DarkGray,
+            todayContentColor = Color.Black,
+            todayDateBorderColor = Color.Black,
+            dayInSelectionRangeContainerColor = Color.DarkGray,
+            dayInSelectionRangeContentColor = Color.White,
+            dividerColor = Color.Gray,
+            dateTextFieldColors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.DarkGray,
+                focusedLabelColor = Color.Black,
+                unfocusedLabelColor = Color.DarkGray,
+                cursorColor = Color.Black
+            )
+        )
     ) {
         DatePicker(
             state = datePickerState,
+            colors = DatePickerColors(
+                containerColor = Color.LightGray,
+                titleContentColor = Color.Black,
+                headlineContentColor = Color.Black,
+                weekdayContentColor = Color.DarkGray,
+                subheadContentColor = Color.DarkGray,
+                navigationContentColor = Color.Black,
+                yearContentColor = Color.Black,
+                disabledYearContentColor = Color.Gray,
+                currentYearContentColor = Color.Black,
+                selectedYearContentColor = Color.White,
+                disabledSelectedYearContentColor = Color.Gray,
+                selectedYearContainerColor = Color.Black,
+                disabledSelectedYearContainerColor = Color.DarkGray,
+                dayContentColor = Color.Black,
+                disabledDayContentColor = Color.Gray,
+                selectedDayContentColor = Color.White,
+                disabledSelectedDayContentColor = Color.Gray,
+                selectedDayContainerColor = Color.Black,
+                disabledSelectedDayContainerColor = Color.DarkGray,
+                todayContentColor = Color.Black,
+                todayDateBorderColor = Color.Black,
+                dayInSelectionRangeContainerColor = Color.DarkGray,
+                dayInSelectionRangeContentColor = Color.White,
+                dividerColor = Color.Gray,
+                dateTextFieldColors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black,
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.DarkGray,
+                    focusedLabelColor = Color.Black,
+                    unfocusedLabelColor = Color.DarkGray,
+                    cursorColor = Color.Black
+                )
+            )
         )
     }
 }
@@ -596,28 +672,56 @@ fun TimePicker(
     timePickerState: TimePickerState,
 ) {
     Dialog(onDismissRequest = onDismiss) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Surface(
+            shape = RoundedCornerShape(size = 16.dp),
+            tonalElevation = 6.dp,
+            modifier = Modifier
+                .width(IntrinsicSize.Min)
+                .height(IntrinsicSize.Min),
+            color = Color.LightGray
         ) {
-            TimePicker(state = timePickerState)
-            Button(onClick = onDismiss) {
-                Text(stringResource(R.string.dismiss_picker))
-            }
-            Button(
-                onClick = {
-                    val selectedHour = timePickerState.hour
-                    val selectedMinute = timePickerState.minute
-                    val calendar = Calendar.getInstance().apply {
-                        set(Calendar.HOUR_OF_DAY, selectedHour)
-                        set(Calendar.MINUTE, selectedMinute)
-                        set(Calendar.SECOND, 0)
-                        set(Calendar.MILLISECOND, 0)
-                    }
-                    onConfirm(calendar.timeInMillis)
-                }
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(all = 16.dp)
             ) {
-                Text(stringResource(R.string.confirm_selection))
+                TimePicker(
+                    state = timePickerState,
+                    colors = TimePickerColors(
+                        clockDialColor = Color.LightGray,
+                        selectorColor = Color.Black,
+                        containerColor = Color.Gray,
+                        periodSelectorBorderColor = Color.Black,
+                        clockDialSelectedContentColor = Color.White,
+                        clockDialUnselectedContentColor = Color.DarkGray,
+                        periodSelectorSelectedContainerColor = Color.Black,
+                        periodSelectorUnselectedContainerColor = Color.Transparent,
+                        periodSelectorSelectedContentColor = Color.White,
+                        periodSelectorUnselectedContentColor = Color.Black,
+                        timeSelectorSelectedContainerColor = Color.Black,
+                        timeSelectorUnselectedContainerColor = Color.Transparent,
+                        timeSelectorSelectedContentColor = Color.White,
+                        timeSelectorUnselectedContentColor = Color.Black,
+                    )
+                )
+                Button(onClick = onDismiss) {
+                    Text(stringResource(R.string.dismiss_picker))
+                }
+                Button(
+                    onClick = {
+                        val selectedHour = timePickerState.hour
+                        val selectedMinute = timePickerState.minute
+                        val calendar = Calendar.getInstance().apply {
+                            set(Calendar.HOUR_OF_DAY, selectedHour)
+                            set(Calendar.MINUTE, selectedMinute)
+                            set(Calendar.SECOND, 0)
+                            set(Calendar.MILLISECOND, 0)
+                        }
+                        onConfirm(calendar.timeInMillis)
+                    }
+                ) {
+                    Text(stringResource(R.string.confirm_selection))
+                }
             }
         }
     }

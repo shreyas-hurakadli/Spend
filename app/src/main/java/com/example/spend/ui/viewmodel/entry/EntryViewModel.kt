@@ -4,15 +4,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.sqlite.SQLiteException
 import com.example.spend.data.dto.EntryCategory
+import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.entry.EntryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,6 +33,17 @@ class EntryViewModel @Inject constructor(
 ) : ViewModel() {
     private val _selectedEntry: MutableStateFlow<EntryCategory?> = MutableStateFlow(value = null)
     val selectedEntry = _selectedEntry.asStateFlow()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val selectedEntryAccount = selectedEntry
+        .flatMapLatest {
+            defaultAccountRepository.getAccountById(it?.entry?.accountId ?: 0L)
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(stopTimeoutMillis = durationMillis),
+                    initialValue = null
+                )
+        }
 
     val thereAreEntries = defaultRepository.areEntriesPresent()
         .stateIn(
@@ -61,8 +78,9 @@ class EntryViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 withContext(context = Dispatchers.IO) {
-                    val account = defaultAccountRepository.getAccountById(_selectedEntry.value!!.entry.accountId)
-                        .firstOrNull()
+                    val account =
+                        defaultAccountRepository.getAccountById(_selectedEntry.value!!.entry.accountId)
+                            .firstOrNull()
                     val firstAccount = defaultAccountRepository.getFirstAccount().firstOrNull()
                     if (account != null) {
                         defaultAccountRepository.update(account.copy(balance = account.balance + (_selectedEntry.value!!.entry.amount * if (_selectedEntry.value!!.entry.isExpense) 1 else -1)))

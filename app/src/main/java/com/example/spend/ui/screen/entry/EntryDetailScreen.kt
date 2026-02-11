@@ -64,6 +64,7 @@ fun EntryDetailScreen(
     viewModel: EntryViewModel = hiltViewModel()
 ) {
     val selectedEntry by viewModel.selectedEntry.collectAsState()
+    val selectedEntryAccount by viewModel.selectedEntryAccount.collectAsState(initial = null)
 
     var showDialogBox by rememberSaveable { mutableStateOf(value = false) }
 
@@ -109,6 +110,13 @@ fun EntryDetailScreen(
                         fontWeight = FontWeight.Bold
                     )
                 }
+                DetailRow(
+                    icon = ImageVector.vectorResource(id = R.drawable.baseline_wallet),
+                    detail = stringResource(R.string.account),
+                    information = selectedEntryAccount?.name ?: "",
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(height = 8.dp))
                 DetailRow(
                     icon = ImageVector.vectorResource(id = R.drawable.baseline_label),
                     detail = stringResource(R.string.category),
