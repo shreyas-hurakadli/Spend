@@ -11,8 +11,8 @@
     <string name="back">Back</string>
     <string name="update_balance">Update balance</string>
     <string name="new_balance">New Balance</string>
-    <string name="save">SAVE</string>
-    <string name="cancel">CANCEL</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
     <string name="done">Done</string>
     <string name="enter_new_balance">Enter new balance</string>
     <string name="transactions">Transactions</string>
@@ -34,7 +34,7 @@
     <string name="add_account">Add Account</string>
     <string name="add_budget">Add budget</string>
     <string name="menu">Menu</string>
-    <string name="budget">Budget</string>
+    <string name="budgets">Budgets</string>
     <string name="transaction_detail">Transaction Detail</string>
     <string name="confirm">Confirm</string>
     <string name="dismiss">Dismiss</string>
@@ -55,8 +55,12 @@
     <string name="no_transactions_home_extended_message">A fresh start for your finances. Start tracking to see your activity here</string>
     <string name="budget_message">Create A Budget</string>
     <string name="budget_extended_message">Budgets help you track your spending and achieve your financial goals. Get started now to take control of your finances</string>
-    <string name="account">Account</string>
+    <string name="accounts">Accounts</string>
     <string name="no_account_message">No Accounts</string>
     <string name="no_account_extended_message">Accounts help you centralize your money management and monitor all your balances. Get started now to stay on top of your finances</string>
     <string name="account_detail">Account Detail</string>
+    <string name="delete">Delete</string>
+    <string name="transaction_delete_message">Are you sure you want to delete this transaction? This action cannot be undone.</string>
+    <string name="account_delete_message">Are you sure you want to delete this account? This action cannot be undone.</string>
+    <string name="delete_account">Delete Account</string>
 </resources>

@@ -72,7 +72,7 @@ fun AccountScreen(
         Scaffold(
             topBar = {
                 AppTopBar(
-                    title = stringResource(id = R.string.account),
+                    title = stringResource(id = R.string.accounts),
                     hasNavigationDrawer = true,
                     onNavigationDrawerClick = {
                         drawerScope.launch {
@@ -99,7 +99,7 @@ fun AccountScreen(
             }
         ) { innerPadding ->
             Box(modifier = Modifier.padding(paddingValues = innerPadding)) {
-                if (accounts.isNotEmpty()) {
+                if (thereAreAccounts) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top,

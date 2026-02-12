@@ -14,14 +14,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -38,6 +44,7 @@ import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.accountIcons
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppTopBar
+import com.example.spend.ui.screen.DialogBox
 import com.example.spend.ui.screen.NoTransactions
 import com.example.spend.ui.screen.TransactionCard
 import com.example.spend.ui.viewmodel.account.AccountViewModel
@@ -52,12 +59,23 @@ fun AccountDetailScreen(
     val selectedAccount by viewModel.selectedAccount.collectAsState()
     val selectedAccountTransactions by viewModel.selectedAccountTransactions.collectAsState(initial = emptyList())
 
+    var showDialogBox by remember { mutableStateOf(value = false) }
+
     Scaffold(
         topBar = {
             AppTopBar(
                 title = stringResource(id = R.string.account_detail),
                 canNavigateBack = true,
                 onBackClick = { navHostController.popBackStack() },
+                actions = {
+                    IconButton(onClick = { showDialogBox = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = stringResource(R.string.delete)
+                        )
+                    }
+                }
             )
         }
     ) { innerPadding ->
@@ -144,6 +162,24 @@ fun AccountDetailScreen(
                 }
                 if (selectedAccount == null) {
                     CircularProgressIndicator()
+                }
+                if (showDialogBox) {
+                    DialogBox(
+                        onDismissRequest = { showDialogBox = false },
+                        onConfirmation = {
+                            navHostController.popBackStack()
+                            viewModel.deleteAccount(selectedAccount)
+                        },
+                        dialogTitle = stringResource(R.string.delete_account),
+                        dialogText = stringResource(id = R.string.account_delete_message),
+                        confirmText = {
+                            Text(
+                                text = stringResource(id = R.string.delete),
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        },
+                        dismissText = { Text(text = stringResource(id = R.string.cancel)) },
+                    )
                 }
             }
         }

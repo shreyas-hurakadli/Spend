@@ -7,13 +7,17 @@ import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.entry.EntryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val DURATION_MILLIS = 1_000L
 
@@ -56,5 +60,17 @@ class AccountViewModel @Inject constructor(
 
     fun selectAccount(account: Account) {
         _selectedAccount.value = account
+    }
+
+    fun deleteAccount(account: Account?) {
+        account?.let {
+            viewModelScope.launch {
+                withContext(context = Dispatchers.IO) {
+                    defaultAccountRepository.delete(account)
+                    val firstAccount = defaultAccountRepository.getFirstAccount().first()
+                    defaultAccountRepository.update(firstAccount.copy(balance = firstAccount.balance - account.balance))
+                }
+            }
+        }
     }
 }

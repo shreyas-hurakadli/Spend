@@ -19,7 +19,7 @@ interface AccountDao {
     @Update
     suspend fun update(account: Account)
 
-    @Query("SELECT EXISTS (SELECT 1 FROM accounts WHERE id IS NOT NULL)")
+    @Query("SELECT EXISTS (SELECT 1 FROM accounts WHERE name != 'All')")
     fun thereAreAccounts(): Flow<Boolean>
 
     @Query("SELECT * FROM accounts WHERE id = :id")

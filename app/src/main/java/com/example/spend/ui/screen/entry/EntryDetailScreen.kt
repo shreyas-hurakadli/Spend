@@ -23,45 +23,32 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
 import com.example.spend.epochSecondsToDate
 import com.example.spend.getFormattedAmount
 import com.example.spend.getLocalCurrencySymbol
-import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.DialogBox
-import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.entry.EntryViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun EntryDetailScreen(
@@ -71,7 +58,7 @@ fun EntryDetailScreen(
     val selectedEntry by viewModel.selectedEntry.collectAsState()
     val selectedEntryAccount by viewModel.selectedEntryAccount.collectAsState(initial = null)
 
-    var showDialogBox by rememberSaveable { mutableStateOf(value = false) }
+    var showDialogBox by remember { mutableStateOf(value = false) }
 
     Scaffold(
         topBar = {
@@ -115,7 +102,7 @@ fun EntryDetailScreen(
                 }
                 DetailRow(
                     icon = ImageVector.vectorResource(id = R.drawable.baseline_wallet),
-                    detail = stringResource(R.string.account),
+                    detail = stringResource(R.string.accounts),
                     information = selectedEntryAccount?.name ?: "",
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -164,9 +151,14 @@ fun EntryDetailScreen(
                     navHostController.popBackStack()
                 },
                 dialogTitle = stringResource(id = R.string.delete_transaction),
-                dialogText = "Are you sure you want to delete this transaction? This action cannot be undone.",
-                confirmText = { Text(text = "Delete", color = MaterialTheme.colorScheme.error) },
-                dismissText = { Text(text = "Cancel") },
+                dialogText = stringResource(id = R.string.transaction_delete_message),
+                confirmText = {
+                    Text(
+                        text = stringResource(id = R.string.delete),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                },
+                dismissText = { Text(text = stringResource(id = R.string.cancel)) },
             )
         }
     }
