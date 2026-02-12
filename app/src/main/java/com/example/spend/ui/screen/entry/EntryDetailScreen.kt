@@ -74,16 +74,6 @@ fun EntryDetailScreen(
                 title = stringResource(R.string.transaction_detail),
                 canNavigateBack = true,
                 onBackClick = { navHostController.popBackStack() },
-                actions = {
-                    TextButton(onClick = {
-
-                    }) {
-                        Text(
-                            text = stringResource(R.string.edit),
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                    }
-                }
             )
         },
     ) { innerPadding ->
@@ -104,7 +94,7 @@ fun EntryDetailScreen(
                 ) {
                     Text(
                         text = (getLocalCurrencySymbol()
-                            ?: "$") + "%.2f".format(selectedEntry?.entry?.amount),
+                            ?: "$") + " " + "%.2f".format(selectedEntry?.entry?.amount),
                         style = MaterialTheme.typography.displayMedium,
                         color = MaterialTheme.colorScheme.secondary,
                         fontWeight = FontWeight.Bold

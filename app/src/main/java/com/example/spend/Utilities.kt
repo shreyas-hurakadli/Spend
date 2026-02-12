@@ -111,7 +111,7 @@ fun getFormattedAmount(value: Double): String = String.format(Locale.US, "%.2f",
  */
 fun epochSecondsToDate(epochSeconds: Long): String {
     val dateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSeconds), ZoneId.systemDefault())
-    val formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy")
+    val formatter = DateTimeFormatter.ofPattern("dd MMMM, yyyy")
     return dateTime.format(formatter)
 }
 
