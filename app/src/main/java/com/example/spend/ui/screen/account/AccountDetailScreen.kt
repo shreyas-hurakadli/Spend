@@ -100,7 +100,9 @@ fun AccountDetailScreen(
                     Spacer(modifier = Modifier.height(height = 16.dp))
                     BasicText(
                         text = "${getLocalCurrencySymbol()} ${getFormattedAmount(value = it.balance)}",
-                        style = MaterialTheme.typography.displayMedium,
+                        style = MaterialTheme.typography.displayMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
                         autoSize = TextAutoSize.StepBased(
                             minFontSize = 24.sp,
                             maxFontSize = 48.sp
