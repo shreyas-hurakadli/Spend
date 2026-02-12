@@ -47,6 +47,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -63,7 +64,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -220,21 +223,22 @@ fun AppNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(
-                drawerContainerColor = MaterialTheme.colorScheme.surface,
-                drawerContentColor = MaterialTheme.colorScheme.onSurface,
+                drawerContainerColor = MaterialTheme.colorScheme.primary,
+                drawerTonalElevation = 0.dp,
+                drawerShape = RectangleShape,
+                drawerContentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
                     .fillMaxHeight()
-                    .fillMaxWidth(0.7f)
+                    .fillMaxWidth(fraction = 0.7f)
             ) {
                 LazyColumn(
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(all = 8.dp)
                 ) {
                     itemsIndexed(items = navigationIcon) { index, item ->
                         NavigationDrawerItem(
                             label = {
                                 Text(
                                     text = item.contentDescription ?: "Default",
-                                    color = MaterialTheme.colorScheme.onBackground,
                                     style = MaterialTheme.typography.labelLarge
                                 )
                             },
@@ -243,11 +247,18 @@ fun AppNavigationDrawer(
                             icon = {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(id = item.baseLineIcon),
-                                    tint = MaterialTheme.colorScheme.onBackground,
                                     contentDescription = item.contentDescription,
                                     modifier = Modifier.size(size = 24.dp)
                                 )
                             },
+                            colors = NavigationDrawerItemDefaults.colors(
+                                selectedContainerColor = MaterialTheme.colorScheme.background,
+                                unselectedContainerColor = Color.Transparent,
+                                selectedIconColor = MaterialTheme.colorScheme.onBackground,
+                                unselectedIconColor = MaterialTheme.colorScheme.background,
+                                selectedTextColor = MaterialTheme.colorScheme.onBackground,
+                                unselectedTextColor = MaterialTheme.colorScheme.background
+                            )
                         )
                     }
                 }
