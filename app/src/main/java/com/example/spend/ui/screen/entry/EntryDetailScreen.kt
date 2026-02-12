@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.ButtonDefaults
@@ -37,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -45,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -93,12 +97,20 @@ fun EntryDetailScreen(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.fillMaxHeight(fraction = 0.2f)
                 ) {
-                    Text(
+                    BasicText(
                         text = (getLocalCurrencySymbol()
-                            ?: "$") + " " + getFormattedAmount(value = selectedEntry?.entry?.amount ?: 0.00),
-                        style = MaterialTheme.typography.displayMedium,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontWeight = FontWeight.Bold
+                            ?: "$") + " " + getFormattedAmount(
+                            value = selectedEntry?.entry?.amount ?: 0.00
+                        ),
+                        style = MaterialTheme.typography.displayMedium.copy(
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        maxLines = 1,
+                        autoSize = TextAutoSize.StepBased(
+                            minFontSize = 24.sp,
+                            maxFontSize = 48.sp
+                        ),
                     )
                 }
                 DetailRow(
