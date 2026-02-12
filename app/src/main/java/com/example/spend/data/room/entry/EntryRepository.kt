@@ -29,6 +29,8 @@ interface EntryRepository {
 
     fun areEntriesPresent(): Flow<Boolean>
 
+    fun getEntriesByAccountId(id: Long): Flow<List<EntryCategory>>
+
     fun getAllExpenseAmount(): Flow<List<Double>>
 
     fun getAllIncomeAmount(): Flow<List<Double>>

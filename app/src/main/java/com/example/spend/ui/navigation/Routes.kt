@@ -38,4 +38,7 @@ sealed class Routes {
 
     @Serializable
     data object BudgetDetailScreen: Routes()
+
+    @Serializable
+    data object AccountDetailScreen: Routes()
 }

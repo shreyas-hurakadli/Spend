@@ -33,6 +33,8 @@ class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : En
 
     override fun areEntriesPresent(): Flow<Boolean> = entryDao.areEntriesPresent()
 
+    override fun getEntriesByAccountId(id: Long): Flow<List<EntryCategory>> = entryDao.getEntriesByAccountId(id)
+
     override fun getAllExpenseAmount(): Flow<List<Double>> = entryDao.getAllExpenseAmount()
 
     override fun getAllIncomeAmount(): Flow<List<Double>> = entryDao.getAllIncomeAmount()

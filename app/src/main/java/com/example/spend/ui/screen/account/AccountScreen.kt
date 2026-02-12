@@ -1,6 +1,7 @@
 package com.example.spend.ui.screen.account
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -106,7 +107,13 @@ fun AccountScreen(
                             .padding(all = 8.dp)
                             .fillMaxSize()
                     ) {
-                        AccountList(accounts = accounts.filter { it.name != "All" })
+                        AccountList(
+                            accounts = accounts.filter { it.name != "All" },
+                            onClick = {
+                                viewModel.selectAccount(it)
+                                navHostController.navigate(Routes.AccountDetailScreen)
+                            }
+                        )
                     }
                 } else {
                     Column(
@@ -139,11 +146,15 @@ fun AccountScreen(
 @Composable
 private fun AccountList(
     accounts: List<Account>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (Account) -> Unit = {}
 ) {
     LazyColumn(modifier = modifier) {
         items(items = accounts) { account ->
-            AccountView(account)
+            AccountView(
+                account = account,
+                onClick = onClick
+            )
         }
     }
 }
@@ -151,12 +162,14 @@ private fun AccountList(
 @Composable
 private fun AccountView(
     account: Account,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (Account) -> Unit = {}
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .clickable(enabled = true, onClick = { onClick(account) })
             .padding(bottom = 8.dp)
             .fillMaxWidth()
     ) {

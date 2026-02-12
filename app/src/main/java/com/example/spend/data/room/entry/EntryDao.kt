@@ -40,6 +40,16 @@ interface EntryDao {
     @Query("SELECT SUM(amount) FROM entries WHERE is_expense = 0 AND epochSeconds >= :from")
     fun getIncome(from: Long): Flow<Double>
 
+    @Query(
+        value = """
+        SELECT e.*, c.name, c.icon, c.color
+        FROM entries e, categories c
+        WHERE e.account_id = :id AND e.category_id = c.id
+        ORDER BY epochSeconds DESC
+        """
+    )
+    fun getEntriesByAccountId(id: Long): Flow<List<EntryCategory>>
+
     @Query("SELECT c.name AS name, SUM(e.amount) AS totalAmount, c.color AS color FROM categories c, entries e WHERE e.is_expense = 1 AND e.category_id = c.id AND e.epochSeconds >= :from AND e.epochSeconds <= :to GROUP BY c.name")
     fun getExpenseByCategory(
         from: Long,

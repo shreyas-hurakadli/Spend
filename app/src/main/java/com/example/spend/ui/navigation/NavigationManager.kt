@@ -8,18 +8,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.spend.ui.screen.account.AddAccountScreen
-import com.example.spend.ui.screen.budget.AddBudgetScreen
 import com.example.spend.ui.screen.AddScreen
 import com.example.spend.ui.screen.CreateCategoryScreen
-import com.example.spend.ui.screen.entry.EntryScreen
 import com.example.spend.ui.screen.HomeScreen
 import com.example.spend.ui.screen.SettingsScreen
 import com.example.spend.ui.screen.SummaryScreen
+import com.example.spend.ui.screen.account.AccountDetailScreen
 import com.example.spend.ui.screen.account.AccountScreen
+import com.example.spend.ui.screen.account.AddAccountScreen
+import com.example.spend.ui.screen.budget.AddBudgetScreen
 import com.example.spend.ui.screen.budget.BudgetDetailScreen
 import com.example.spend.ui.screen.budget.BudgetScreen
 import com.example.spend.ui.screen.entry.EntryDetailScreen
+import com.example.spend.ui.screen.entry.EntryScreen
 
 private const val durationMillis = 150
 
@@ -98,6 +99,14 @@ fun NavigationManager(
         }
         composable<Routes.BudgetDetailScreen> {
             BudgetDetailScreen(
+                navHostController = navHostController,
+                viewModel = if (navHostController.previousBackStackEntry != null) hiltViewModel(
+                    viewModelStoreOwner = navHostController.previousBackStackEntry!!
+                ) else hiltViewModel()
+            )
+        }
+        composable<Routes.AccountDetailScreen> {
+            AccountDetailScreen(
                 navHostController = navHostController,
                 viewModel = if (navHostController.previousBackStackEntry != null) hiltViewModel(
                     viewModelStoreOwner = navHostController.previousBackStackEntry!!

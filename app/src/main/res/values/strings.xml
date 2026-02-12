@@ -58,4 +58,5 @@
     <string name="account">Account</string>
     <string name="no_account_message">No Accounts</string>
     <string name="no_account_extended_message">Accounts help you centralize your money management and monitor all your balances. Get started now to stay on top of your finances</string>
+    <string name="account_detail">Account Detail</string>
 </resources>
