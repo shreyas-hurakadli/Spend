@@ -50,6 +50,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
 import com.example.spend.epochSecondsToDate
+import com.example.spend.getFormattedAmount
 import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppTopBar
@@ -94,7 +95,7 @@ fun EntryDetailScreen(
                 ) {
                     Text(
                         text = (getLocalCurrencySymbol()
-                            ?: "$") + " " + "%.2f".format(selectedEntry?.entry?.amount),
+                            ?: "$") + " " + getFormattedAmount(value = selectedEntry?.entry?.amount ?: 0.00),
                         style = MaterialTheme.typography.displayMedium,
                         color = MaterialTheme.colorScheme.secondary,
                         fontWeight = FontWeight.Bold
