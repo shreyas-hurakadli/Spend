@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
@@ -95,10 +98,14 @@ fun AccountDetailScreen(
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(height = 16.dp))
-                    Text(
+                    BasicText(
                         text = "${getLocalCurrencySymbol()} ${getFormattedAmount(value = it.balance)}",
                         style = MaterialTheme.typography.displayMedium,
-                        fontWeight = FontWeight.Bold
+                        autoSize = TextAutoSize.StepBased(
+                            minFontSize = 24.sp,
+                            maxFontSize = 48.sp
+                        ),
+                        maxLines = 1
                     )
                     Spacer(modifier = Modifier.height(height = 16.dp))
                     Text(
