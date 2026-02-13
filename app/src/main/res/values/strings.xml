@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Expenditure</string>
+    <string name="app_name">BudgetWise</string>
     <string name="home">Home</string>
     <string name="total_balance">Total Balance</string>
     <string name="recent_transaction">Recent Transaction</string>
