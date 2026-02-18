@@ -9,12 +9,15 @@ import com.example.spend.data.room.RoomDatabaseClass
 import com.example.spend.data.room.account.AccountDao
 import com.example.spend.data.room.budget.BudgetDao
 import com.example.spend.data.room.category.CategoryDao
+import com.example.spend.data.room.currency.CurrencyDao
 import com.example.spend.data.room.entry.EntryDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -85,6 +88,9 @@ object RoomProvidesModule {
             .build()
 
     @Provides
+    fun provideCoroutineDispatcher(): CoroutineDispatcher = Dispatchers.IO
+
+    @Provides
     @Singleton
     fun provideEntryDao(roomDatabaseClass: RoomDatabaseClass): EntryDao =
         roomDatabaseClass.entryDao()
@@ -106,6 +112,11 @@ object RoomProvidesModule {
 
     @Provides
     @Singleton
+    fun provideCurrencyDao(roomDatabaseClass: RoomDatabaseClass): CurrencyDao =
+        roomDatabaseClass.currencyDao()
+
+    @Provides
+    @Singleton
     fun provideWorkManager(@ApplicationContext context: Context): WorkManager =
-        WorkManager.Companion.getInstance(context)
+        WorkManager.getInstance(context)
 }

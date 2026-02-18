@@ -10,10 +10,12 @@ import com.example.spend.data.room.budget.BudgetDao
 import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryDao
 import com.example.spend.data.room.converters.ColorConverter
+import com.example.spend.data.room.currency.Currency
+import com.example.spend.data.room.currency.CurrencyDao
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryDao
 
-@Database(entities = [Entry::class, Account::class, Budget::class, Category::class], version = 11)
+@Database(entities = [Entry::class, Account::class, Budget::class, Category::class, Currency::class], version = 12)
 @TypeConverters(ColorConverter::class)
 abstract class RoomDatabaseClass : RoomDatabase() {
     abstract fun entryDao(): EntryDao
@@ -22,4 +24,6 @@ abstract class RoomDatabaseClass : RoomDatabase() {
     abstract fun budgetDao(): BudgetDao
 
     abstract fun categoryDao(): CategoryDao
+
+    abstract fun currencyDao(): CurrencyDao
 }

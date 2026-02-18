@@ -1,6 +1,5 @@
 package com.example.spend.data.room.entry
 
-import android.util.Log
 import com.example.spend.data.dto.CategoryAmount
 import com.example.spend.data.dto.EntryCategory
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +18,7 @@ class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : En
 
     override suspend fun deleteAll() = entryDao.deleteAll()
 
-    override suspend fun resetAutoincrement() = entryDao.resetAutoIncrement("entries")
+    override suspend fun resetAutoincrement() = entryDao.resetAutoIncrement()
 
     override fun getExpense(from: Long): Flow<Double> = entryDao.getExpense(from)
 

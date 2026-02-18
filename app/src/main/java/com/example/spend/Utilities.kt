@@ -1,5 +1,7 @@
 package com.example.spend
 
+import co.yml.charts.common.extensions.roundTwoDecimal
+import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
@@ -110,21 +112,14 @@ fun getFormattedAmount(value: Double): String = String.format(Locale.US, "%.2f",
  * Returns the string in the format "Month Date, Year"
  */
 fun epochSecondsToDate(epochSeconds: Long): String {
-    val dateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSeconds), ZoneId.systemDefault())
+    val dateTime =
+        LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSeconds), ZoneId.systemDefault())
     val formatter = DateTimeFormatter.ofPattern("dd MMMM, yyyy")
     return dateTime.format(formatter)
 }
 
 /**
- * Checks if a double value has two decimal points which are zero.
+ * Converts the Double values to have a precision of two
  * Useful while handling currency
  */
-fun Double.hasTwoDecimalZeroPoints(): Boolean {
-    var value = (this * 100).toInt()
-    for (i in 0 .. 1) {
-        if (value % 10 != 0)
-            return false
-        value /= 10
-    }
-    return true
-}
+fun Double.toTwoDecimal() = this.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()

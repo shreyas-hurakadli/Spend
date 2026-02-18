@@ -31,8 +31,8 @@ interface EntryDao {
     @Query("DELETE FROM entries")
     suspend fun deleteAll()
 
-    @Query("DELETE FROM sqlite_sequence WHERE name = :tableName")
-    suspend fun resetAutoIncrement(tableName: String)
+    @Query("DELETE FROM sqlite_sequence WHERE name = 'entries'")
+    suspend fun resetAutoIncrement()
 
     @Query("SELECT SUM(amount) FROM entries WHERE is_expense = 1 AND epochSeconds >= :from")
     fun getExpense(from: Long): Flow<Double>
