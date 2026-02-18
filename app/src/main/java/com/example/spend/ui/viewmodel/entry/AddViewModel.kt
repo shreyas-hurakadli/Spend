@@ -1,6 +1,5 @@
-package com.example.spend.ui.viewmodel
+package com.example.spend.ui.viewmodel.entry
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -18,8 +17,6 @@ import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
 import com.example.spend.data.workmanager.budget.BudgetNotificationRepository
 import com.example.spend.getTodayStart
-import com.example.spend.longToDate
-import com.example.spend.longToDayTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

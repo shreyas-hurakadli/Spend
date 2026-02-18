@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -70,7 +69,7 @@ import com.example.spend.getTodayStart
 import com.example.spend.longToDate
 import com.example.spend.longToDayTime
 import com.example.spend.ui.theme.SpendTheme
-import com.example.spend.ui.viewmodel.AddViewModel
+import com.example.spend.ui.viewmodel.entry.AddViewModel
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId

@@ -1,4 +1,4 @@
-package com.example.spend.di.module
+package com.example.spend.di.module.room
 
 import android.content.Context
 import androidx.room.Room
@@ -107,5 +107,5 @@ object RoomProvidesModule {
     @Provides
     @Singleton
     fun provideWorkManager(@ApplicationContext context: Context): WorkManager =
-        WorkManager.getInstance(context)
+        WorkManager.Companion.getInstance(context)
 }

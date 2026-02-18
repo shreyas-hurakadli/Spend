@@ -1,4 +1,4 @@
-package com.example.spend.di.module
+package com.example.spend.di.module.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -7,9 +7,9 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import com.example.spend.di.annotations.BalanceRepository
 import com.example.spend.di.annotations.LoginRepository
 import com.example.spend.di.annotations.PermissionRepository
+import com.example.spend.di.annotations.PreferencesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,20 +20,20 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
-    private const val BALANCE = "balance"
+    private const val PREFERENCES = "preferences"
     private const val FIRST_LOGIN = "first_login"
     private const val POST_NOTIFICATIONS = "post_notifications"
 
     @Provides
     @Singleton
-    @BalanceRepository
-    fun getBalanceDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
+    @PreferencesRepository
+    fun getPreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
         PreferenceDataStoreFactory.create(
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }
             ),
             produceFile = {
-                context.preferencesDataStoreFile(BALANCE)
+                context.preferencesDataStoreFile(PREFERENCES)
             }
         )
 

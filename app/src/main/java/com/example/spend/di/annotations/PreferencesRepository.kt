@@ -4,4 +4,4 @@ import jakarta.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class BalanceRepository
+annotation class PreferencesRepository

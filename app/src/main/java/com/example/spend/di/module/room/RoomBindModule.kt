@@ -1,4 +1,4 @@
-package com.example.spend.di.module
+package com.example.spend.di.module.room
 
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.account.DefaultAccountRepository
