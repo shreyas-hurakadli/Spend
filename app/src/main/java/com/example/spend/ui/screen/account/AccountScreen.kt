@@ -44,7 +44,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.data.room.account.Account
-import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.accountIcons
 import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.navigation.Routes
@@ -63,6 +62,7 @@ fun AccountScreen(
 
     val accounts by viewModel.accounts.collectAsState()
     val thereAreAccounts by viewModel.thereAreAccounts.collectAsState()
+    val currencySymbol by viewModel.currencySymbol.collectAsState()
 
     AppNavigationDrawer(
         currentScreenIndex = RouteNumbers.ACCOUNT_PAGE.screenNumber,
@@ -109,6 +109,7 @@ fun AccountScreen(
                     ) {
                         AccountList(
                             accounts = accounts.filter { it.name != "All" },
+                            currencySymbol = currencySymbol,
                             onClick = {
                                 viewModel.selectAccount(it)
                                 navHostController.navigate(Routes.AccountDetailScreen)
@@ -146,6 +147,7 @@ fun AccountScreen(
 @Composable
 private fun AccountList(
     accounts: List<Account>,
+    currencySymbol: String,
     modifier: Modifier = Modifier,
     onClick: (Account) -> Unit = {}
 ) {
@@ -153,6 +155,7 @@ private fun AccountList(
         items(items = accounts) { account ->
             AccountView(
                 account = account,
+                currencySymbol = currencySymbol,
                 onClick = onClick
             )
         }
@@ -162,6 +165,7 @@ private fun AccountList(
 @Composable
 private fun AccountView(
     account: Account,
+    currencySymbol: String,
     modifier: Modifier = Modifier,
     onClick: (Account) -> Unit = {}
 ) {
@@ -194,7 +198,7 @@ private fun AccountView(
         Text(text = account.name, style = MaterialTheme.typography.labelLarge)
         Spacer(modifier.weight(weight = 1f))
         Text(
-            text = "${getLocalCurrencySymbol()} ${account.balance}",
+            text = "$currencySymbol ${account.balance}",
             style = MaterialTheme.typography.labelLarge
         )
     }

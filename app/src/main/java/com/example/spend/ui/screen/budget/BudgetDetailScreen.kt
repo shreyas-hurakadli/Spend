@@ -33,7 +33,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.data.room.budget.Budget
-import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.TransactionCard
 import com.example.spend.ui.viewmodel.budget.BudgetViewModel
@@ -45,6 +44,7 @@ fun BudgetDetailScreen(
 ) {
     val selectedBudget by viewModel.selectedBudget.collectAsState()
     val transactions by viewModel.selectedBudgetTransactions.collectAsState(initial = emptyList())
+    val currencySymbol by viewModel.currencySymbol.collectAsState()
 
     val budget = selectedBudget?.first ?: Budget()
     val expense = selectedBudget?.second ?: 0.00
@@ -92,7 +92,7 @@ fun BudgetDetailScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = getLocalCurrencySymbol() + expense.toInt().toString(),
+                        text = currencySymbol + expense.toInt().toString(),
                         fontSize = 48.sp,
                         fontWeight = FontWeight.ExtraBold
                     )
@@ -135,7 +135,7 @@ fun BudgetDetailScreen(
                             style = MaterialTheme.typography.labelSmall
                         )
                         Text(
-                            text = getLocalCurrencySymbol() + "%.2f".format(expense),
+                            text = currencySymbol + "%.2f".format(expense),
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -149,7 +149,7 @@ fun BudgetDetailScreen(
                             style = MaterialTheme.typography.labelSmall
                         )
                         Text(
-                            text = getLocalCurrencySymbol() + "%.2f".format(budget.amount),
+                            text = currencySymbol + "%.2f".format(budget.amount),
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -197,6 +197,7 @@ fun BudgetDetailScreen(
                             entryCategoryTransactions?.forEach { entryCategory ->
                                 TransactionCard(
                                     entryCategory = entryCategory,
+                                    currencySymbol = currencySymbol,
                                     iconTint = Color.Black,
                                     showDate = true,
                                 )

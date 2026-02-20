@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yml.charts.ui.piechart.models.PieChartData
+import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.entry.EntryRepository
 import com.example.spend.getMonthStart
 import com.example.spend.getSunday
@@ -29,6 +30,7 @@ data class ExpenseUiState(
 @HiltViewModel
 class SummaryViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
+    private val defaultPreferencesRepository: PreferencesRepository
 ) : ViewModel() {
     var uiState = MutableStateFlow(ExpenseUiState())
         private set
@@ -39,6 +41,13 @@ class SummaryViewModel @Inject constructor(
     init {
         updateIndex(0)
     }
+
+    val currencySymbol = defaultPreferencesRepository.baseCurrencySymbol
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = ""
+        )
 
     fun getExpenseByCategory(from: Long, to: Long = System.currentTimeMillis() / 1000) =
         defaultRepository.getExpenseByCategory(from, to)

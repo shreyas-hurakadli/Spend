@@ -3,20 +3,17 @@ package com.example.spend.ui.viewmodel.entry
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.sqlite.SQLiteException
+import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.dto.EntryCategory
-import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.entry.EntryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
@@ -29,7 +26,8 @@ private const val durationMillis = 1_000L
 @HiltViewModel
 class EntryViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
-    private val defaultAccountRepository: AccountRepository
+    private val defaultAccountRepository: AccountRepository,
+    private val defaultPreferencesRepository: PreferencesRepository
 ) : ViewModel() {
     private val _selectedEntry: MutableStateFlow<EntryCategory?> = MutableStateFlow(value = null)
     val selectedEntry = _selectedEntry.asStateFlow()
@@ -44,6 +42,13 @@ class EntryViewModel @Inject constructor(
                     initialValue = null
                 )
         }
+
+    val currencySymbol = defaultPreferencesRepository.baseCurrencySymbol
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = durationMillis),
+            initialValue = ""
+        )
 
     val thereAreEntries = defaultRepository.areEntriesPresent()
         .stateIn(

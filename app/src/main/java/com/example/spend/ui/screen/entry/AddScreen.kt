@@ -1,4 +1,4 @@
-package com.example.spend.ui.screen
+package com.example.spend.ui.screen.entry
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -107,6 +107,7 @@ fun AddScreen(
     val selectedCategory = viewModel.category.name
     val selectedToAccount = viewModel.toAccount.name
     val selectedFromAccount = viewModel.fromAccount.name
+    val currencySymbol by viewModel.currencySymbol.collectAsState()
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val snackBarScope = rememberCoroutineScope()
@@ -123,7 +124,7 @@ fun AddScreen(
 
     Scaffold(
         topBar = {
-            AppTopBar(
+            _root_ide_package_.com.example.spend.ui.screen.AppTopBar(
                 title = stringResource(R.string.add_entry),
                 canNavigateBack = true,
                 onBackClick = { navHostController.popBackStack() },
@@ -155,7 +156,7 @@ fun AddScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.weight(0.35f)
                 ) {
-                    SegmentedControl(
+                    _root_ide_package_.com.example.spend.ui.screen.SegmentedControl(
                         options = options,
                         selectedIndex = selectedIndex,
                         onSegmentSelected = {
@@ -256,8 +257,9 @@ fun AddScreen(
                     )
                 }
                 if (showAccountsBottomSheet) {
-                    AccountBottomSheet(
+                    _root_ide_package_.com.example.spend.ui.screen.AccountBottomSheet(
                         accounts = accounts.filter { it.name != "All" },
+                        currencySymbol = currencySymbol,
                         onSelect = {
                             if (accountIndex == 0)
                                 viewModel.changeFromAccount(value = it)
@@ -268,7 +270,7 @@ fun AddScreen(
                     )
                 }
                 if (showCategoryBottomSheet) {
-                    CategoryBottomSheet(
+                    _root_ide_package_.com.example.spend.ui.screen.CategoryBottomSheet(
                         categories =
                             if (selectedIndex == 0) incomeCategories.filter { it.name != "All" }
                             else expenseCategories.filter { it.name != "All" },
@@ -505,7 +507,7 @@ private fun DateTimePicker(
                 )
 
                 Dialog(onDismissRequest = { showTimePicker = false }) {
-                    TimePicker(
+                    _root_ide_package_.com.example.spend.ui.screen.TimePicker(
                         timePickerState = timePickerState,
                         onConfirm = {
                             onTimeChange(it)
@@ -516,7 +518,7 @@ private fun DateTimePicker(
                 }
             }
             if (showDatePicker) {
-                DatePicker(
+                _root_ide_package_.com.example.spend.ui.screen.DatePicker(
                     onDateSelected = {
                         onDateChange(it)
                         showTimePicker = false
@@ -613,15 +615,5 @@ private fun SpecificationSelectionButton(
                 overflow = TextOverflow.Ellipsis
             )
         }
-    }
-}
-
-@Preview(showSystemUi = true)
-@Composable
-private fun AddScreenPreview() {
-    SpendTheme {
-        AddScreen(
-            navHostController = rememberNavController()
-        )
     }
 }

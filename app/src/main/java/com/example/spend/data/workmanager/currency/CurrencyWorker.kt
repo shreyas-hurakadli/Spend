@@ -1,11 +1,15 @@
 package com.example.spend.data.workmanager.currency
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.spend.data.api.currency.CurrencyRepository
+import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.dto.currency.CurrencyResponse
 import com.example.spend.data.room.currency.Currency
+import com.example.spend.di.annotations.PermissionRepository
 import com.example.spend.toTwoDecimal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -15,7 +19,8 @@ class CurrencyWorker(
     context: Context,
     params: WorkerParameters,
     private val defaultCurrencyRepository: CurrencyRepository,
-    private val dbCurrencyRepository: com.example.spend.data.room.currency.CurrencyRepository
+    private val dbCurrencyRepository: com.example.spend.data.room.currency.CurrencyRepository,
+    private val defaultPreferencesRepository: PreferencesRepository
 ) : CoroutineWorker(appContext = context, params = params) {
     override suspend fun doWork(): Result {
         return try {
@@ -38,11 +43,11 @@ class CurrencyWorker(
                 rate = it.rates
             )
         }
-        withContext(context = Dispatchers.IO) {
-            dbCurrencyRepository.deleteAll()
-            rates.forEach { currency ->
-                dbCurrencyRepository.insert(currency)
-            }
+        dbCurrencyRepository.deleteAll()
+        rates.forEach { currency ->
+            dbCurrencyRepository.insert(currency)
         }
+        val baseCurrency = defaultPreferencesRepository.baseCurrency.first()
+        dbCurrencyRepository.insert(Currency(name = baseCurrency, rate = 1.00))
     }
 }

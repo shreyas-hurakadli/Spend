@@ -1,6 +1,5 @@
 package com.example.spend
 
-import co.yml.charts.common.extensions.roundTwoDecimal
 import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -9,7 +8,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import java.util.Currency
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
@@ -96,12 +94,6 @@ fun validateCurrency(input: String): Boolean {
     val regex = """^\+?\d+(\.\d\d?)?$""".toRegex()
     return regex.matches(input)
 }
-
-/**
- * Returns the local currency symbol
- */
-fun getLocalCurrencySymbol(locale: Locale = Locale.getDefault()): String? =
-    Currency.getInstance(locale).symbol
 
 /**
  * Truncates the Double value to two decimal digits

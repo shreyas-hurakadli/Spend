@@ -45,7 +45,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.data.room.budget.Budget
-import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppNavigationDrawer
@@ -63,6 +62,7 @@ fun BudgetScreen(
     val drawerScope = rememberCoroutineScope()
 
     val thereAreBudgets by viewModel.thereAreBudgets.collectAsState()
+    val currencySymbol by viewModel.currencySymbol.collectAsState()
     val budgets by viewModel.budgets.collectAsState()
 
     AppNavigationDrawer(
@@ -117,6 +117,7 @@ fun BudgetScreen(
                                 BudgetView(
                                     budget = it.first,
                                     expense = it.second,
+                                    currencySymbol = currencySymbol,
                                     onClick = {
                                         viewModel.selectBudget(budgetPair = it)
                                         navHostController.navigate(route = Routes.BudgetDetailScreen)
@@ -173,6 +174,7 @@ fun BudgetScreen(
 private fun BudgetView(
     budget: Budget,
     expense: Double,
+    currencySymbol: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -200,7 +202,7 @@ private fun BudgetView(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "${getLocalCurrencySymbol()} ${budget.amount}",
+                    text = "$currencySymbol ${budget.amount}",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onBackground
@@ -233,12 +235,12 @@ private fun BudgetView(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Spent: ${getLocalCurrencySymbol()} $expense",
+                    text = "Spent: $currencySymbol $expense",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = (if (budget.amount >= expense) "Remaining" else "Overspent") + ": ${getLocalCurrencySymbol()} ${(budget.amount - expense).absoluteValue}",
+                    text = (if (budget.amount >= expense) "Remaining" else "Overspent") + ": $currencySymbol ${(budget.amount - expense).absoluteValue}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     color = if (progress > 1f || budget.amount < expense) Color(color = 0xFFF44336)

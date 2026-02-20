@@ -2,10 +2,10 @@ package com.example.spend.ui.viewmodel.budget
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.budget.Budget
 import com.example.spend.data.room.budget.DefaultBudgetRepository
 import com.example.spend.data.room.entry.DefaultRepository
-import com.example.spend.ui.screen.SummaryScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +26,8 @@ private const val TIMEOUT_MILLIS = 5_000L
 @HiltViewModel
 class BudgetViewModel @Inject constructor(
     private val entryRepository: DefaultRepository,
-    private val budgetRepository: DefaultBudgetRepository
+    private val budgetRepository: DefaultBudgetRepository,
+    private val defaultPreferencesRepository: PreferencesRepository
 ) : ViewModel() {
     private val _budgets: MutableStateFlow<List<Pair<Budget, Double>>> =
         MutableStateFlow(value = emptyList())
@@ -35,6 +36,13 @@ class BudgetViewModel @Inject constructor(
     private val _selectedBudget: MutableStateFlow<Pair<Budget, Double>?> =
         MutableStateFlow(value = null)
     val selectedBudget = _selectedBudget.asStateFlow()
+
+    val currencySymbol = defaultPreferencesRepository.baseCurrencySymbol
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),
+            initialValue = ""
+        )
 
     init {
         viewModelScope.launch {

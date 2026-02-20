@@ -40,7 +40,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.getFormattedAmount
-import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.accountIcons
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppTopBar
@@ -58,6 +57,7 @@ fun AccountDetailScreen(
 ) {
     val selectedAccount by viewModel.selectedAccount.collectAsState()
     val selectedAccountTransactions by viewModel.selectedAccountTransactions.collectAsState(initial = emptyList())
+    val currencySymbol by viewModel.currencySymbol.collectAsState()
 
     var showDialogBox by remember { mutableStateOf(value = false) }
 
@@ -117,7 +117,7 @@ fun AccountDetailScreen(
                     )
                     Spacer(modifier = Modifier.height(height = 16.dp))
                     BasicText(
-                        text = "${getLocalCurrencySymbol()} ${getFormattedAmount(value = it.balance)}",
+                        text = "$currencySymbol ${getFormattedAmount(value = it.balance)}",
                         style = MaterialTheme.typography.displayMedium.copy(
                             fontWeight = FontWeight.Bold
                         ),
@@ -140,6 +140,7 @@ fun AccountDetailScreen(
                             items(items = selectedAccountTransactions) { entryCategory ->
                                 TransactionCard(
                                     entryCategory = entryCategory,
+                                    currencySymbol = currencySymbol,
                                     iconTint = entryCategory.color,
                                     showDate = true,
                                     clickable = true,

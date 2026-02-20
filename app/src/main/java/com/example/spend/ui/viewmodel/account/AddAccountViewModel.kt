@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.sqlite.SQLiteException
+import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.validateCurrency
@@ -11,13 +12,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+private const val DURATION_MILLIS = 1_000L
+
 @HiltViewModel
 class AddAccountViewModel @Inject constructor(
-    private val defaultAccountRepository: AccountRepository
+    private val defaultAccountRepository: AccountRepository,
+    private val defaultPreferencesRepository: PreferencesRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(Account())
     val uiState = _uiState.asStateFlow()
@@ -30,6 +36,13 @@ class AddAccountViewModel @Inject constructor(
 
     private val _snackBarMessage = MutableStateFlow(value = "")
     val snackBarMessage = _snackBarMessage.asStateFlow()
+
+    val currencySymbol = defaultPreferencesRepository.baseCurrencySymbol
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = DURATION_MILLIS),
+            initialValue = ""
+        )
 
     init {
         viewModelScope.launch {

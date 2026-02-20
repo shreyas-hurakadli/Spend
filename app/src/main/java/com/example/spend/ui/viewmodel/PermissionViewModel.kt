@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.spend.data.datastore.config.PermissionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val TIMEOUT_MILLIS = 5_000L
 

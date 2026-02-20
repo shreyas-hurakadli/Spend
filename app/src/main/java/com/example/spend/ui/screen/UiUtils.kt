@@ -64,7 +64,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -80,7 +79,6 @@ import com.example.spend.data.dto.EntryCategory
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.category.Category
 import com.example.spend.getFormattedAmount
-import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.longToDate
 import com.example.spend.ui.accountIcons
 import com.example.spend.ui.icons
@@ -275,6 +273,7 @@ fun AppNavigationDrawer(
 fun TransactionCard(
     entryCategory: EntryCategory,
     iconTint: Color,
+    currencySymbol: String,
     modifier: Modifier = Modifier,
     showDate: Boolean = false,
     clickable: Boolean = false,
@@ -320,7 +319,7 @@ fun TransactionCard(
                         modifier = Modifier.weight(1f)
                     )
                     Text(
-                        text = (if (entryCategory.entry.isExpense) "- " else "") + getLocalCurrencySymbol() + " " + getFormattedAmount(
+                        text = (if (entryCategory.entry.isExpense) "- " else "") + currencySymbol + " " + getFormattedAmount(
                             entryCategory.entry.amount
                         ),
                         style = MaterialTheme.typography.titleMedium,
@@ -416,6 +415,7 @@ fun SegmentedControl(
 @Composable
 fun AccountBottomSheet(
     accounts: List<Account>,
+    currencySymbol: String,
     onSelect: (Account) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -430,7 +430,10 @@ fun AccountBottomSheet(
             modifier = Modifier.fillMaxWidth()
         ) {
             items(items = accounts) { account ->
-                AccountView(account = account) {
+                AccountView(
+                    account = account,
+                    currencySymbol = currencySymbol
+                ) {
                     onSelect(account)
                     scope.launch {
                         sheetState.hide()
@@ -448,6 +451,7 @@ fun AccountBottomSheet(
 @Composable
 private fun AccountView(
     account: Account,
+    currencySymbol: String,
     onClick: () -> Unit
 ) {
     TextButton(
@@ -484,12 +488,12 @@ private fun AccountView(
                 Spacer(Modifier.width(2.dp))
                 Text(
                     text = account.name,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.titleMedium
                 )
             }
             Text(
-                text = getLocalCurrencySymbol() + " " + account.balance.toString(),
+                text = currencySymbol + " " + account.balance.toString(),
                 style = MaterialTheme.typography.titleMedium,
                 color = if (account.balance >= 0.00) Color.Green else Color.Red
             )
@@ -565,7 +569,7 @@ private fun CategoryView(
             }
             Text(
                 text = category.name,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.width(IntrinsicSize.Min)
             )

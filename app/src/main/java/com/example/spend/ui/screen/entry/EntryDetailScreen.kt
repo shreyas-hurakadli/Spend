@@ -29,7 +29,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +44,6 @@ import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.epochSecondsToDate
 import com.example.spend.getFormattedAmount
-import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.DialogBox
 import com.example.spend.ui.viewmodel.entry.EntryViewModel
@@ -56,6 +54,7 @@ fun EntryDetailScreen(
     viewModel: EntryViewModel = hiltViewModel()
 ) {
     val selectedEntry by viewModel.selectedEntry.collectAsState()
+    val currencySymbol by viewModel.currencySymbol.collectAsState()
     val selectedEntryAccount by viewModel.selectedEntryAccount.collectAsState(initial = null)
 
     var showDialogBox by remember { mutableStateOf(value = false) }
@@ -85,7 +84,7 @@ fun EntryDetailScreen(
                     modifier = Modifier.fillMaxHeight(fraction = 0.2f)
                 ) {
                     BasicText(
-                        text = (getLocalCurrencySymbol()
+                        text = (currencySymbol
                             ?: "$") + " " + getFormattedAmount(
                             value = selectedEntry?.entry?.amount ?: 0.00
                         ),

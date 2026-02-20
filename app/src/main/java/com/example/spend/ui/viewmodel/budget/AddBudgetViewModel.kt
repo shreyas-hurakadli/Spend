@@ -3,6 +3,7 @@ package com.example.spend.ui.viewmodel.budget
 import android.database.sqlite.SQLiteConstraintException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.account.DefaultAccountRepository
@@ -31,7 +32,8 @@ private const val TIMEOUT_MILLIS = 5_000L
 class AddBudgetViewModel @Inject constructor(
     private val budgetRepository: BudgetRepository,
     private val accountRepository: AccountRepository,
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository,
+    private val defaultPreferencesRepository: PreferencesRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(value = Budget())
     val uiState = _uiState.asStateFlow()
@@ -57,6 +59,13 @@ class AddBudgetViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),
             initialValue = emptyList()
+        )
+
+    val currencySymbol = defaultPreferencesRepository.baseCurrencySymbol
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = ""
         )
 
     private val _selectedAccount: MutableStateFlow<Account?> = MutableStateFlow(value = null)

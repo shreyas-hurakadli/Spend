@@ -61,7 +61,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
-import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.getTodayStart
 import com.example.spend.longToDate
 import com.example.spend.ui.accountIcons
@@ -74,7 +73,6 @@ import com.example.spend.ui.viewmodel.budget.AddBudgetViewModel
 import com.example.spend.ui.viewmodel.budget.Period
 import com.example.spend.validateCurrency
 import kotlinx.coroutines.launch
-import kotlin.collections.get
 
 @Composable
 fun AddBudgetScreen(
@@ -99,6 +97,7 @@ fun AddBudgetScreen(
     val toDate by viewModel.toDate.collectAsState()
     val showSnackBar by viewModel.showSnackBar.collectAsState()
     val snackBarMessage by viewModel.snackBarMessage.collectAsState()
+    val currencySymbol by viewModel.currencySymbol.collectAsState()
 
     var amount by rememberSaveable { mutableStateOf("") }
     var showCategories by rememberSaveable { mutableStateOf(false) }
@@ -283,7 +282,7 @@ fun AddBudgetScreen(
                         onValueChange = {},
                         trailingIcon = {
                             Text(
-                                text = getLocalCurrencySymbol() ?: "$",
+                                text = currencySymbol,
                                 color = Color.Black
                             )
                         },
@@ -474,6 +473,7 @@ fun AddBudgetScreen(
                 if (showAccounts) {
                     AccountBottomSheet(
                         accounts = accounts,
+                        currencySymbol = currencySymbol,
                         onSelect = {
                             viewModel.setAccount(it)
                             viewModel.setSelectedAccount(it)

@@ -57,13 +57,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
-import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.accountIcons
 import com.example.spend.ui.pastelColors
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.viewmodel.account.AddAccountViewModel
 import kotlinx.coroutines.launch
-import kotlin.collections.get
 
 @Composable
 fun AddAccountScreen(
@@ -75,6 +73,7 @@ fun AddAccountScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     val balance by viewModel.balance.collectAsState()
+    val currencySymbol by viewModel.currencySymbol.collectAsState()
 
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
@@ -171,7 +170,7 @@ fun AddAccountScreen(
                         onValueChange = {},
                         trailingIcon = {
                             Text(
-                                text = getLocalCurrencySymbol() ?: "$",
+                                text = currencySymbol,
                                 color = Color.Black
                             )
                         },

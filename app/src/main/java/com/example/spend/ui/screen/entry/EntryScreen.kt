@@ -3,11 +3,9 @@ package com.example.spend.ui.screen.entry
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -59,6 +56,7 @@ fun EntryScreen(
     val list by viewModel.transactions.collectAsState()
 
     val thereAreEntries by viewModel.thereAreEntries.collectAsState()
+    val currencySymbol by viewModel.currencySymbol.collectAsState()
 
     val showSnackBar by viewModel.showSnackBar.collectAsState()
     val snackBarMessage by viewModel.snackBarMessage.collectAsState()
@@ -136,6 +134,7 @@ fun EntryScreen(
                             }
                             TransactionCard(
                                 entryCategory = entryCategory,
+                                currencySymbol = currencySymbol,
                                 iconTint = Color.Black,
                                 clickable = true,
                                 onClick = {

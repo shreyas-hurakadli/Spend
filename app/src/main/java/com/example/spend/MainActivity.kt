@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SpendTheme {
-                RequestPostNotificationsPermission()
+                // RequestPostNotificationsPermission()
                 NavigationManager(
                     navHostController = rememberNavController(),
                 )

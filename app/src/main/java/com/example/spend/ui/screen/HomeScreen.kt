@@ -45,23 +45,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
 import com.example.spend.data.room.account.Account
 import com.example.spend.getFormattedAmount
-import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.navigation.Routes
-import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 
@@ -73,6 +68,8 @@ fun HomeScreen(
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val drawerScope = rememberCoroutineScope()
+
+    val currencySymbol by viewModel.currencySymbol.collectAsState()
 
     AppNavigationDrawer(
         currentScreenIndex = RouteNumbers.HOME_PAGE.screenNumber,
@@ -122,6 +119,7 @@ fun HomeScreen(
                     ) {
                         BalanceBar(
                             account = account,
+                            currencySymbol = currencySymbol,
                             onDropDownClick = { showAccountsBottomSheet = true },
                         )
                         Spacer(Modifier.padding(16.dp))
@@ -206,6 +204,7 @@ fun HomeScreen(
                                     transactions.forEach { entryCategory ->
                                         TransactionCard(
                                             entryCategory = entryCategory,
+                                            currencySymbol = currencySymbol,
                                             iconTint = Color.Black,
                                             showDate = true,
                                         )
@@ -218,6 +217,7 @@ fun HomeScreen(
                         if (showAccountsBottomSheet) {
                             AccountBottomSheet(
                                 accounts = accountList,
+                                currencySymbol = currencySymbol,
                                 onSelect = { account = it },
                                 onDismiss = { showAccountsBottomSheet = false },
                             )
@@ -288,6 +288,7 @@ private fun ActionCard(
 @Composable
 private fun BalanceBar(
     account: Account,
+    currencySymbol: String,
     onDropDownClick: () -> Unit
 ) {
     Box(
@@ -340,7 +341,7 @@ private fun BalanceBar(
             }
             Spacer(Modifier.padding(8.dp))
             Text(
-                text = (if (account.balance < 0) "- " else "") + "${getLocalCurrencySymbol()} ${
+                text = (if (account.balance < 0) "- " else "") + "$currencySymbol ${
                     getFormattedAmount(
                         value = account.balance
                     )
@@ -350,13 +351,5 @@ private fun BalanceBar(
                 fontSize = 24.sp
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun MainScreenPreviewLight() {
-    SpendTheme {
-        HomeScreen(navHostController = rememberNavController())
     }
 }

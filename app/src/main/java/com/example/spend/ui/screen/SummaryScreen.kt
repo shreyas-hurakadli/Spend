@@ -57,7 +57,6 @@ import co.yml.charts.ui.piechart.models.PieChartConfig
 import co.yml.charts.ui.piechart.models.PieChartData
 import com.example.spend.R
 import com.example.spend.getFormattedAmount
-import com.example.spend.getLocalCurrencySymbol
 import com.example.spend.getMonthStart
 import com.example.spend.getSunday
 import com.example.spend.getTodayStart
@@ -81,6 +80,7 @@ fun SummaryScreen(
     val drawerScope = rememberCoroutineScope()
 
     val income by viewModel.getIncomeByTime().collectAsState()
+    val currencySymbol by viewModel.currencySymbol.collectAsState()
 
     AppNavigationDrawer(
         currentScreenIndex = RouteNumbers.SUMMARY_SCREEN.screenNumber,
@@ -146,7 +146,8 @@ fun SummaryScreen(
                         Spacer(Modifier.padding(8.dp))
                         InfoBar(
                             balance = uiState.income - uiState.expense,
-                            expense = uiState.expense
+                            expense = uiState.expense,
+                            currencySymbol = currencySymbol
                         )
                         Spacer(Modifier.padding(16.dp))
                         Text(
@@ -211,12 +212,14 @@ fun SummaryScreen(
                             1 -> CategoryList(
                                 slices = expenseSlices,
                                 total = uiState.expense,
+                                currencySymbol = currencySymbol,
                                 navHostController = navHostController
                             )
 
                             else -> CategoryList(
                                 slices = incomeSlices,
                                 total = income,
+                                currencySymbol = currencySymbol,
                                 navHostController = navHostController
                             )
                         }
@@ -230,7 +233,8 @@ fun SummaryScreen(
 @Composable
 private fun InfoBar(
     balance: Double,
-    expense: Double
+    expense: Double,
+    currencySymbol: String
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceAround,
@@ -248,7 +252,7 @@ private fun InfoBar(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "${getLocalCurrencySymbol()} ${getFormattedAmount(balance)}",
+                text = "$currencySymbol ${getFormattedAmount(balance)}",
                 color = Color(0xFF4CAF50),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center
@@ -263,7 +267,7 @@ private fun InfoBar(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "${getLocalCurrencySymbol()} ${getFormattedAmount(expense)}",
+                text = "$currencySymbol ${getFormattedAmount(expense)}",
                 color = Color(0xFFF44336),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center
@@ -303,13 +307,19 @@ private fun ScrollIndicator(index: Int, total: Int, size: Dp, modifier: Modifier
 private fun CategoryList(
     slices: List<PieChartData.Slice>,
     total: Double,
+    currencySymbol: String,
     navHostController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     if (slices.isNotEmpty()) {
         Column(modifier = modifier) {
             slices.forEach { slice ->
-                CategoryView(slice, total, modifier)
+                CategoryView(
+                    slice = slice,
+                    currencySymbol = currencySymbol,
+                    total = total,
+                    modifier = modifier
+                )
             }
         }
     } else {
@@ -370,6 +380,7 @@ private fun CategoryList(
 @Composable
 private fun CategoryView(
     slice: PieChartData.Slice,
+    currencySymbol: String,
     total: Double,
     modifier: Modifier = Modifier
 ) {
@@ -403,7 +414,7 @@ private fun CategoryView(
                 fontWeight = FontWeight.Light
             )
             Text(
-                text = "${getLocalCurrencySymbol()} ${getFormattedAmount(slice.value.toDouble())}",
+                text = "$currencySymbol ${getFormattedAmount(slice.value.toDouble())}",
                 style = MaterialTheme.typography.labelSmall,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Light

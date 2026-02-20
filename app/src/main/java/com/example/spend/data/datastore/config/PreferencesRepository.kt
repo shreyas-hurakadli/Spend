@@ -15,15 +15,21 @@ class PreferencesRepository @Inject constructor(
 ) {
     private companion object {
         val BASE_CURRENCY = stringPreferencesKey(name = "base_currency")
+        val BASE_CURRENCY_SYMBOL = stringPreferencesKey(name = "base_currency_symbol")
     }
 
     suspend fun registerBaseCurrency(baseCurrency: String) {
         dataStore.edit { preferences ->
-            preferences[BASE_CURRENCY] = baseCurrency
+            preferences[BASE_CURRENCY] = baseCurrency.substring(startIndex = 0, endIndex = 3)
+            preferences[BASE_CURRENCY_SYMBOL] = baseCurrency.substring(startIndex = 4)
         }
     }
 
     val baseCurrency = dataStore.data
         .catch { emit(value = emptyPreferences()) }
-        .map { preferences -> preferences[BASE_CURRENCY] ?: "INR" }
+        .map { preferences -> preferences[BASE_CURRENCY] ?: "" }
+
+    val baseCurrencySymbol = dataStore.data
+        .catch { emit(value = emptyPreferences()) }
+        .map { preferences -> preferences[BASE_CURRENCY_SYMBOL] ?: "" }
 }

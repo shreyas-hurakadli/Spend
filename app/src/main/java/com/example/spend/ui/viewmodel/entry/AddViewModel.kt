@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.sqlite.SQLiteException
+import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.category.Category
@@ -34,7 +35,8 @@ class AddViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
     private val defaultAccountRepository: AccountRepository,
     private val defaultCategoryRepository: CategoryRepository,
-    private val defaultBudgetNotificationRepository: BudgetNotificationRepository
+    private val defaultBudgetNotificationRepository: BudgetNotificationRepository,
+    private val defaultPreferencesRepository: PreferencesRepository
 ) : ViewModel() {
     var selectedIndex by mutableIntStateOf(1)
         private set
@@ -82,6 +84,13 @@ class AddViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),
             initialValue = emptyList()
+        )
+
+    val currencySymbol = defaultPreferencesRepository.baseCurrencySymbol
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),
+            initialValue = ""
         )
 
     val expenseCategories = defaultCategoryRepository

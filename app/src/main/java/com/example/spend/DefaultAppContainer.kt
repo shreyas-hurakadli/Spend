@@ -9,7 +9,7 @@ import javax.inject.Inject
 @HiltAndroidApp
 class DefaultAppContainer : Application(), Configuration.Provider {
     @Inject
-    lateinit var workerFactory: NotificationWorkerFactory
+    lateinit var workerFactory: WorkManagerFactory
 
     @Inject
     lateinit var defaultCurrencyApiRepository: DefaultCurrencyApiRepository

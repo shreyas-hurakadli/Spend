@@ -2,6 +2,7 @@ package com.example.spend.ui.viewmodel.account
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.entry.EntryRepository
@@ -24,13 +25,21 @@ private const val DURATION_MILLIS = 1_000L
 @HiltViewModel
 class AccountViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
-    private val defaultAccountRepository: AccountRepository
+    private val defaultAccountRepository: AccountRepository,
+    private val defaultPreferencesRepository: PreferencesRepository
 ): ViewModel() {
     val accounts = defaultAccountRepository.getAllAccounts()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = DURATION_MILLIS),
             initialValue = emptyList()
+        )
+
+    val currencySymbol = defaultPreferencesRepository.baseCurrencySymbol
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = DURATION_MILLIS),
+            initialValue = ""
         )
 
     val thereAreAccounts = defaultAccountRepository.thereAreAccounts()

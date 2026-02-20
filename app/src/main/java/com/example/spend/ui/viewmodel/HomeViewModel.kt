@@ -2,6 +2,7 @@ package com.example.spend.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.dto.EntryCategory
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
@@ -18,6 +19,7 @@ private const val durationMillis = 1_000L
 class HomeViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
     private val defaultAccountRepository: AccountRepository,
+    private val defaultPreferencesRepository: PreferencesRepository
 ) : ViewModel() {
     val transactions: StateFlow<List<EntryCategory>> =
         defaultRepository.getEntryIconAndColor(limit = 4)
@@ -41,4 +43,11 @@ class HomeViewModel @Inject constructor(
                 started = SharingStarted.Lazily,
                 initialValue = Account()
             )
+
+    val currencySymbol = defaultPreferencesRepository.baseCurrencySymbol
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = ""
+        )
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
+import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.budget.BudgetRepository
 import com.example.spend.data.room.currency.CurrencyRepository
 import com.example.spend.data.room.entry.EntryRepository
@@ -11,11 +12,12 @@ import com.example.spend.data.workmanager.budget.BudgetCheckWorker
 import com.example.spend.data.workmanager.currency.CurrencyWorker
 import jakarta.inject.Inject
 
-class NotificationWorkerFactory @Inject constructor(
+class WorkManagerFactory @Inject constructor(
     private val entryRepository: EntryRepository,
     private val budgetRepository: BudgetRepository,
     private val currencyRepository: CurrencyRepository,
-    private val apiCurrencyRepository: com.example.spend.data.api.currency.CurrencyRepository
+    private val apiCurrencyRepository: com.example.spend.data.api.currency.CurrencyRepository,
+    private val defaultPreferencesRepository: PreferencesRepository
 ) : WorkerFactory() {
     override fun createWorker(
         appContext: Context,
@@ -37,7 +39,8 @@ class NotificationWorkerFactory @Inject constructor(
                     context = appContext,
                     params = workerParameters,
                     defaultCurrencyRepository = apiCurrencyRepository,
-                    dbCurrencyRepository = currencyRepository
+                    dbCurrencyRepository = currencyRepository,
+                    defaultPreferencesRepository = defaultPreferencesRepository
                 )
             }
 
