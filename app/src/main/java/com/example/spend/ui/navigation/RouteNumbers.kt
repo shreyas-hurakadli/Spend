@@ -6,5 +6,6 @@ enum class RouteNumbers(val screenNumber: Int) {
     ACCOUNT_PAGE(2),
     BUDGET_PAGE(3),
     SUMMARY_SCREEN(4),
-    SETTINGS_SCREEN(5),
+    CURRENCY_SCREEN(5),
+    SETTINGS_SCREEN(6),
 }

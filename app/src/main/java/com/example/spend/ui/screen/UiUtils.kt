@@ -119,6 +119,12 @@ private val navigationIcon = listOf(
         contentDescription = "Budgets"
     ),
     NavigationIcon(
+        baseLineIcon = R.drawable.baseline_currency_exchange,
+        outlinedIcon = R.drawable.outlined_currency_exchange,
+        route = Routes.CurrencyConverterScreen,
+        contentDescription = "Currencies"
+    ),
+    NavigationIcon(
         baseLineIcon = R.drawable.baseline_summarize,
         outlinedIcon = R.drawable.outline_summarize,
         route = Routes.ExpensesScreen,
@@ -236,7 +242,7 @@ fun AppNavigationDrawer(
                         NavigationDrawerItem(
                             label = {
                                 Text(
-                                    text = item.contentDescription ?: "Default",
+                                    text = item.contentDescription ?: "",
                                     style = MaterialTheme.typography.labelLarge
                                 )
                             },

@@ -1,4 +1,4 @@
-package com.example.spend.ui.screen
+package com.example.spend.ui.screen.currency
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,7 +44,8 @@ import com.example.spend.R
 import com.example.spend.ui.CurrencyIcon
 import com.example.spend.ui.currencyIcons
 import com.example.spend.ui.navigation.Routes
-import com.example.spend.ui.viewmodel.CurrencyScreenViewModel
+import com.example.spend.ui.screen.AppTopBar
+import com.example.spend.ui.viewmodel.currency.CurrencyScreenViewModel
 
 @Composable
 fun SelectCurrencyScreen(

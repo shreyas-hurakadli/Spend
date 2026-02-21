@@ -16,9 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import co.yml.charts.common.extensions.isNotNull
-import com.example.spend.ui.screen.entry.AddScreen
 import com.example.spend.ui.screen.CreateCategoryScreen
-import com.example.spend.ui.screen.SelectCurrencyScreen
 import com.example.spend.ui.screen.HomeScreen
 import com.example.spend.ui.screen.SettingsScreen
 import com.example.spend.ui.screen.SummaryScreen
@@ -28,6 +26,9 @@ import com.example.spend.ui.screen.account.AddAccountScreen
 import com.example.spend.ui.screen.budget.AddBudgetScreen
 import com.example.spend.ui.screen.budget.BudgetDetailScreen
 import com.example.spend.ui.screen.budget.BudgetScreen
+import com.example.spend.ui.screen.currency.CurrencyConverterScreen
+import com.example.spend.ui.screen.currency.SelectCurrencyScreen
+import com.example.spend.ui.screen.entry.AddScreen
 import com.example.spend.ui.screen.entry.EntryDetailScreen
 import com.example.spend.ui.screen.entry.EntryScreen
 import com.example.spend.ui.viewmodel.AppViewModel
@@ -112,6 +113,9 @@ fun NavigationManager(
             }
             composable<Routes.AddBudgetScreen> {
                 AddBudgetScreen(navHostController = navHostController)
+            }
+            composable<Routes.CurrencyConverterScreen> {
+                CurrencyConverterScreen(navHostController = navHostController)
             }
             composable<Routes.EntryDetailScreen> {
                 EntryDetailScreen(
