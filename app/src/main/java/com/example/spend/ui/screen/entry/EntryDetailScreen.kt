@@ -84,8 +84,7 @@ fun EntryDetailScreen(
                     modifier = Modifier.fillMaxHeight(fraction = 0.2f)
                 ) {
                     BasicText(
-                        text = (currencySymbol
-                            ?: "$") + " " + getFormattedAmount(
+                        text = "$currencySymbol " + getFormattedAmount(
                             value = selectedEntry?.entry?.amount ?: 0.00
                         ),
                         style = MaterialTheme.typography.displayMedium.copy(
@@ -101,7 +100,7 @@ fun EntryDetailScreen(
                 }
                 DetailRow(
                     icon = ImageVector.vectorResource(id = R.drawable.baseline_wallet),
-                    detail = stringResource(R.string.accounts),
+                    detail = stringResource(R.string.account),
                     information = selectedEntryAccount?.name ?: "",
                     modifier = Modifier.fillMaxWidth()
                 )

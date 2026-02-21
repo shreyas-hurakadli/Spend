@@ -44,6 +44,13 @@ class AddAccountViewModel @Inject constructor(
             initialValue = ""
         )
 
+    val currencyCode = defaultPreferencesRepository.baseCurrency
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = DURATION_MILLIS),
+            initialValue = ""
+        )
+
     init {
         viewModelScope.launch {
             withContext(context = Dispatchers.IO) {

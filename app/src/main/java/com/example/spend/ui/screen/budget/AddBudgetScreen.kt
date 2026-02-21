@@ -98,6 +98,7 @@ fun AddBudgetScreen(
     val showSnackBar by viewModel.showSnackBar.collectAsState()
     val snackBarMessage by viewModel.snackBarMessage.collectAsState()
     val currencySymbol by viewModel.currencySymbol.collectAsState()
+    val currencyCode by viewModel.currencyCode.collectAsState()
 
     var amount by rememberSaveable { mutableStateOf("") }
     var showCategories by rememberSaveable { mutableStateOf(false) }
@@ -278,7 +279,7 @@ fun AddBudgetScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     OutlinedTextField(
-                        value = "INR",
+                        value = currencyCode,
                         onValueChange = {},
                         trailingIcon = {
                             Text(

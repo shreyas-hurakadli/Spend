@@ -74,6 +74,7 @@ fun AddAccountScreen(
     val uiState by viewModel.uiState.collectAsState()
     val balance by viewModel.balance.collectAsState()
     val currencySymbol by viewModel.currencySymbol.collectAsState()
+    val currencyCode by viewModel.currencyCode.collectAsState()
 
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
@@ -166,7 +167,7 @@ fun AddAccountScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     OutlinedTextField(
-                        value = "INR",
+                        value = currencyCode,
                         onValueChange = {},
                         trailingIcon = {
                             Text(

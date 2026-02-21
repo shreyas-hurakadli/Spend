@@ -68,6 +68,13 @@ class AddBudgetViewModel @Inject constructor(
             initialValue = ""
         )
 
+    val currencyCode = defaultPreferencesRepository.baseCurrency
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = ""
+        )
+
     private val _selectedAccount: MutableStateFlow<Account?> = MutableStateFlow(value = null)
     val selectedAccount = _selectedAccount.asStateFlow()
 
