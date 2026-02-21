@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 sealed class Routes {
     @Serializable
-    data object CurrencyScreen: Routes()
+    data object SelectCurrencyScreen: Routes()
 
     @Serializable
     data object HomeScreen: Routes()

@@ -18,7 +18,7 @@ class AppViewModel @Inject constructor(
 ): ViewModel() {
     val startDestination = defaultPreferencesRepository.baseCurrency
         .map { currency ->
-            if (currency.isEmpty()) Routes.CurrencyScreen
+            if (currency.isEmpty()) Routes.SelectCurrencyScreen
             else Routes.HomeScreen
         }
         .stateIn(

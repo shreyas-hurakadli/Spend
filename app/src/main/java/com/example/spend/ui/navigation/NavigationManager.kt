@@ -5,7 +5,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,7 +18,7 @@ import androidx.navigation.compose.composable
 import co.yml.charts.common.extensions.isNotNull
 import com.example.spend.ui.screen.entry.AddScreen
 import com.example.spend.ui.screen.CreateCategoryScreen
-import com.example.spend.ui.screen.CurrencyScreen
+import com.example.spend.ui.screen.SelectCurrencyScreen
 import com.example.spend.ui.screen.HomeScreen
 import com.example.spend.ui.screen.SettingsScreen
 import com.example.spend.ui.screen.SummaryScreen
@@ -52,7 +51,7 @@ fun NavigationManager(
     } else {
         NavHost(
             navController = navHostController,
-            startDestination = startDestination ?: Routes.CurrencyScreen,
+            startDestination = startDestination ?: Routes.SelectCurrencyScreen,
             enterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { fullWidth -> fullWidth },
@@ -78,8 +77,8 @@ fun NavigationManager(
                 )
             }
         ) {
-            composable<Routes.CurrencyScreen> {
-                CurrencyScreen(navHostController = navHostController)
+            composable<Routes.SelectCurrencyScreen> {
+                SelectCurrencyScreen(navHostController = navHostController)
             }
             composable<Routes.HomeScreen> {
                 HomeScreen(navHostController = navHostController)
