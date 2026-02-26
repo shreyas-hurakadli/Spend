@@ -2,7 +2,10 @@ package com.example.spend.data.workmanager.currency
 
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.Operation
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import jakarta.inject.Inject
@@ -14,6 +17,23 @@ import java.util.concurrent.TimeUnit
 class DefaultCurrencyApiRepository @Inject constructor(
     private val workManager: WorkManager
 ) : CurrencyApiRepository {
+    override fun getExchangeRateNow() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val work = OneTimeWorkRequest
+            .Builder(workerClass = CurrencyWorker::class.java)
+            .setConstraints(constraints = constraints)
+            .build()
+
+        workManager.enqueueUniqueWork(
+            uniqueWorkName = "currency_exchange_rate_fetch",
+            existingWorkPolicy = ExistingWorkPolicy.KEEP,
+            request = work
+        )
+    }
+
     override fun scheduleExchangeRateFetch() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -28,7 +48,7 @@ class DefaultCurrencyApiRepository @Inject constructor(
             .build()
 
         workManager.enqueueUniquePeriodicWork(
-            uniqueWorkName = "currency_exchange_rate_fetch",
+            uniqueWorkName = "currency_exchange_rate_fetch_periodic",
             existingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.UPDATE,
             request = work
         )

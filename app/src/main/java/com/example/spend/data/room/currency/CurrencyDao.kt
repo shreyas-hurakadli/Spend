@@ -26,4 +26,7 @@ interface CurrencyDao {
 
     @Query(value = "SELECT * FROM currencies")
     fun getAll(): Flow<List<Currency>>
+
+    @Query(value = "SELECT * FROM currencies WHERE name = :code")
+    fun getByCode(code: String): Flow<Currency>
 }

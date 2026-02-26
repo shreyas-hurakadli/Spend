@@ -28,4 +28,6 @@ class DefaultCurrencyRepository @Inject constructor(
     }
 
     override fun getAll(): Flow<List<Currency>> = dao.getAll()
+
+    override fun getByCode(code: String): Flow<Currency> = dao.getByCode(code = code)
 }

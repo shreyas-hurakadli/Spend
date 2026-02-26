@@ -12,4 +12,6 @@ interface CurrencyRepository {
     suspend fun deleteAll()
 
     fun getAll(): Flow<List<Currency>>
+
+    fun getByCode(code: String): Flow<Currency>
 }

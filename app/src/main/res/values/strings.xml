@@ -67,4 +67,9 @@
     <string name="select_currency">Select Currency</string>
     <string name="india">India</string>
     <string name="currencies">Currencies</string>
+    <string name="send">Send</string>
+    <string name="no_exchange_data_main_message">No Exchange Data</string>
+    <string name="no_exchange_data_extended_message">We could not find the latest exchange rates. Please check your connection and try again.</string>
+    <string name="receive">Receive</string>
+    <string name="exchange_rate">Exchange Rate</string>
 </resources>
