@@ -30,6 +30,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -117,6 +118,7 @@ private fun CurrencyView(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)
+            .clip(shape = RoundedCornerShape(size = 16.dp))
             .background(
                 color = MaterialTheme.colorScheme.tertiary,
                 shape = RoundedCornerShape(size = 16.dp)
