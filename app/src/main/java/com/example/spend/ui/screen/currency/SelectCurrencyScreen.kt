@@ -79,7 +79,10 @@ fun SelectCurrencyScreen(
             LazyColumn(
                 modifier = Modifier.weight(weight = 1f)
             ) {
-                items(items = currencyIcons) { currency ->
+                items(
+                    items = currencyIcons,
+                    key = { it.code }
+                ) { currency ->
                     CurrencyView(
                         currency = currency,
                         selected = selectedCode?.substring(startIndex = 0, endIndex = 3),
