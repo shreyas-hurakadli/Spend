@@ -180,7 +180,8 @@ fun BudgetDetailScreen(
                     text = stringResource(R.string.transactions),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.align(alignment = Alignment.Start)
                 )
                 Spacer(modifier = Modifier.fillMaxHeight(fraction = 0.01f))
                 Box(
