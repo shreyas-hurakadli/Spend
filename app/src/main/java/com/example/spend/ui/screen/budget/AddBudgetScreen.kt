@@ -550,7 +550,7 @@ private fun PeriodBottomSheet(
                         }
                     }
                 ) {
-                    Text(text = period, color = MaterialTheme.colorScheme.onPrimary)
+                    Text(text = period, color = MaterialTheme.colorScheme.onBackground)
                 }
             }
         }
