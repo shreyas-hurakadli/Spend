@@ -63,6 +63,7 @@
     <string name="delete">Delete</string>
     <string name="transaction_delete_message">Are you sure you want to delete this transaction? This action cannot be undone.</string>
     <string name="account_delete_message">Are you sure you want to delete this account? This action cannot be undone.</string>
+    <string name="budget_delete_message">Are you sure you want to delete this budget? This action cannot be undone.</string>
     <string name="delete_account">Delete Account</string>
     <string name="select_currency">Select Currency</string>
     <string name="india">India</string>
@@ -72,4 +73,5 @@
     <string name="no_exchange_data_extended_message">We could not find the latest exchange rates. Please check your connection and try again.</string>
     <string name="receive">Receive</string>
     <string name="exchange_rate">Exchange Rate</string>
+    <string name="delete_budget">Delete Budget</string>
 </resources>

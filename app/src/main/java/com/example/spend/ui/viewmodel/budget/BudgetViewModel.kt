@@ -152,4 +152,10 @@ class BudgetViewModel @Inject constructor(
     fun selectBudget(budgetPair: Pair<Budget, Double>) {
         _selectedBudget.value = budgetPair
     }
+
+    fun deleteBudget(budget: Budget) {
+        viewModelScope.launch {
+            budgetRepository.delete(budget = budget)
+        }
+    }
 }

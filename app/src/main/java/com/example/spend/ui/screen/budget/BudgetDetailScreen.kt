@@ -13,7 +13,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -21,6 +27,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +43,7 @@ import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.data.room.budget.Budget
 import com.example.spend.ui.screen.AppTopBar
+import com.example.spend.ui.screen.DialogBox
 import com.example.spend.ui.screen.TransactionCard
 import com.example.spend.ui.viewmodel.budget.BudgetViewModel
 
@@ -51,12 +61,23 @@ fun BudgetDetailScreen(
     val remaining = budget.amount - expense
     val progress = (expense / budget.amount).coerceIn(0.0, 1.0).toFloat()
 
+    var showDialogBox by remember { mutableStateOf(value = false) }
+
     Scaffold(
         topBar = {
             AppTopBar(
                 title = stringResource(R.string.budget_detail),
                 canNavigateBack = true,
                 onBackClick = { navHostController.popBackStack() },
+                actions = {
+                    IconButton(onClick = { showDialogBox = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = stringResource(R.string.delete)
+                        )
+                    }
+                }
             )
         }
     ) { innerPadding ->
@@ -155,27 +176,12 @@ fun BudgetDetailScreen(
                     }
                 }
                 Spacer(modifier = Modifier.fillMaxHeight(fraction = 0.05f))
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = stringResource(R.string.transactions),
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
-                    if (transactions?.isNotEmpty() ?: false) {
-                        Text(
-                            text = stringResource(R.string.see_all),
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier
-                                .clickable {}
-                        )
-                    }
-                }
+                Text(
+                    text = stringResource(R.string.transactions),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
                 Spacer(modifier = Modifier.fillMaxHeight(fraction = 0.01f))
                 Box(
                     modifier = Modifier
@@ -188,13 +194,10 @@ fun BudgetDetailScreen(
                             ?: false
                     ) Alignment.TopCenter else Alignment.Center
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        if (transactions?.isNotEmpty() ?: false) {
-                            val entryCategoryTransactions = transactions?.take(n = 4)
-                            entryCategoryTransactions?.forEach { entryCategory ->
+                    val entryCategoryTransactions = transactions
+                    if (entryCategoryTransactions?.isNotEmpty() ?: false) {
+                        LazyColumn {
+                            items(items = entryCategoryTransactions) { entryCategory ->
                                 TransactionCard(
                                     entryCategory = entryCategory,
                                     currencySymbol = currencySymbol,
@@ -202,10 +205,28 @@ fun BudgetDetailScreen(
                                     showDate = true,
                                 )
                             }
-                        } else {
-                            Text(text = stringResource(R.string.no_transactions))
                         }
+                    } else {
+                        Text(text = stringResource(R.string.no_transactions))
                     }
+                }
+                if (showDialogBox) {
+                    DialogBox(
+                        onDismissRequest = { showDialogBox = false },
+                        onConfirmation = {
+                            navHostController.popBackStack()
+                            viewModel.deleteBudget(selectedBudget?.first ?: Budget())
+                        },
+                        dialogTitle = stringResource(id = R.string.delete_budget),
+                        dialogText = stringResource(id = R.string.budget_delete_message),
+                        confirmText = {
+                            Text(
+                                text = stringResource(id = R.string.delete),
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        },
+                        dismissText = { Text(text = stringResource(id = R.string.cancel)) },
+                    )
                 }
             }
         }
