@@ -247,7 +247,16 @@ fun AppNavigationDrawer(
                                 )
                             },
                             selected = (currentScreenIndex == index),
-                            onClick = { navHostController.navigate(item.route) },
+                            onClick = {
+                                navHostController.navigate(item.route) {
+                                    popUpTo(navHostController.graph.id) {
+                                        inclusive = true
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
                             icon = {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(id = item.baseLineIcon),
