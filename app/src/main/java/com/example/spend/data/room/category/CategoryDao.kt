@@ -35,22 +35,6 @@ interface CategoryDao {
         deleteAll()
         upsert(
             Category(
-                name = "All",
-                isExpense = false,
-                color = Color(-14634326),
-                icon = null
-            )
-        )
-        upsert(
-            Category(
-                name = "All",
-                isExpense = true,
-                color = Color(-14634326),
-                icon = null
-            )
-        )
-        upsert(
-            Category(
                 name = "Transfer",
                 isExpense = true,
                 color = Color(-14634326),

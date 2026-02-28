@@ -34,10 +34,10 @@ interface AccountDao {
     @Transaction
     suspend fun resetData() {
         deleteAll()
-        upsert(Account(name = "All", balance = 0.0, color = Color(-14634326), icon = null))
-        upsert(Account(name = "Cash", balance = 0.0, color = Color(-8921737), icon = "cash"))
-        upsert(Account(name = "Card", balance = 0.0, color = Color(-5323057), icon = "card"))
-        upsert(Account(name = "Savings", balance = 0.0, color = Color(-19641), icon = "piggybank"))
+        upsert(Account(id = 1, name = "All", balance = 0.0, color = Color(-14634326), icon = null))
+        insert(Account(name = "Cash", balance = 0.0, color = Color(-8921737), icon = "cash"))
+        insert(Account(name = "Card", balance = 0.0, color = Color(-5323057), icon = "card"))
+        insert(Account(name = "Savings", balance = 0.0, color = Color(-19641), icon = "piggybank"))
     }
 
     @Query("SELECT EXISTS (SELECT 1 FROM accounts WHERE name != 'All')")
