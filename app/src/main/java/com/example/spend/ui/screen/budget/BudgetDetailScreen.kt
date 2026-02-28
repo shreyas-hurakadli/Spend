@@ -2,7 +2,6 @@ package com.example.spend.ui.screen.budget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
@@ -42,6 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.data.room.budget.Budget
+import com.example.spend.getFormattedAmount
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.DialogBox
 import com.example.spend.ui.screen.TransactionCard
@@ -107,22 +109,17 @@ fun BudgetDetailScreen(
                     fontWeight = FontWeight.Bold,
                     color = Color.Gray
                 )
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = currencySymbol + expense.toInt().toString(),
-                        fontSize = 48.sp,
-                        fontWeight = FontWeight.ExtraBold
+                BasicText(
+                    text = "$currencySymbol ${getFormattedAmount(value = expense)}",
+                    maxLines = 1,
+                    style = MaterialTheme.typography.displayMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    autoSize = TextAutoSize.StepBased(
+                        minFontSize = 24.sp,
+                        maxFontSize = 48.sp
                     )
-                    Text(
-                        text = "%.2f".format(remaining - remaining.toInt())
-                            .substring(startIndex = 1),
-                        color = Color.Gray
-                    )
-                }
+                )
                 Spacer(modifier = Modifier.fillMaxHeight(fraction = 0.05f))
                 if (!progress.isNaN()) {
                     LinearProgressIndicator(
