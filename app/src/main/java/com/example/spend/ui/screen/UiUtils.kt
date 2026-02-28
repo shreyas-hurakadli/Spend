@@ -139,7 +139,7 @@ private val navigationIcon = listOf(
 )
 
 @Composable
-fun NoTransactions(modifier: Modifier = Modifier) {
+fun NoTransactions() {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.padding(all = 32.dp)
