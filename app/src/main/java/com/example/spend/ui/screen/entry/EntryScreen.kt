@@ -112,26 +112,26 @@ fun EntryScreen(
             snackbarHost = { SnackbarHost(snackBarHostState) }
         ) { innerPadding ->
             if (list.isNotEmpty()) {
-                var date = ""
                 LazyColumn(
                     modifier = Modifier
                         .padding(paddingValues = innerPadding)
                         .fillMaxSize()
                         .padding(all = 8.dp)
                 ) {
-                    items(items = list) { entryCategory ->
-                        Column {
-                            if (date != longToDate(entryCategory.entry.epochSeconds)) {
-                                date = longToDate(entryCategory.entry.epochSeconds)
-                                Text(
-                                    text = longToDate(entryCategory.entry.epochSeconds),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = Color.Black,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    textAlign = TextAlign.Start,
-                                )
-                                Spacer(Modifier.padding(top = 8.dp))
-                            }
+                    list.forEach { (date, entryCategories) ->
+                        item(key = "header_$date") {
+                            Text(
+                                text = date,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Color.Black,
+                                fontWeight = FontWeight.ExtraBold,
+                                textAlign = TextAlign.Start,
+                            )
+                            Spacer(Modifier.padding(top = 8.dp))
+                        }
+                        items(
+                            items = entryCategories,
+                        ) { entryCategory ->
                             TransactionCard(
                                 entryCategory = entryCategory,
                                 currencySymbol = currencySymbol,

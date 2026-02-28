@@ -273,7 +273,7 @@ fun AddScreen(
                     _root_ide_package_.com.example.spend.ui.screen.CategoryBottomSheet(
                         categories =
                             if (selectedIndex == 0) incomeCategories.filter { it.name != "All" }
-                            else expenseCategories.filter { it.name != "All" },
+                            else expenseCategories.filter { it.name != "All" && it.name != "Transfer" },
                         onSelect = { viewModel.changeCategoryId(value = it) },
                         onDismiss = { showCategoryBottomSheet = false },
                     )
@@ -360,22 +360,22 @@ private fun CalculatorUI(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
-                buttons.forEach { rowButtons ->
-                    if (rowButtons == buttons.first()) {
-                        Spacer(Modifier.height(4.dp))
-                    }
-                    CalculatorButtonRow(
-                        buttons = rowButtons,
-                        maxWidth = maxWidth,
-                        buttonAspectRatio = buttonAspectRatio,
-                        updateOperator = updateOperator,
-                        calculateAmount = calculateAmount,
-                        addToAmount = addToAmount
-                    )
-                    if (rowButtons != buttons.last()) {
-                        Spacer(Modifier.height(4.dp))
-                    }
+            buttons.forEach { rowButtons ->
+                if (rowButtons == buttons.first()) {
+                    Spacer(Modifier.height(4.dp))
                 }
+                CalculatorButtonRow(
+                    buttons = rowButtons,
+                    maxWidth = maxWidth,
+                    buttonAspectRatio = buttonAspectRatio,
+                    updateOperator = updateOperator,
+                    calculateAmount = calculateAmount,
+                    addToAmount = addToAmount
+                )
+                if (rowButtons != buttons.last()) {
+                    Spacer(Modifier.height(4.dp))
+                }
+            }
         }
     }
 }

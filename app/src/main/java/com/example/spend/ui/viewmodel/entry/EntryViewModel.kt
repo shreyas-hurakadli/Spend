@@ -7,6 +7,7 @@ import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.dto.EntryCategory
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.entry.EntryRepository
+import com.example.spend.longToDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -63,12 +65,15 @@ class EntryViewModel @Inject constructor(
     private val _snackBarMessage = MutableStateFlow(value = "")
     val snackBarMessage = _snackBarMessage.asStateFlow()
 
-    val transactions: StateFlow<List<EntryCategory>> =
+    val transactions =
         defaultRepository.getEntryIconAndColor()
+            .map {
+                it.groupBy { entryCategory -> longToDate(longDate = entryCategory.entry.epochSeconds) }
+            }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(stopTimeoutMillis = durationMillis),
-                initialValue = emptyList()
+                initialValue = emptyMap()
             )
 
     fun toggleSnackBar() {

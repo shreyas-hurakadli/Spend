@@ -109,6 +109,14 @@ class AddViewModel @Inject constructor(
             initialValue = Category()
         )
 
+    val transferCategoryIncome = defaultCategoryRepository
+        .findCategoryByNameAndId(name = "Transfer", isExpense = false)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = Category()
+        )
+
     private val _showSnackBar = MutableStateFlow(value = false)
     val showSnackBar = _showSnackBar.asStateFlow()
 
@@ -260,6 +268,16 @@ class AddViewModel @Inject constructor(
                         defaultAccountRepository.update(
                             account = toAccount.copy(
                                 balance = toAccount.balance + amount.toDouble()
+                            )
+                        )
+                        defaultRepository.insert(
+                            entry = Entry(
+                                amount = amount.toDouble(),
+                                isExpense = false,
+                                epochSeconds = time + date,
+                                categoryId = transferCategoryIncome.value.id,
+                                accountId = toAccount.id,
+                                description = description.trim()
                             )
                         )
                     }
