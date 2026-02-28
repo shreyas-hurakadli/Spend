@@ -9,6 +9,8 @@ interface BudgetRepository {
 
     suspend fun delete(budget: Budget)
 
+    suspend fun deleteAll()
+
     fun thereAreBudgets(): Flow<Boolean>
 
     fun getAllBudgets(): Flow<List<Budget>>

@@ -9,6 +9,10 @@ interface AccountRepository {
 
     suspend fun delete(account: Account)
 
+    suspend fun deleteAll()
+
+    suspend fun resetData()
+
     fun thereAreAccounts(): Flow<Boolean>
 
     fun getAccountById(id: Long): Flow<Account?>

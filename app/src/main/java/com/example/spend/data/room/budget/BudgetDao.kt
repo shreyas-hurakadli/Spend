@@ -18,6 +18,12 @@ interface BudgetDao {
     @Delete
     suspend fun delete(budget: Budget)
 
+    @Query("DELETE FROM budgets")
+    suspend fun deleteAll()
+
+    @Query("DELETE FROM sqlite_sequence WHERE name = 'budgets'")
+    suspend fun resetAutoIncrement()
+
     @Query("SELECT EXISTS (SELECT 1 FROM budgets WHERE id IS NOT NULL)")
     fun thereAreNoBudgets(): Flow<Boolean>
 

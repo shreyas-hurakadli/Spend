@@ -13,6 +13,10 @@ class DefaultBudgetRepository @Inject constructor(
 
     override suspend fun delete(budget: Budget) = dao.delete(budget)
 
+    override suspend fun deleteAll() {
+        dao.deleteAll()
+        dao.resetAutoIncrement()
+    }
     override fun getAllBudgets(): Flow<List<Budget>> = dao.getAllBudgets()
 
     override fun getAllActiveBudgets(): Flow<List<Budget>> =
