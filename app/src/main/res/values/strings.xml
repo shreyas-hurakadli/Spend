@@ -16,7 +16,7 @@
     <string name="done">Done</string>
     <string name="enter_new_balance">Enter new balance</string>
     <string name="transactions">Transactions</string>
-    <string name="delete_everything">Delete Everything</string>
+    <string name="reset_data">Reset Data</string>
     <string name="transaction_success_message">Successfully inserted transaction</string>
     <string name="previous">previous</string>
     <string name="next">next</string>
@@ -74,4 +74,5 @@
     <string name="receive">Receive</string>
     <string name="exchange_rate">Exchange Rate</string>
     <string name="delete_budget">Delete Budget</string>
+    <string name="reset_data_message">This will permanently delete all the application data from this device. This action can’t be undone.</string>
 </resources>
