@@ -18,14 +18,13 @@ import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
 import com.example.spend.data.workmanager.budget.BudgetNotificationRepository
 import com.example.spend.getTodayStart
+import com.example.spend.toTwoDecimal
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 private const val TIMEOUT_MILLIS = 5_000L
@@ -174,9 +173,7 @@ class AddViewModel @Inject constructor(
         if (decimalPoints > 2)
             return
 
-        amount = if (value.contains(regex = Regex(pattern = "^*\\.00?$")))
-            String.format("%.0f", value.toDouble())
-        else String.format("%.${decimalPoints}f", value.toDouble())
+        amount = String.format("%.${decimalPoints}f", value.toDouble())
 
         if (value.last() == '.')
             amount += '.'
@@ -194,10 +191,10 @@ class AddViewModel @Inject constructor(
         amount = "0"
         operation = { a, b ->
             when (operator) {
-                "+" -> (a + b).toString()
-                "-" -> (a - b).toString()
-                "÷" -> (a / b).toString()
-                "x" -> (a * b).toString()
+                "+" -> (a + b).toTwoDecimal().toString()
+                "-" -> (a - b).toTwoDecimal().toString()
+                "÷" -> (a / b).toTwoDecimal().toString()
+                "x" -> (a * b).toTwoDecimal().toString()
                 else -> amount
             }
         }
