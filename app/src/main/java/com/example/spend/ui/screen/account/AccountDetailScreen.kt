@@ -141,7 +141,7 @@ fun AccountDetailScreen(
                                 TransactionCard(
                                     entryCategory = entryCategory,
                                     currencySymbol = currencySymbol,
-                                    iconTint = entryCategory.color,
+                                    iconTint = Color.Black,
                                     showDate = true,
                                     clickable = true,
                                     onClick = {
