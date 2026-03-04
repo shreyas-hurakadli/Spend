@@ -42,5 +42,5 @@ class PreferencesRepository @Inject constructor(
 
     val timeFormat = dataStore.data
         .catch { emit(value = emptyPreferences()) }
-        .map { preferences -> preferences[TIME_FORMAT] ?: "12hr" }
+        .map { preferences -> preferences[TIME_FORMAT] ?: "12h" }
 }
