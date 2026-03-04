@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
@@ -46,6 +48,7 @@ import com.example.spend.data.room.budget.Budget
 import com.example.spend.getFormattedAmount
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.DialogBox
+import com.example.spend.ui.screen.NoTransactions
 import com.example.spend.ui.screen.TransactionCard
 import com.example.spend.ui.viewmodel.budget.BudgetViewModel
 
@@ -60,7 +63,6 @@ fun BudgetDetailScreen(
 
     val budget = selectedBudget?.first ?: Budget()
     val expense = selectedBudget?.second ?: 0.00
-    val remaining = budget.amount - expense
     val progress = (expense / budget.amount).coerceIn(0.0, 1.0).toFloat()
 
     var showDialogBox by remember { mutableStateOf(value = false) }
@@ -85,7 +87,11 @@ fun BudgetDetailScreen(
     ) { innerPadding ->
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier
+            modifier = if (transactions?.isEmpty() ?: false) Modifier
+                .padding(paddingValues = innerPadding)
+                .verticalScroll(state = rememberScrollState())
+                .fillMaxSize()
+            else Modifier
                 .padding(paddingValues = innerPadding)
                 .fillMaxSize()
         ) {
@@ -104,7 +110,7 @@ fun BudgetDetailScreen(
                 )
                 Spacer(modifier = Modifier.fillMaxSize(fraction = 0.08f))
                 Text(
-                    text = "REMAINING",
+                    text = stringResource(id = R.string.expense),
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.Bold,
                     color = Color.Gray
@@ -148,13 +154,20 @@ fun BudgetDetailScreen(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "Spent",
+                            text = stringResource(id = R.string.spent),
                             color = Color.Gray,
                             style = MaterialTheme.typography.labelSmall
                         )
-                        Text(
-                            text = currencySymbol + "%.2f".format(expense),
-                            fontWeight = FontWeight.Bold
+                        BasicText(
+                            text = "$currencySymbol ${getFormattedAmount(value = expense)}",
+                            maxLines = 1,
+                            style = MaterialTheme.typography.displayMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            autoSize = TextAutoSize.StepBased(
+                                minFontSize = 8.sp,
+                                maxFontSize = 24.sp
+                            )
                         )
                     }
                     Column(
@@ -162,17 +175,24 @@ fun BudgetDetailScreen(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "Limit",
+                            text = stringResource(id = R.string.limit),
                             color = Color.Gray,
                             style = MaterialTheme.typography.labelSmall
                         )
-                        Text(
-                            text = currencySymbol + "%.2f".format(budget.amount),
-                            fontWeight = FontWeight.Bold
+                        BasicText(
+                            text = "$currencySymbol ${getFormattedAmount(value = budget.amount)}",
+                            maxLines = 1,
+                            style = MaterialTheme.typography.displayMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            autoSize = TextAutoSize.StepBased(
+                                minFontSize = 8.sp,
+                                maxFontSize = 24.sp
+                            )
                         )
                     }
                 }
-                Spacer(modifier = Modifier.fillMaxHeight(fraction = 0.05f))
+                Spacer(modifier = Modifier.height(height = 16.dp))
                 Text(
                     text = stringResource(R.string.transactions),
                     style = MaterialTheme.typography.labelLarge,
@@ -205,7 +225,13 @@ fun BudgetDetailScreen(
                             }
                         }
                     } else {
-                        Text(text = stringResource(R.string.no_transactions))
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            NoTransactions()
+                        }
                     }
                 }
                 if (showDialogBox) {

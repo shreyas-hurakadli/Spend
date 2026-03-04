@@ -80,4 +80,7 @@
     <string name="notification_setting">Budget Alerts</string>
     <string name="time_format_message">Choose your preferred display</string>
     <string name="time_format">Time Format</string>
+    <string name="limit">Limit</string>
+    <string name="spent">Spent</string>
+    <string name="expense">EXPENSE</string>
 </resources>
