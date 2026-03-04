@@ -9,6 +9,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,17 +40,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,6 +69,8 @@ import com.example.spend.R
 import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
+
+private val timeFormats = listOf("12h", "24h")
 
 @Composable
 fun SettingsScreen(
@@ -80,11 +88,18 @@ fun SettingsScreen(
         val activity = context as Activity
         viewModel.onPermissionRequestDismissed(
             permissionPermanentlyDenied = !it &&
-                !ActivityCompat.shouldShowRequestPermissionRationale(
-                    activity,
-                    Manifest.permission.POST_NOTIFICATIONS
-                )
+                    !ActivityCompat.shouldShowRequestPermissionRationale(
+                        activity,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    )
         )
+    }
+    val folderPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree()
+    ) { directory ->
+        directory?.let {
+            viewModel.exportCsvFiles(directory = it)
+        }
     }
 
     val showNotificationRequestPermissionDialog by viewModel.showNotificationRequestPermissionDialog.collectAsState()
@@ -92,6 +107,8 @@ fun SettingsScreen(
     val notificationPermissionTurnedOn by viewModel.notificationPermissionTurnedOn.collectAsState()
     val showSnackBar by viewModel.showSnackBar.collectAsState()
     val snackBarMessage by viewModel.snackBarMessage.collectAsState()
+
+    var selectedTimeFormat by remember { mutableStateOf(value = "12h") }
 
     LaunchedEffect(key1 = lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
@@ -152,9 +169,9 @@ fun SettingsScreen(
                         style = MaterialTheme.typography.labelMedium
                     )
                     SettingTile(
-                        name = "Budget Alerts",
+                        name = stringResource(id = R.string.notification_setting),
                         icon = ImageVector.vectorResource(id = R.drawable.notifications),
-                        description = "Get notified when you are near or over your budget",
+                        description = stringResource(id = R.string.notification_setting_message),
                         action = {
                             Switch(
                                 checked = notificationPermissionTurnedOn,
@@ -176,19 +193,59 @@ fun SettingsScreen(
                     )
                     Spacer(modifier = Modifier.height(height = 16.dp))
                     Text(
+                        text = "PREFERENCES",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                    SettingTile(
+                        name = stringResource(id = R.string.time_format),
+                        icon = ImageVector.vectorResource(id = R.drawable.time),
+                        description = stringResource(id = R.string.time_format_message),
+                        action = {
+                            Row(
+                                modifier = Modifier
+                                    .padding(end = 6.dp)
+                                    .background(
+                                        color = Color.LightGray,
+                                        shape = RoundedCornerShape(size = 8.dp)
+                                    )
+                                    .padding(all = 4.dp)
+                            ) {
+                                timeFormats.forEach { timeFormat ->
+                                    Text(
+                                        text = timeFormat,
+                                        color = if (selectedTimeFormat == timeFormat) MaterialTheme.colorScheme.onBackground else Color.Gray,
+                                        textAlign = TextAlign.Center,
+                                        style = MaterialTheme.typography.labelLarge,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .background(
+                                                color = if (selectedTimeFormat == timeFormat) MaterialTheme.colorScheme.background else Color.Transparent,
+                                                shape = RoundedCornerShape(size = 8.dp)
+                                            )
+                                            .padding(vertical = 8.dp)
+                                            .clickable(
+                                                interactionSource = remember { MutableInteractionSource() },
+                                                indication = null
+                                            ) { selectedTimeFormat = timeFormat }
+                                    )
+                                }
+                            }
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(height = 16.dp))
+                    Text(
                         text = "DATA MANAGEMENT",
                         style = MaterialTheme.typography.labelMedium
                     )
                     SettingTile(
-                        name = "Export CSV",
+                        name = stringResource(R.string.export_csv),
                         icon = ImageVector.vectorResource(id = R.drawable.download),
                         description = "",
                         action = {
-                            IconButton(onClick = {}) {
+                            IconButton(onClick = { folderPickerLauncher.launch(input = null) }) {
                                 Icon(
-                                    imageVector =
-                                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                    contentDescription = null
+                                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                    contentDescription = stringResource(id = R.string.export_csv)
                                 )
                             }
                         }

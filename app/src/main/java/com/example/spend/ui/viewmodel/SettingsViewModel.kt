@@ -1,15 +1,20 @@
 package com.example.spend.ui.viewmodel
 
 import android.content.Context
-import android.util.Log
+import android.net.Uri
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.sqlite.SQLiteException
+import com.example.spend.data.local.file.CsvExportableRepository
+import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
+import com.example.spend.data.room.budget.Budget
 import com.example.spend.data.room.budget.BudgetRepository
+import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.currency.CurrencyRepository
+import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -17,6 +22,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,14 +33,19 @@ class SettingsViewModel @Inject constructor(
     private val defaultAccountRepository: AccountRepository,
     private val defaultCategoryRepository: CategoryRepository,
     private val defaultBudgetRepository: BudgetRepository,
-    private val defaultCurrencyRepository: CurrencyRepository
+    private val defaultCurrencyRepository: CurrencyRepository,
+    private val defaultCsvExportableRepository: CsvExportableRepository
 ) : ViewModel() {
     private val notificationManagerCompat = NotificationManagerCompat.from(context)
-    private val _notificationPermissionTurnedOn = MutableStateFlow(value = areNotificationsEnabled())
+
+    private val selectedDirectory = MutableStateFlow(value = Uri.EMPTY)
+    private val _notificationPermissionTurnedOn =
+        MutableStateFlow(value = areNotificationsEnabled())
     val notificationPermissionTurnedOn = _notificationPermissionTurnedOn.asStateFlow()
 
     private val _showNotificationRequestPermissionDialog = MutableStateFlow(value = false)
-    val showNotificationRequestPermissionDialog = _showNotificationRequestPermissionDialog.asStateFlow()
+    val showNotificationRequestPermissionDialog =
+        _showNotificationRequestPermissionDialog.asStateFlow()
 
     private val _permissionPermanentlyDismissed = MutableStateFlow(value = false)
 
@@ -50,23 +61,16 @@ class SettingsViewModel @Inject constructor(
     private val _snackBarMessage = MutableStateFlow(value = "")
     val snackBarMessage = _snackBarMessage.asStateFlow()
 
-    private fun areNotificationsEnabled(): Boolean = notificationManagerCompat.areNotificationsEnabled()
+    private fun areNotificationsEnabled(): Boolean =
+        notificationManagerCompat.areNotificationsEnabled()
 
     fun toggleShowSnackBar() {
         _showSnackBar.value = !_showSnackBar.value
     }
 
     fun toggleShowNotificationRequestPermissionDialog(turnOn: Boolean) {
-        Log.d(
-            "SettingsScreen",
-            "Inside viewModel input = $turnOn"
-        )
         if (turnOn && !_permissionPermanentlyDismissed.value) {
             _showNotificationRequestPermissionDialog.value = true
-            Log.d(
-                "SettingsScreen",
-                "Inside true block = ${showNotificationRequestPermissionDialog.value}"
-            )
         } else {
             _openSettingsEvent.tryEmit(value = Unit)
         }
@@ -81,6 +85,51 @@ class SettingsViewModel @Inject constructor(
         _permissionPermanentlyDismissed.value = permissionPermanentlyDenied
         _showNotificationRequestPermissionDialog.value = false
         _notificationPermissionTurnedOn.value = areNotificationsEnabled()
+    }
+
+    private fun registerDirectory(directory: Uri) {
+        selectedDirectory.value = directory
+    }
+
+    fun exportCsvFiles(directory: Uri) {
+        try {
+            registerDirectory(directory = directory)
+            viewModelScope.launch {
+                val entries = defaultEntryRepository.getAllEntries().first()
+                defaultCsvExportableRepository.writeFile(
+                    parentDirectory = selectedDirectory.value,
+                    fileName = "entries.csv",
+                    header = Entry.HEADER,
+                    data = entries
+                )
+                val categories = defaultCategoryRepository.getAllCategories().first()
+                defaultCsvExportableRepository.writeFile(
+                    parentDirectory = selectedDirectory.value,
+                    fileName = "categories.csv",
+                    header = Category.HEADER,
+                    data = categories
+                )
+                val accounts = defaultAccountRepository.getAllAccounts().first()
+                defaultCsvExportableRepository.writeFile(
+                    parentDirectory = selectedDirectory.value,
+                    fileName = "accounts.csv",
+                    header = Account.HEADER,
+                    data = accounts
+                )
+                val budgets = defaultBudgetRepository.getAllBudgets().first()
+                defaultCsvExportableRepository.writeFile(
+                    parentDirectory = selectedDirectory.value,
+                    fileName = "budgets.csv",
+                    header = Budget.HEADER,
+                    data = budgets
+                )
+                _snackBarMessage.value = "Successful export"
+                toggleShowSnackBar()
+            }
+        } catch (e: Exception) {
+            _snackBarMessage.value = "Failed to export files"
+            toggleShowSnackBar()
+        }
     }
 
     fun resetData() {

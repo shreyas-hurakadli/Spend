@@ -115,3 +115,11 @@ fun epochSecondsToDate(epochSeconds: Long): String {
  * Useful while handling currency
  */
 fun Double.toTwoDecimal() = this.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+
+/**
+ * Wraps the string in double quotes and escapes internal quotes if it
+ * contains commas, double quotes, or newlines — per RFC 4180 CSV spec.
+ */
+fun String.escapeCsv(): String = if (contains(",") || contains("\"") || contains("\n")) {
+    "\"${replace("\"", "\"\"")}\""
+} else this

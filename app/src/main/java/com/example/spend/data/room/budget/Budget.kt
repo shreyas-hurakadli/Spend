@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.example.spend.data.local.file.CsvExportableEntity
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.category.Category
 
@@ -19,12 +20,14 @@ import com.example.spend.data.room.category.Category
         ForeignKey(
             entity = Account::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("account_id")
+            childColumns = arrayOf("account_id"),
+            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = Category::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("category_id")
+            childColumns = arrayOf("category_id"),
+            onDelete = ForeignKey.CASCADE
         )
     ],
 )
@@ -40,4 +43,11 @@ data class Budget(
     val accountId: Long = 0L,
     @ColumnInfo(name = "category_id")
     val categoryId: Long = 0L,
-)
+) : CsvExportableEntity {
+    override fun toCsv(): String =
+        "$id,$name,$startTimeStamp,$period,$amount,$accountId,$categoryId"
+
+    companion object {
+        const val HEADER = "id,name,start_time_stamp,period,amount,account_id,category_id"
+    }
+}

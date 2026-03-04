@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 12,
-    "identityHash": "8ca51574d713ddbe2147b82d859c7f33",
+    "version": 14,
+    "identityHash": "47566fae04eb51024781b2037b94df43",
     "entities": [
       {
         "tableName": "entries",
@@ -156,7 +156,7 @@
       },
       {
         "tableName": "budgets",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `start_time_stamp` INTEGER NOT NULL, `period` INTEGER NOT NULL, `amount` REAL NOT NULL, `account_id` INTEGER NOT NULL, `category_id` INTEGER NOT NULL, FOREIGN KEY(`account_id`) REFERENCES `accounts`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`category_id`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `start_time_stamp` INTEGER NOT NULL, `period` INTEGER NOT NULL, `amount` REAL NOT NULL, `account_id` INTEGER NOT NULL, `category_id` INTEGER NOT NULL, FOREIGN KEY(`account_id`) REFERENCES `accounts`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`category_id`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -239,7 +239,7 @@
         "foreignKeys": [
           {
             "table": "accounts",
-            "onDelete": "NO ACTION",
+            "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
               "account_id"
@@ -250,7 +250,7 @@
           },
           {
             "table": "categories",
-            "onDelete": "NO ACTION",
+            "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
               "category_id"
@@ -358,7 +358,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8ca51574d713ddbe2147b82d859c7f33')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '47566fae04eb51024781b2037b94df43')"
     ]
   }
 }

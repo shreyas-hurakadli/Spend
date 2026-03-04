@@ -308,8 +308,8 @@ fun TransactionCard(
                     .background(color = entryCategory.color),
                 contentAlignment = Alignment.Center
             ) {
-                entryCategory.icon?.let {
-                    icons[it]?.let {
+                entryCategory.icon?.let { icon ->
+                    icons[icon]?.let {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = it),
                             tint = iconTint,
