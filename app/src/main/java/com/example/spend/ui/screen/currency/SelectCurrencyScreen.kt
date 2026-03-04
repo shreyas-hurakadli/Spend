@@ -21,6 +21,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxColors
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -64,8 +66,6 @@ fun SelectCurrencyScreen(
         topBar = {
             AppTopBar(
                 title = stringResource(R.string.select_currency),
-                canNavigateBack = true,
-                onBackClick = { navHostController.popBackStack() }
             )
         },
     ) { innerPadding ->
@@ -173,8 +173,8 @@ private fun CurrencyView(
             Spacer(modifier = Modifier.weight(weight = 1f))
             Checkbox(
                 checked = (selected == currency.code),
-                onCheckedChange = {},
-                enabled = false
+                onCheckedChange = { onSelect("${currency.code} ${currency.symbol}") },
+                enabled = true
             )
         }
     }
