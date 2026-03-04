@@ -32,6 +32,7 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
@@ -438,7 +439,7 @@ private fun CurrencyBottomSheet(
 
     ModalBottomSheet(
         sheetState = sheetState,
-        onDismissRequest = {}
+        onDismissRequest = onDismiss
     ) {
         LazyColumn {
             items(
@@ -466,8 +467,21 @@ private fun CurrencyView(
     onClick: () -> Unit
 ) {
     ListItem(
-        headlineContent = { Text(text = currency.name) },
+        headlineContent = {
+            Text(text = currency.name, style = MaterialTheme.typography.titleMedium)
+        },
         supportingContent = { Text(text = currency.code) },
+        colors = ListItemColors(
+            containerColor = Color.Transparent,
+            headlineColor = MaterialTheme.colorScheme.onBackground,
+            leadingIconColor = Color.Transparent,
+            overlineColor = Color.Transparent,
+            supportingTextColor = MaterialTheme.colorScheme.onBackground,
+            trailingIconColor = Color.Transparent,
+            disabledHeadlineColor = Color.Transparent,
+            disabledLeadingIconColor = Color.Transparent,
+            disabledTrailingIconColor = Color.Transparent
+        ),
         leadingContent = {
             Box(
                 contentAlignment = Alignment.Center,

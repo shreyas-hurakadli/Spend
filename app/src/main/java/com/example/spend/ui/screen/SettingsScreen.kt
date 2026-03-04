@@ -111,7 +111,6 @@ fun SettingsScreen(
     }
 
     LaunchedEffect(key1 = showNotificationRequestPermissionDialog) {
-        Log.d("SettingsScreen", "Inside launched effect: $showNotificationRequestPermissionDialog")
         if (showNotificationRequestPermissionDialog) {
             launcher.launch(input = Manifest.permission.POST_NOTIFICATIONS)
         }
@@ -160,17 +159,8 @@ fun SettingsScreen(
                             Switch(
                                 checked = notificationPermissionTurnedOn,
                                 onCheckedChange = {
-                                    Log.d("SettingsScreen", it.toString())
-                                    Log.d(
-                                        "SettingsScreen",
-                                        "ShowNotificationPermission = $showNotificationRequestPermissionDialog"
-                                    )
                                     viewModel.toggleShowNotificationRequestPermissionDialog(
                                         turnOn = it
-                                    )
-                                    Log.d(
-                                        "SettingsScreen",
-                                        "After ShowNotificationPermission = $showNotificationRequestPermissionDialog"
                                     )
                                 },
                                 colors = SwitchDefaults.colors(
@@ -192,20 +182,6 @@ fun SettingsScreen(
                     SettingTile(
                         name = "Export CSV",
                         icon = ImageVector.vectorResource(id = R.drawable.download),
-                        description = "",
-                        action = {
-                            IconButton(onClick = {}) {
-                                Icon(
-                                    imageVector =
-                                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                    contentDescription = null
-                                )
-                            }
-                        }
-                    )
-                    SettingTile(
-                        name = "Import CSV",
-                        icon = ImageVector.vectorResource(id = R.drawable.upload),
                         description = "",
                         action = {
                             IconButton(onClick = {}) {

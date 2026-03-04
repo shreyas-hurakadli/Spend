@@ -370,7 +370,7 @@ fun DialogBox(
     AlertDialog(
         title = { Text(text = dialogTitle) },
         text = { Text(text = dialogText) },
-        containerColor = Color.LightGray,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         textContentColor = MaterialTheme.colorScheme.onBackground,
         onDismissRequest = { onDismissRequest() },
         confirmButton = {
@@ -618,7 +618,7 @@ fun DatePicker(
             }
         },
         colors = DatePickerColors(
-            containerColor = Color.LightGray,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
             titleContentColor = Color.Black,
             headlineContentColor = Color.Black,
             weekdayContentColor = Color.DarkGray,
@@ -656,7 +656,7 @@ fun DatePicker(
         DatePicker(
             state = datePickerState,
             colors = DatePickerColors(
-                containerColor = Color.LightGray,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                 titleContentColor = Color.Black,
                 headlineContentColor = Color.Black,
                 weekdayContentColor = Color.DarkGray,
@@ -708,7 +708,7 @@ fun TimePicker(
             modifier = Modifier
                 .width(IntrinsicSize.Min)
                 .height(IntrinsicSize.Min),
-            color = Color.LightGray
+            color = MaterialTheme.colorScheme.surfaceContainerLow
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -718,9 +718,9 @@ fun TimePicker(
                 TimePicker(
                     state = timePickerState,
                     colors = TimePickerColors(
-                        clockDialColor = Color.LightGray,
+                        clockDialColor = MaterialTheme.colorScheme.surfaceContainerLow,
                         selectorColor = Color.Black,
-                        containerColor = Color.Gray,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                         periodSelectorBorderColor = Color.Black,
                         clockDialSelectedContentColor = Color.White,
                         clockDialUnselectedContentColor = Color.DarkGray,

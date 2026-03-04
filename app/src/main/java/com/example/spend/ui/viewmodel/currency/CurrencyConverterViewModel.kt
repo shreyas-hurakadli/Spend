@@ -1,6 +1,5 @@
 package com.example.spend.ui.viewmodel.currency
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spend.data.datastore.config.PreferencesRepository
@@ -10,7 +9,6 @@ import com.example.spend.toTwoDecimal
 import com.example.spend.ui.CurrencyIcon
 import com.example.spend.ui.currencyIcons
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -143,12 +141,13 @@ class CurrencyConverterViewModel @Inject constructor(
     }
 
     init {
+        if (currencies.value.isEmpty()) {
+            getExchangeData()
+        }
         viewModelScope.launch {
-            delay(timeMillis = 3_000L)
-            if (currencies.value.isEmpty()) {
-                getExchangeData()
-            }
-            _baseCurrency.value = currencyIcons.find { it.code == defaultPreferencesRepository.baseCurrency.first() } ?: currencyIcons[0]
+            _baseCurrency.value =
+                currencyIcons.find { it.code == defaultPreferencesRepository.baseCurrency.first() }
+                    ?: currencyIcons[0]
             _isLoading.value = false
         }
     }
