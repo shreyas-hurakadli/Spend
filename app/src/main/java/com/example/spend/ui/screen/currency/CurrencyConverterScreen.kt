@@ -194,7 +194,7 @@ fun CurrencyConverterScreen(
                                 color = Color.Black
                             )
                             Text(
-                                text = "1 ${baseCurrency.code} = $conversionValue ${quoteCurrency.code}",
+                                text = "1 ${baseCurrency.code} = ${conversionValue.toBigDecimal()} ${quoteCurrency.code}",
                                 fontSize = if (screenWidth <= 360.dp) 16.sp else 24.sp,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = Color.Black
