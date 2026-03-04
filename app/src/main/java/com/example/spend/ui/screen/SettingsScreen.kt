@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -40,15 +39,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -107,8 +103,7 @@ fun SettingsScreen(
     val notificationPermissionTurnedOn by viewModel.notificationPermissionTurnedOn.collectAsState()
     val showSnackBar by viewModel.showSnackBar.collectAsState()
     val snackBarMessage by viewModel.snackBarMessage.collectAsState()
-
-    var selectedTimeFormat by remember { mutableStateOf(value = "12h") }
+    val selectedTimeFormat by viewModel.selectedTimeFormat.collectAsState()
 
     LaunchedEffect(key1 = lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
@@ -226,7 +221,7 @@ fun SettingsScreen(
                                             .clickable(
                                                 interactionSource = remember { MutableInteractionSource() },
                                                 indication = null
-                                            ) { selectedTimeFormat = timeFormat }
+                                            ) { viewModel.changeTimeFormat(timeFormat) }
                                     )
                                 }
                             }

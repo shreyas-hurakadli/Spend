@@ -6,6 +6,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.sqlite.SQLiteException
+import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.local.file.CsvExportableRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
@@ -34,7 +35,8 @@ class SettingsViewModel @Inject constructor(
     private val defaultCategoryRepository: CategoryRepository,
     private val defaultBudgetRepository: BudgetRepository,
     private val defaultCurrencyRepository: CurrencyRepository,
-    private val defaultCsvExportableRepository: CsvExportableRepository
+    private val defaultCsvExportableRepository: CsvExportableRepository,
+    private val defaultPreferencesRepository: PreferencesRepository
 ) : ViewModel() {
     private val notificationManagerCompat = NotificationManagerCompat.from(context)
 
@@ -60,6 +62,22 @@ class SettingsViewModel @Inject constructor(
 
     private val _snackBarMessage = MutableStateFlow(value = "")
     val snackBarMessage = _snackBarMessage.asStateFlow()
+
+    private val _selectedTimeFormat = MutableStateFlow(value = "12h")
+    val selectedTimeFormat = _selectedTimeFormat.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            _selectedTimeFormat.value = defaultPreferencesRepository.timeFormat.first()
+        }
+    }
+
+    fun changeTimeFormat(format: String) {
+        _selectedTimeFormat.value = format
+        viewModelScope.launch {
+            defaultPreferencesRepository.changeTimeFormat(format = format)
+        }
+    }
 
     private fun areNotificationsEnabled(): Boolean =
         notificationManagerCompat.areNotificationsEnabled()

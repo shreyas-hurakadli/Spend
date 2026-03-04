@@ -56,19 +56,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
 import com.example.spend.getTodayStart
 import com.example.spend.longToDate
 import com.example.spend.longToDayTime
-import com.example.spend.ui.theme.SpendTheme
+import com.example.spend.longToDayTime12Hour
 import com.example.spend.ui.viewmodel.entry.AddViewModel
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -108,6 +106,7 @@ fun AddScreen(
     val selectedToAccount = viewModel.toAccount.name
     val selectedFromAccount = viewModel.fromAccount.name
     val currencySymbol by viewModel.currencySymbol.collectAsState()
+    val is24hr by viewModel.is24hr.collectAsState()
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val snackBarScope = rememberCoroutineScope()
@@ -236,6 +235,7 @@ fun AddScreen(
                     DateTimePicker(
                         date = date,
                         time = time,
+                        is24hr = is24hr,
                         onDateChange = {
                             val selectedDate =
                                 Instant.ofEpochMilli(it ?: System.currentTimeMillis())
@@ -448,6 +448,7 @@ private fun CalculatorButton(button: String, onClick: () -> Unit, modifier: Modi
 private fun DateTimePicker(
     time: Long,
     date: Long,
+    is24hr: Boolean,
     onDateChange: (Long?) -> Unit,
     onTimeChange: (Long?) -> Unit
 ) {
@@ -485,7 +486,7 @@ private fun DateTimePicker(
                         onClick = { showTimePicker = true }
                     )
             ) {
-                Text(text = longToDayTime(time), style = MaterialTheme.typography.titleMedium)
+                Text(text = if (is24hr) longToDayTime(time) else longToDayTime12Hour(time), style = MaterialTheme.typography.titleMedium)
             }
         }
     }
@@ -503,7 +504,7 @@ private fun DateTimePicker(
                 val timePickerState = rememberTimePickerState(
                     initialHour = initialHour.toInt(),
                     initialMinute = initialMinute.toInt(),
-                    is24Hour = true
+                    is24Hour = is24hr
                 )
 
                 Dialog(onDismissRequest = { showTimePicker = false }) {

@@ -23,6 +23,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -68,6 +69,9 @@ class AddViewModel @Inject constructor(
 
     var category by mutableStateOf(Category())
         private set
+
+    private val _is24hr = MutableStateFlow(value = false)
+    val is24hr = _is24hr.asStateFlow()
 
     val accounts = defaultAccountRepository
         .getAllAccounts()
@@ -121,6 +125,12 @@ class AddViewModel @Inject constructor(
 
     private val _snackBarMessage = MutableStateFlow(value = "")
     val snackBarMessage = _snackBarMessage.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            _is24hr.value = defaultPreferencesRepository.timeFormat.first() == "24h"
+        }
+    }
 
     fun changeFromAccount(value: Account) {
         fromAccount = value

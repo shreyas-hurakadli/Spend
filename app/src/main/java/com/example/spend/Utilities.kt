@@ -19,12 +19,26 @@ fun longToTime(longDate: Long): String {
 }
 
 /**
- * Calculates the time relative to a day
+ * Calculates the time relative to a day for 24-hour clock
  */
 fun longToDayTime(time: Long): String {
     val hours = time / 3600L
     val minutes = (time % 3600L) / 60L
     return String.format("%02d:%02d", hours, minutes)
+}
+
+/**
+ * Calculates the time relative to a day for 12-hour clock
+ */
+fun longToDayTime12Hour(time: Long): String {
+    var hours = time / 3600L
+    var meridiem = "AM"
+    if (hours >= 12) {
+        meridiem = "PM"
+        hours -= 12
+    }
+    val minutes = (time % 3600L) / 60L
+    return String.format("%02d:%02d %s", hours, minutes, meridiem)
 }
 
 /**
