@@ -16,6 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import co.yml.charts.common.extensions.isNotNull
+import com.example.spend.ui.IntroductionScreen
 import com.example.spend.ui.screen.CreateCategoryScreen
 import com.example.spend.ui.screen.HomeScreen
 import com.example.spend.ui.screen.SettingsScreen
@@ -52,7 +53,7 @@ fun NavigationManager(
     } else {
         NavHost(
             navController = navHostController,
-            startDestination = startDestination ?: Routes.SelectCurrencyScreen,
+            startDestination = startDestination ?: Routes.IntroductionScreen,
             enterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { fullWidth -> fullWidth },
@@ -78,6 +79,9 @@ fun NavigationManager(
                 )
             }
         ) {
+            composable<Routes.IntroductionScreen> {
+                IntroductionScreen(navHostController = navHostController)
+            }
             composable<Routes.SelectCurrencyScreen> {
                 SelectCurrencyScreen(navHostController = navHostController)
             }

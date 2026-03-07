@@ -18,8 +18,8 @@
     <string name="transactions">Transactions</string>
     <string name="reset_data">Reset Data</string>
     <string name="transaction_success_message">Successfully inserted transaction</string>
-    <string name="previous">previous</string>
-    <string name="next">next</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
     <string name="no_transactions">No Transactions</string>
     <string name="summary">Summary</string>
     <string name="settings">Settings</string>
@@ -83,4 +83,13 @@
     <string name="limit">Limit</string>
     <string name="spent">Spent</string>
     <string name="expense">EXPENSE</string>
+    <string name="get_started">Get Started</string>
+    <string name="title_1">Simple Finance for You</string>
+    <string name="title_1_message">Track your spending and achieve financial wellness with our minimalist tools.</string>
+    <string name="title_3">Understand Your Habits</string>
+    <string name="title_3_message">Visual patterns help you understand your financial patterns over time.</string>
+    <string name="title_4_message">Enjoy full access to your finances without needing an internet connection. Your data stays private on your device.</string>
+    <string name="title_4">Safe And Secure</string>
+    <string name="title_2">Reach Your Goals</string>
+    <string name="title_2_message">Set personalized savings targets and easily track your progress towards achieving them.</string>
 </resources>

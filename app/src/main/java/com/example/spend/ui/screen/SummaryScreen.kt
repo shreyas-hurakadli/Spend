@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -187,13 +188,19 @@ fun SummaryScreen(
                                             contentDescription = stringResource(R.string.previous)
                                         )
                                     }
-                                    ScrollIndicator(index = index, total = total, size = 4.dp)
+                                    ScrollIndicator(
+                                        index = index,
+                                        total = total,
+                                        size = 8.dp,
+                                        height = 8.dp,
+                                        width = 16.dp
+                                    )
                                     IconButton(onClick = {
                                         index = if (index == total) 1 else index + 1
                                     }) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                                            contentDescription = stringResource(R.string.next)
+                                            contentDescription = stringResource(id = R.string.next)
                                         )
                                     }
                                 }
@@ -277,26 +284,34 @@ private fun InfoBar(
 }
 
 @Composable
-private fun ScrollIndicator(index: Int, total: Int, size: Dp, modifier: Modifier = Modifier) {
+fun ScrollIndicator(
+    index: Int,
+    total: Int,
+    size: Dp,
+    height: Dp,
+    width: Dp,
+    modifier: Modifier = Modifier
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .background(
-                color = MaterialTheme.colorScheme.onBackground,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .padding(8.dp)
     ) {
         for (i in 1..total) {
             Box(
                 modifier = Modifier.padding(horizontal = 4.dp)
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(if (i == index) size * 2 else size)
-                        .clip(CircleShape)
-                        .background(color = MaterialTheme.colorScheme.background)
+                    modifier = if (i == index)
+                        Modifier
+                            .size(height = height, width = width)
+                            .clip(shape = CircleShape)
+                            .background(color = MaterialTheme.colorScheme.primary)
+                    else
+                        Modifier
+                            .size(size)
+                            .clip(shape = CircleShape)
+                            .background(color = Color.LightGray)
                 )
             }
         }
