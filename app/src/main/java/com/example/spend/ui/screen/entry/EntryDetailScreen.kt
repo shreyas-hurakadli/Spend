@@ -93,7 +93,7 @@ fun EntryDetailScreen(
                         ),
                         maxLines = 1,
                         autoSize = TextAutoSize.StepBased(
-                            minFontSize = 24.sp,
+                            minFontSize = 16.sp,
                             maxFontSize = 48.sp
                         ),
                     )
