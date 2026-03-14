@@ -6,14 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
-import com.example.spend.data.room.account.DefaultAccountRepository
 import com.example.spend.data.room.budget.Budget
 import com.example.spend.data.room.budget.BudgetRepository
-import com.example.spend.data.room.budget.DefaultBudgetRepository
 import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
-import com.example.spend.data.room.category.DefaultCategoryRepository
-import com.example.spend.getTodayStart
 import com.example.spend.validateCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -24,7 +20,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 private const val TIMEOUT_MILLIS = 5_000L
 
@@ -185,10 +180,14 @@ class AddBudgetViewModel @Inject constructor(
         }
     }
 
+    fun checkAmount(amount: String): Boolean = amount.isNotEmpty() && amount.toDouble() > 100000000000
+
     private fun validateInput(): Boolean {
-        return if (uiState.value.name.trim() == "") false
-        else if (uiState.value.amount <= 0.00) false
-        else if (uiState.value.period <= 0L) false
+        return if (_uiState.value.name.trim() == "") false
+        else if (_uiState.value.name.length > 20) false
+        else if (_uiState.value.amount > 100000000000) false
+        else if (_uiState.value.amount <= 0.00) false
+        else if (_uiState.value.period <= 0L) false
         else true
     }
 
@@ -210,9 +209,7 @@ class AddBudgetViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 if (validateInput()) {
-                    withContext(context = Dispatchers.IO) {
-                        budgetRepository.insert(budget = _uiState.value)
-                    }
+                    budgetRepository.insert(budget = _uiState.value)
                     clear()
                     _snackBarMessage.value = "Successful insertion"
                     _showSnackBar.value = true

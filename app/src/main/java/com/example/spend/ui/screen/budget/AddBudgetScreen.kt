@@ -83,7 +83,6 @@ fun AddBudgetScreen(
     val interactionSource = remember { MutableInteractionSource() }
     val fromDateInteractionSource = remember { MutableInteractionSource() }
     val toDateInteractionSource = remember { MutableInteractionSource() }
-    val snackBarScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
 
     val uiState by viewModel.uiState.collectAsState()
@@ -100,32 +99,30 @@ fun AddBudgetScreen(
     val currencySymbol by viewModel.currencySymbol.collectAsState()
     val currencyCode by viewModel.currencyCode.collectAsState()
 
-    var amount by rememberSaveable { mutableStateOf("") }
-    var showCategories by rememberSaveable { mutableStateOf(false) }
-    var showAccounts by rememberSaveable { mutableStateOf(false) }
-    var showPeriods by rememberSaveable { mutableStateOf(false) }
-    var showDatePicker by rememberSaveable { mutableStateOf(false) }
+    var amount by remember { mutableStateOf(value = "") }
+    var showCategories by remember { mutableStateOf(value = false) }
+    var showAccounts by remember { mutableStateOf(value = false) }
+    var showPeriods by remember { mutableStateOf(value = false) }
+    var showDatePicker by remember { mutableStateOf(value = false) }
     val isFromDatePressed by fromDateInteractionSource.collectIsPressedAsState()
     val isToDatePressed by toDateInteractionSource.collectIsPressedAsState()
-    var isFromDate by rememberSaveable { mutableStateOf(false) }
+    var isFromDate by remember { mutableStateOf(value = false) }
 
-    LaunchedEffect(showSnackBar) {
+    LaunchedEffect(key1 = showSnackBar) {
         if (showSnackBar && snackBarMessage.isNotEmpty()) {
-            snackBarScope.launch {
-                snackBarHostState.showSnackbar(message = snackBarMessage)
-                viewModel.toggleShowSnackBar()
-            }
+            snackBarHostState.showSnackbar(message = snackBarMessage)
+            viewModel.toggleShowSnackBar()
         }
     }
 
-    LaunchedEffect(isFromDatePressed) {
+    LaunchedEffect(key1 = isFromDatePressed) {
         if (isFromDatePressed) {
             isFromDate = true
             showDatePicker = true
         }
     }
 
-    LaunchedEffect(isToDatePressed) {
+    LaunchedEffect(key1 = isToDatePressed) {
         if (isToDatePressed) {
             isFromDate = false
             showDatePicker = true
@@ -145,7 +142,7 @@ fun AddBudgetScreen(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .padding(innerPadding)
+                .padding(paddingValues = innerPadding)
                 .clickable(
                     enabled = true,
                     indication = null,
@@ -157,12 +154,13 @@ fun AddBudgetScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(all = 8.dp)
                     .fillMaxSize()
             ) {
                 OutlinedTextField(
                     value = uiState.name,
                     onValueChange = { viewModel.setName(it) },
+                    isError = uiState.name.length > 20,
                     label = {
                         Text(
                             text = "Enter budget name",
@@ -171,7 +169,7 @@ fun AddBudgetScreen(
                         )
                     },
                     singleLine = true,
-                    shape = RoundedCornerShape(24.dp),
+                    shape = RoundedCornerShape(size = 24.dp),
                     textStyle = TextStyle(
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp
@@ -305,15 +303,16 @@ fun AddBudgetScreen(
                                 viewModel.setAmount(it)
                             }
                         },
+                        isError = viewModel.checkAmount(amount),
                         label = {
                             Text(
-                                text = "Amount",
+                                text = stringResource(id = R.string.amount),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                         },
                         singleLine = true,
-                        shape = RoundedCornerShape(24.dp),
+                        shape = RoundedCornerShape(size = 24.dp),
                         textStyle = TextStyle(
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 16.sp
