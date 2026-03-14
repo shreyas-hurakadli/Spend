@@ -1,6 +1,5 @@
 package com.example.spend.ui.viewmodel
 
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -57,29 +56,27 @@ class CreateCategoryViewModel @Inject constructor(
         _category.value = Category()
     }
 
-    fun validateInput(): Boolean = _category.value.name != ""
+    fun validateInput(): Boolean = _category.value.name != "" && _category.value.name.length <= 20
 
     fun save() {
         if (validateInput()) {
             viewModelScope.launch {
-                withContext(context = Dispatchers.IO) {
-                    _category.value = _category.value.copy(isExpense = (_selectedIndex.value == 1))
-                    try {
-                        defaultCategoryRepository.insert(_category.value)
-                        clear()
-                        _snackBarMessage.value = "Successful Insertion"
-                        _showSnackBar.value = true
-                    } catch (e: SQLiteException) {
-                        _snackBarMessage.value = "A category of this name or type already exists"
-                        _showSnackBar.value = true
-                    } catch (e: Exception) {
-                        _snackBarMessage.value = "Unknown Error has occurred"
-                        _showSnackBar.value = true
-                    }
+                _category.value = _category.value.copy(isExpense = (_selectedIndex.value == 1))
+                try {
+                    defaultCategoryRepository.insert(_category.value)
+                    clear()
+                    _snackBarMessage.value = "Successful Insertion"
+                    _showSnackBar.value = true
+                } catch (e: SQLiteException) {
+                    _snackBarMessage.value = "A category of this name or type already exists"
+                    _showSnackBar.value = true
+                } catch (e: Exception) {
+                    _snackBarMessage.value = "Unknown Error has occurred"
+                    _showSnackBar.value = true
                 }
             }
         } else {
-            _snackBarMessage.value = "Error: Specify the name"
+            _snackBarMessage.value = "Error: Specify the name correctly (length should not exceed 20)"
             _showSnackBar.value = true
         }
     }

@@ -46,19 +46,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.example.spend.R
 import com.example.spend.ui.icons
 import com.example.spend.ui.pastelColors
-import com.example.spend.ui.theme.SpendTheme
 import com.example.spend.ui.viewmodel.CreateCategoryViewModel
 import kotlinx.coroutines.launch
 
@@ -74,22 +73,19 @@ fun CreateCategoryScreen(
     val showSnackBar by viewModel.showSnackBar.collectAsState()
     val snackBarMessage by viewModel.snackBarMessage.collectAsState()
 
-    val snackBarScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = showSnackBar) {
         if (showSnackBar && snackBarMessage.isNotEmpty()) {
-            snackBarScope.launch {
-                snackBarHostState.showSnackbar(message = snackBarMessage)
-                viewModel.toggleShowSnackBar()
-            }
+            snackBarHostState.showSnackbar(message = snackBarMessage)
+            viewModel.toggleShowSnackBar()
         }
     }
 
     Scaffold(
         topBar = {
             AppTopBar(
-                title = "Add Category",
+                title = stringResource(id = R.string.add_category),
                 canNavigateBack = true,
                 onBackClick = { navHostController.popBackStack() },
             )
@@ -97,11 +93,11 @@ fun CreateCategoryScreen(
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Box(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(paddingValues = innerPadding)
         ) {
             Column(
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(all = 8.dp)
                     .fillMaxSize()
             ) {
                 SegmentedControl(
@@ -141,8 +137,9 @@ fun CreateCategoryScreen(
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                         },
+                        isError = category.name.length > 20,
                         singleLine = true,
-                        shape = RoundedCornerShape(24.dp),
+                        shape = RoundedCornerShape(size = 24.dp),
                         textStyle = TextStyle(
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 16.sp
@@ -209,14 +206,17 @@ fun CreateCategoryScreen(
                             color = MaterialTheme.colorScheme.tertiary,
                             shape = RoundedCornerShape(24.dp)
                         )
-                        .padding(8.dp)
+                        .padding(all = 8.dp)
                 ) {
                     LazyHorizontalGrid(
                         rows = GridCells.Fixed(count = 3),
                         verticalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxHeight(0.3f)
                     ) {
-                        items(items = icons.entries.toList()) { entry ->
+                        items(
+                            items = icons.entries.toList(),
+                            key = { it.key }
+                        ) { entry ->
                             IconButton(
                                 onClick = { viewModel.changeLogo(entry.key) },
                                 modifier = Modifier.wrapContentSize()
@@ -251,18 +251,10 @@ fun CreateCategoryScreen(
                         ),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Create")
+                        Text(stringResource(id = R.string.add))
                     }
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-private fun CreateCategoryScreenPreview() {
-    SpendTheme {
-        CreateCategoryScreen(navHostController = rememberNavController())
     }
 }
