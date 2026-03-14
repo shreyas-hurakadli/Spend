@@ -122,7 +122,7 @@ private val navigationIcon = listOf(
         baseLineIcon = R.drawable.baseline_currency_exchange,
         outlinedIcon = R.drawable.outlined_currency_exchange,
         route = Routes.CurrencyConverterScreen,
-        contentDescription = "Currencies"
+        contentDescription = "Currency Converter"
     ),
     NavigationIcon(
         baseLineIcon = R.drawable.baseline_summarize,

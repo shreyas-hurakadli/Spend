@@ -106,7 +106,7 @@ fun CurrencyConverterScreen(
         Scaffold(
             topBar = {
                 AppTopBar(
-                    title = stringResource(R.string.currencies),
+                    title = stringResource(id = R.string.currency_converter),
                     hasNavigationDrawer = true,
                     onNavigationDrawerClick = {
                         scope.launch {
