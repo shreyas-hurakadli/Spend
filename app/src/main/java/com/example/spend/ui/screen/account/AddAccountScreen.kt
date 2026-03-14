@@ -78,15 +78,12 @@ fun AddAccountScreen(
 
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
-    val snackBarScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(showSnackBar) {
+    LaunchedEffect(key1 = showSnackBar) {
         if (showSnackBar && snackBarMessage.isNotEmpty()) {
-            snackBarScope.launch {
-                snackBarHostState.showSnackbar(message = snackBarMessage)
-                viewModel.toggleShowSnackBar()
-            }
+            snackBarHostState.showSnackbar(message = snackBarMessage)
+            viewModel.toggleShowSnackBar()
         }
     }
 
@@ -103,7 +100,7 @@ fun AddAccountScreen(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .padding(innerPadding)
+                .padding(paddingValues = innerPadding)
                 .clickable(
                     enabled = true,
                     interactionSource = interactionSource,
@@ -131,7 +128,7 @@ fun AddAccountScreen(
                     ) {
                         if (accountIcons[uiState.icon] != null) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(accountIcons[uiState.icon]!!),
+                                imageVector = ImageVector.vectorResource(id = accountIcons[uiState.icon]!!),
                                 contentDescription = null,
                                 modifier = Modifier.size(30.dp)
                             )
@@ -148,6 +145,7 @@ fun AddAccountScreen(
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                         },
+                        isError = uiState.name.length > 20,
                         singleLine = true,
                         shape = RoundedCornerShape(size = 24.dp),
                         textStyle = TextStyle(
@@ -196,8 +194,9 @@ fun AddAccountScreen(
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                         },
+                        isError = viewModel.checkBalance(balance),
                         singleLine = true,
-                        shape = RoundedCornerShape(24.dp),
+                        shape = RoundedCornerShape(size = 24.dp),
                         textStyle = TextStyle(
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 16.sp

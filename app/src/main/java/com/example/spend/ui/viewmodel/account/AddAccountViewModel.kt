@@ -95,8 +95,15 @@ class AddAccountViewModel @Inject constructor(
         _balance.value = ""
     }
 
+    fun checkBalance(balance: String): Boolean {
+        val number = if (balance.isNotEmpty()) balance.toDouble() else 0.00
+        return number > 100000000000
+    }
+
     private fun validateInput(balance: String): Boolean {
-        return balance.trim() != "" && validateCurrency(balance) && _uiState.value.name != ""
+        if (_uiState.value.name.length > 20) return false
+        if (balance.toDouble() > 100000000000) return false
+        return balance.trim() != "" && validateCurrency(input = balance) && _uiState.value.name != ""
     }
 
     fun save(balance: String) {
@@ -104,22 +111,20 @@ class AddAccountViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(balance = balance.toDouble())
             viewModelScope.launch {
                 if (allAccount.value != Account()) {
-                    withContext(context = Dispatchers.IO) {
-                        try {
-                            defaultAccountRepository.insert(_uiState.value)
-                            defaultAccountRepository.update(
-                                account = allAccount.value.copy(
-                                    balance = balance.toDouble() + allAccount.value.balance
-                                )
+                    try {
+                        defaultAccountRepository.insert(account = _uiState.value)
+                        defaultAccountRepository.update(
+                            account = allAccount.value.copy(
+                                balance = balance.toDouble() + allAccount.value.balance
                             )
-                            clear()
-                        } catch (e: SQLiteException) {
-                            _snackBarMessage.value = "An Account by this name already exists"
-                            _showSnackBar.value = true
-                        } catch (e: Exception) {
-                            _snackBarMessage.value = "Unknown error has occurred"
-                            _showSnackBar.value = true
-                        }
+                        )
+                        clear()
+                    } catch (e: SQLiteException) {
+                        _snackBarMessage.value = "An Account by this name already exists"
+                        _showSnackBar.value = true
+                    } catch (e: Exception) {
+                        _snackBarMessage.value = "Unknown error has occurred"
+                        _showSnackBar.value = true
                     }
                 } else {
                     _snackBarMessage.value = "Unknown Error has occurred"
