@@ -102,7 +102,7 @@ class AddAccountViewModel @Inject constructor(
 
     private fun validateInput(balance: String): Boolean {
         if (_uiState.value.name.length > 20) return false
-        if (balance.toDouble() > 100000000000) return false
+        if (balance.isEmpty() || balance.toDouble() > 100000000000) return false
         return balance.trim() != "" && validateCurrency(input = balance) && _uiState.value.name != ""
     }
 
@@ -119,8 +119,10 @@ class AddAccountViewModel @Inject constructor(
                             )
                         )
                         clear()
+                        _snackBarMessage.value = "Successful account creation"
+                        _showSnackBar.value = true
                     } catch (e: SQLiteException) {
-                        _snackBarMessage.value = "An Account by this name already exists"
+                        _snackBarMessage.value = "An account by this name already exists"
                         _showSnackBar.value = true
                     } catch (e: Exception) {
                         _snackBarMessage.value = "Unknown error has occurred"
