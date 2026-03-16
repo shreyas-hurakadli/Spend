@@ -1,5 +1,8 @@
 package com.example.spend.data.dto.currency
 
+import androidx.annotation.Keep
+
+@Keep
 data class CurrencyApiResponse(
     val amount: Double,
     val base: String,

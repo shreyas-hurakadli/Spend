@@ -30,7 +30,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -70,9 +71,6 @@ dependencies {
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
-
-    // JSON serialization library
-    implementation(libs.kotlinx.serialization.json)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
