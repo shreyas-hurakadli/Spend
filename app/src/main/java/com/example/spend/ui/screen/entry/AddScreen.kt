@@ -127,7 +127,7 @@ fun AddScreen(
                 actions = {
                     IconButton(onClick = { viewModel.save() }) {
                         Icon(
-                            imageVector = Icons.Default.Done,
+                            imageVector = ImageVector.vectorResource(id = R.drawable.done),
                             contentDescription = stringResource(R.string.save),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
