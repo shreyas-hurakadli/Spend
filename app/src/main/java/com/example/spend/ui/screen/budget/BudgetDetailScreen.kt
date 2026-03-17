@@ -87,12 +87,9 @@ fun BudgetDetailScreen(
     ) { innerPadding ->
         Box(
             contentAlignment = Alignment.Center,
-            modifier = if (transactions?.isEmpty() ?: false) Modifier
+            modifier = Modifier
                 .padding(paddingValues = innerPadding)
                 .verticalScroll(state = rememberScrollState())
-                .fillMaxSize()
-            else Modifier
-                .padding(paddingValues = innerPadding)
                 .fillMaxSize()
         ) {
             Column(
@@ -212,10 +209,9 @@ fun BudgetDetailScreen(
                             ?: false
                     ) Alignment.TopCenter else Alignment.Center
                 ) {
-                    val entryCategoryTransactions = transactions
-                    if (entryCategoryTransactions?.isNotEmpty() ?: false) {
+                    transactions?.let {
                         LazyColumn {
-                            items(items = entryCategoryTransactions) { entryCategory ->
+                            items(items = it) { entryCategory ->
                                 TransactionCard(
                                     entryCategory = entryCategory,
                                     currencySymbol = currencySymbol,
@@ -224,7 +220,8 @@ fun BudgetDetailScreen(
                                 )
                             }
                         }
-                    } else {
+                    }
+                    if (transactions?.isEmpty() ?: true) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,

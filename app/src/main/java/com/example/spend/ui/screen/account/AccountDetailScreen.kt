@@ -6,14 +6,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
@@ -92,52 +95,59 @@ fun AccountDetailScreen(
                     .fillMaxSize()
             ) {
                 selectedAccount?.let {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .background(
-                                color = it.color,
-                                shape = RoundedCornerShape(size = 16.dp)
-                            )
-                            .size(size = 60.dp)
-                    ) {
-                        it.icon?.let { icon ->
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = accountIcons[icon]!!),
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                contentDescription = null,
-                                modifier = Modifier.size(size = 30.dp)
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(height = 8.dp))
-                    Text(
-                        text = it.name,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(height = 16.dp))
-                    BasicText(
-                        text = "$currencySymbol ${getFormattedAmount(value = it.balance)}",
-                        style = MaterialTheme.typography.displayMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        autoSize = TextAutoSize.StepBased(
-                            minFontSize = 24.sp,
-                            maxFontSize = 48.sp
-                        ),
-                        maxLines = 1
-                    )
-                    Spacer(modifier = Modifier.height(height = 16.dp))
-                    Text(
-                        text = stringResource(id = R.string.transactions),
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.Start)
-                    )
-                    Spacer(modifier = Modifier.height(height = 8.dp))
                     if (selectedAccountTransactions.isNotEmpty()) {
                         LazyColumn {
+                            item {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier
+                                            .background(
+                                                color = it.color,
+                                                shape = RoundedCornerShape(size = 16.dp)
+                                            )
+                                            .size(size = 60.dp)
+                                    ) {
+                                        it.icon?.let { icon ->
+                                            Icon(
+                                                imageVector = ImageVector.vectorResource(id = accountIcons[icon]!!),
+                                                tint = MaterialTheme.colorScheme.onBackground,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(size = 30.dp)
+                                            )
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.height(height = 8.dp))
+                                    Text(
+                                        text = it.name,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(modifier = Modifier.height(height = 16.dp))
+                                    BasicText(
+                                        text = "$currencySymbol ${getFormattedAmount(value = it.balance)}",
+                                        style = MaterialTheme.typography.displayMedium.copy(
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                        autoSize = TextAutoSize.StepBased(
+                                            minFontSize = 24.sp,
+                                            maxFontSize = 48.sp
+                                        ),
+                                        maxLines = 1
+                                    )
+                                    Spacer(modifier = Modifier.height(height = 16.dp))
+                                    Text(
+                                        text = stringResource(id = R.string.transactions),
+                                        style = MaterialTheme.typography.labelLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.align(Alignment.Start)
+                                    )
+                                    Spacer(modifier = Modifier.height(height = 8.dp))
+                                }
+                            }
                             items(items = selectedAccountTransactions) { entryCategory ->
                                 TransactionCard(
                                     entryCategory = entryCategory,
@@ -156,7 +166,9 @@ fun AccountDetailScreen(
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(state = rememberScrollState())
                         ) {
                             NoTransactions()
                         }

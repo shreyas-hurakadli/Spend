@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
@@ -61,18 +63,15 @@ fun EntryScreen(
     val showSnackBar by viewModel.showSnackBar.collectAsState()
     val snackBarMessage by viewModel.snackBarMessage.collectAsState()
 
-    val snackBarScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val drawerScope = rememberCoroutineScope()
 
-    LaunchedEffect(showSnackBar) {
+    LaunchedEffect(key1 = showSnackBar) {
         if (showSnackBar && snackBarMessage.isNotEmpty()) {
-            snackBarScope.launch {
-                snackBarHostState.showSnackbar(snackBarMessage)
-                viewModel.toggleSnackBar()
-            }
+            snackBarHostState.showSnackbar(snackBarMessage)
+            viewModel.toggleSnackBar()
         }
     }
 
@@ -146,30 +145,27 @@ fun EntryScreen(
                     }
                 }
             } else {
-                Box(
-                    contentAlignment = Alignment.Center,
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .padding(paddingValues = innerPadding)
+                        .padding(all = 8.dp)
                         .fillMaxSize()
+                        .verticalScroll(state = rememberScrollState())
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.padding(all = 8.dp)
+                    Spacer(Modifier.weight(0.55f))
+                    NoTransactions()
+                    Spacer(Modifier.weight(1f))
+                    OutlinedButton(
+                        onClick = { navHostController.navigate(Routes.AddScreen) },
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Spacer(Modifier.weight(0.55f))
-                        NoTransactions()
-                        Spacer(Modifier.weight(1f))
-                        OutlinedButton(
-                            onClick = { navHostController.navigate(Routes.AddScreen) },
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary
-                            ),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Add")
-                        }
+                        Text(text = stringResource(id = R.string.add))
                     }
                 }
             }

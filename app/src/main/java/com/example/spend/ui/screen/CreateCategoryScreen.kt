@@ -40,7 +40,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,7 +58,6 @@ import com.example.spend.R
 import com.example.spend.ui.icons
 import com.example.spend.ui.pastelColors
 import com.example.spend.ui.viewmodel.CreateCategoryViewModel
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -211,7 +209,7 @@ fun CreateCategoryScreen(
                     LazyHorizontalGrid(
                         rows = GridCells.Fixed(count = 3),
                         verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxHeight(0.3f)
+                        modifier = Modifier.fillMaxHeight(fraction = 0.3f)
                     ) {
                         items(
                             items = icons.entries.toList(),
@@ -240,7 +238,7 @@ fun CreateCategoryScreen(
                         onClick = { viewModel.clear() },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Cancel")
+                        Text(text = stringResource(id = R.string.cancel))
                     }
                     Spacer(Modifier.width(8.dp))
                     OutlinedButton(

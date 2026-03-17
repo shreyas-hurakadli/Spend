@@ -12,16 +12,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +39,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,6 +68,15 @@ fun EntryDetailScreen(
                 title = stringResource(R.string.transaction_detail),
                 canNavigateBack = true,
                 onBackClick = { navHostController.popBackStack() },
+                actions = {
+                    IconButton(onClick = { showDialogBox = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = stringResource(R.string.delete)
+                        )
+                    }
+                }
             )
         },
     ) { innerPadding ->
@@ -72,6 +84,7 @@ fun EntryDetailScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
             modifier = Modifier
+                .verticalScroll(state = rememberScrollState())
                 .padding(paddingValues = innerPadding)
                 .fillMaxSize()
                 .padding(all = 8.dp)
@@ -122,22 +135,20 @@ fun EntryDetailScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(height = 8.dp))
-                DetailRow(
-                    icon = ImageVector.vectorResource(id = R.drawable.note),
-                    detail = stringResource(R.string.description),
-                    information = selectedEntry?.entry?.description ?: "",
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.weight(weight = 1f))
-                OutlinedButton(
-                    onClick = { showDialogBox = true },
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(stringResource(R.string.delete_transaction))
+                selectedEntry?.entry?.description?.let {
+                    DetailRow(
+                        icon = ImageVector.vectorResource(id = R.drawable.note),
+                        detail = stringResource(R.string.description),
+                        information = if (it.length <= 30) it else "",
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    if (it.length > 30) {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.labelSmall,
+                            textAlign = TextAlign.Start
+                        )
+                    }
                 }
             }
         }
