@@ -294,7 +294,7 @@ fun AddAccountScreen(
                         onClick = { viewModel.clear() },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(text = "Cancel")
+                        Text(text = stringResource(id = R.string.cancel))
                     }
                     Spacer(Modifier.width(8.dp))
                     OutlinedButton(
@@ -305,7 +305,7 @@ fun AddAccountScreen(
                         ),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(text = "Add")
+                        Text(text = stringResource(id = R.string.add))
                     }
                 }
             }

@@ -20,10 +20,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,6 +49,7 @@ import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.epochSecondsToDate
 import com.example.spend.getFormattedAmount
+import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.DialogBox
 import com.example.spend.ui.viewmodel.entry.EntryViewModel
@@ -84,10 +87,10 @@ fun EntryDetailScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
             modifier = Modifier
-                .verticalScroll(state = rememberScrollState())
                 .padding(paddingValues = innerPadding)
                 .fillMaxSize()
                 .padding(all = 8.dp)
+                .verticalScroll(state = rememberScrollState())
         ) {
             if (selectedEntry == null) {
                 CircularProgressIndicator()
@@ -149,6 +152,19 @@ fun EntryDetailScreen(
                             textAlign = TextAlign.Start
                         )
                     }
+                }
+                Spacer(modifier = Modifier.weight(weight = 1f))
+                OutlinedButton(
+                    onClick = { navHostController.navigate(Routes.EditTransactionScreen) },
+                    colors= ButtonDefaults.filledTonalButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.edit_transaction),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
             }
         }

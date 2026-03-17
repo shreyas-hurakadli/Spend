@@ -30,6 +30,7 @@ import com.example.spend.ui.screen.budget.BudgetScreen
 import com.example.spend.ui.screen.currency.CurrencyConverterScreen
 import com.example.spend.ui.screen.currency.SelectCurrencyScreen
 import com.example.spend.ui.screen.entry.AddScreen
+import com.example.spend.ui.screen.entry.EditTransactionScreen
 import com.example.spend.ui.screen.entry.EntryDetailScreen
 import com.example.spend.ui.screen.entry.EntryScreen
 import com.example.spend.ui.viewmodel.AppViewModel
@@ -139,6 +140,14 @@ fun NavigationManager(
             }
             composable<Routes.AccountDetailScreen> {
                 AccountDetailScreen(
+                    navHostController = navHostController,
+                    viewModel = if (navHostController.previousBackStackEntry != null) hiltViewModel(
+                        viewModelStoreOwner = navHostController.previousBackStackEntry!!
+                    ) else hiltViewModel()
+                )
+            }
+            composable<Routes.EditTransactionScreen> {
+                EditTransactionScreen(
                     navHostController = navHostController,
                     viewModel = if (navHostController.previousBackStackEntry != null) hiltViewModel(
                         viewModelStoreOwner = navHostController.previousBackStackEntry!!
