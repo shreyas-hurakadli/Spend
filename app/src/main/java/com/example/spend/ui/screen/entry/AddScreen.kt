@@ -109,15 +109,12 @@ fun AddScreen(
     val is24hr by viewModel.is24hr.collectAsState()
 
     val keyboardController = LocalSoftwareKeyboardController.current
-    val snackBarScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(showSnackBar) {
         if (showSnackBar && snackBarMessage.isNotEmpty()) {
-            snackBarScope.launch {
-                snackBarHostState.showSnackbar(message = snackBarMessage)
-                viewModel.toggleShowSnackBar()
-            }
+            snackBarHostState.showSnackbar(message = snackBarMessage)
+            viewModel.toggleShowSnackBar()
         }
     }
 
@@ -486,7 +483,10 @@ private fun DateTimePicker(
                         onClick = { showTimePicker = true }
                     )
             ) {
-                Text(text = if (is24hr) longToDayTime(time) else longToDayTime12Hour(time), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = if (is24hr) longToDayTime(time) else longToDayTime12Hour(time),
+                    style = MaterialTheme.typography.titleMedium
+                )
             }
         }
     }

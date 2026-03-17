@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import com.example.spend.di.annotations.LoginRepository
 import com.example.spend.di.annotations.PermissionRepository
 import com.example.spend.di.annotations.PreferencesRepository
 import dagger.Module
@@ -21,7 +20,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
     private const val PREFERENCES = "preferences"
-    private const val FIRST_LOGIN = "first_login"
     private const val POST_NOTIFICATIONS = "post_notifications"
 
     @Provides
@@ -34,19 +32,6 @@ object DataStoreModule {
             ),
             produceFile = {
                 context.preferencesDataStoreFile(PREFERENCES)
-            }
-        )
-
-    @Provides
-    @Singleton
-    @LoginRepository
-    fun getLoginDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
-        PreferenceDataStoreFactory.create(
-            corruptionHandler = ReplaceFileCorruptionHandler(
-                produceNewData = { emptyPreferences() }
-            ),
-            produceFile = {
-                context.preferencesDataStoreFile(FIRST_LOGIN)
             }
         )
 
