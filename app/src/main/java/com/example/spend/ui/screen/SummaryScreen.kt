@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
@@ -42,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -50,6 +53,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import co.yml.charts.common.model.PlotType
@@ -247,37 +251,49 @@ private fun InfoBar(
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(24.dp))
-            .padding(16.dp)
+            .background(color = MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(24.dp))
+            .padding(all = 16.dp)
             .animateContentSize()
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.weight(weight = 1f)
+        ) {
             Text(
                 text = stringResource(R.string.total_balance),
                 color = Color(0xFF4CAF50),
                 style = MaterialTheme.typography.labelLarge,
                 textAlign = TextAlign.Center
             )
-            Text(
+            BasicText(
                 text = "$currencySymbol ${getFormattedAmount(balance)}",
-                color = Color(0xFF4CAF50),
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
+                maxLines = 1,
+                color = ColorProducer { Color(0xFF4CAF50) },
+                autoSize = TextAutoSize.StepBased(
+                    minFontSize = 8.sp,
+                    maxFontSize = 24.sp
+                )
             )
         }
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.weight(weight = 1f)
+        ) {
             Text(
                 text = stringResource(R.string.total_expense),
                 color = Color(0xFFF44336),
                 style = MaterialTheme.typography.labelLarge,
                 textAlign = TextAlign.Center
             )
-            Text(
+            BasicText(
                 text = "$currencySymbol ${getFormattedAmount(expense)}",
-                color = Color(0xFFF44336),
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
+                maxLines = 1,
+                color = ColorProducer { Color(0xFFF44336) },
+                autoSize = TextAutoSize.StepBased(
+                    minFontSize = 8.sp,
+                    maxFontSize = 24.sp
+                )
             )
         }
     }
