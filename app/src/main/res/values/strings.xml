@@ -95,4 +95,5 @@
     <string name="add">Add</string>
     <string name="amount">Amount</string>
     <string name="edit_transaction">Edit Transaction</string>
+    <string name="save_changes">Save Changes</string>
 </resources>

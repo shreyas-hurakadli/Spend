@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -114,6 +115,7 @@ fun EntryDetailScreen(
                         ),
                     )
                 }
+                Spacer(modifier = Modifier.height(height = 16.dp))
                 DetailRow(
                     icon = ImageVector.vectorResource(id = R.drawable.baseline_wallet),
                     detail = stringResource(R.string.account),
@@ -122,7 +124,7 @@ fun EntryDetailScreen(
                 )
                 Spacer(modifier = Modifier.height(height = 8.dp))
                 DetailRow(
-                    icon = ImageVector.vectorResource(id = R.drawable.baseline_label),
+                    icon = ImageVector.vectorResource(id = R.drawable.baseline_category),
                     detail = stringResource(R.string.category),
                     information = selectedEntry?.name ?: "",
                     modifier = Modifier.fillMaxWidth()
@@ -202,9 +204,10 @@ fun DetailRow(
         modifier = modifier
     ) {
         Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
-                .background(color = Color.LightGray, shape = RoundedCornerShape(size = 8.dp))
-                .padding(all = 8.dp)
+                .background(color = MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(size = 16.dp))
+                .size(size = 48.dp)
         ) {
             Icon(
                 imageVector = icon,

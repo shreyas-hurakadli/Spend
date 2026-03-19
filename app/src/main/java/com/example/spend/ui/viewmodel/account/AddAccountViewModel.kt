@@ -7,6 +7,7 @@ import androidx.sqlite.SQLiteException
 import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
+import com.example.spend.ui.MAX_ENTRY_AMOUNT
 import com.example.spend.validateCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -97,7 +98,7 @@ class AddAccountViewModel @Inject constructor(
 
     fun checkBalance(balance: String): Boolean {
         val number = if (balance.isNotEmpty()) balance.toDouble() else 0.00
-        return number > 100000000000
+        return number > MAX_ENTRY_AMOUNT
     }
 
     private fun validateInput(balance: String): Boolean {

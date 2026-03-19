@@ -508,7 +508,7 @@ private fun AccountView(
                 )
             }
             Text(
-                text = currencySymbol + " " + account.balance.toString(),
+                text = "$currencySymbol ${getFormattedAmount(value = account.balance)}",
                 style = MaterialTheme.typography.titleMedium,
                 color = if (account.balance >= 0.00) Color.Green else Color.Red
             )

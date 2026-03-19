@@ -12,12 +12,6 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
 
-fun longToTime(longDate: Long): String {
-    val dateFormat = SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault())
-    val date = Date(longDate)
-    return dateFormat.format(date).substring(startIndex = 0, endIndex = 5)
-}
-
 /**
  * Calculates the time relative to a day for 24-hour clock
  */
@@ -115,7 +109,7 @@ fun validateCurrency(input: String): Boolean {
 fun getFormattedAmount(value: Double): String = String.format(Locale.US, "%.2f", abs(value))
 
 /**
- * Returns the string in the format "Month Date, Year"
+ * Returns the string in the format "Date Month, Year"
  */
 fun epochSecondsToDate(epochSeconds: Long): String {
     val dateTime =
@@ -137,3 +131,15 @@ fun Double.toTwoDecimal() = this.toBigDecimal().setScale(2, RoundingMode.HALF_UP
 fun String.escapeCsv(): String = if (contains(",") || contains("\"") || contains("\n")) {
     "\"${replace("\"", "\"\"")}\""
 } else this
+
+/***
+ * Checks if the given string is a valid number
+ */
+fun String.isCurrencyAppropriate() = try {
+    if (this.isNotEmpty()) {
+        this.toDouble()
+    }
+    true
+} catch (e: Exception) {
+    false
+}

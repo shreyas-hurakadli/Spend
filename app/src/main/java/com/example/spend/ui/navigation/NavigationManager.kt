@@ -9,6 +9,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,6 +35,7 @@ import com.example.spend.ui.screen.entry.EditTransactionScreen
 import com.example.spend.ui.screen.entry.EntryDetailScreen
 import com.example.spend.ui.screen.entry.EntryScreen
 import com.example.spend.ui.viewmodel.AppViewModel
+import com.example.spend.ui.viewmodel.entry.EntryViewModel
 
 private const val durationMillis = 150
 
@@ -123,11 +125,14 @@ fun NavigationManager(
                 CurrencyConverterScreen(navHostController = navHostController)
             }
             composable<Routes.EntryDetailScreen> {
+                val backStackEntry = remember(key1 = it) {
+                    navHostController.getBackStackEntry(route = Routes.EntryScreen)
+                }
                 EntryDetailScreen(
                     navHostController = navHostController,
-                    viewModel = if (navHostController.previousBackStackEntry != null) hiltViewModel(
-                        viewModelStoreOwner = navHostController.previousBackStackEntry!!
-                    ) else hiltViewModel()
+                    viewModel = hiltViewModel(
+                        viewModelStoreOwner = backStackEntry
+                    )
                 )
             }
             composable<Routes.BudgetDetailScreen> {
@@ -147,11 +152,12 @@ fun NavigationManager(
                 )
             }
             composable<Routes.EditTransactionScreen> {
+                val backStackEntry = remember(key1 = it) {
+                    navHostController.getBackStackEntry(route = Routes.EntryScreen)
+                }
                 EditTransactionScreen(
                     navHostController = navHostController,
-                    viewModel = if (navHostController.previousBackStackEntry != null) hiltViewModel(
-                        viewModelStoreOwner = navHostController.previousBackStackEntry!!
-                    ) else hiltViewModel()
+                    viewModel = hiltViewModel(viewModelStoreOwner = backStackEntry)
                 )
             }
         }

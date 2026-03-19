@@ -1,0 +1,5 @@
+package com.example.spend.ui
+
+const val MAX_ENTRY_AMOUNT = 100000000000
+const val MAX_ENTRY_DESCRIPTION_LENGTH = 100
+const val MAX_ENTRY_NAME_LENGTH = 100
