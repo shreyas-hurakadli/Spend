@@ -20,10 +20,14 @@ import com.example.spend.data.workmanager.budget.BudgetNotificationRepository
 import com.example.spend.getTodayStart
 import com.example.spend.toTwoDecimal
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -75,6 +79,8 @@ class AddViewModel @Inject constructor(
 
     val accounts = defaultAccountRepository
         .getAllAccounts()
+        .map { list -> list.filter { it.name != "All" } }
+        .flowOn(context = Dispatchers.Default)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),
@@ -83,6 +89,8 @@ class AddViewModel @Inject constructor(
 
     val incomeCategories = defaultCategoryRepository
         .getAllIncomeCategories()
+        .map { list -> list.filter { it.name != "All" && it.name != "Transfer" } }
+        .flowOn(context = Dispatchers.Default)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),
@@ -98,6 +106,8 @@ class AddViewModel @Inject constructor(
 
     val expenseCategories = defaultCategoryRepository
         .getAllExpenseCategories()
+        .map { list -> list.filter { it.name != "All" && it.name != "Transfer" } }
+        .flowOn(context = Dispatchers.Default)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),

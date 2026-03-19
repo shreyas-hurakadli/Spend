@@ -251,7 +251,7 @@ fun AddScreen(
                 }
                 if (showAccountsBottomSheet) {
                     _root_ide_package_.com.example.spend.ui.screen.AccountBottomSheet(
-                        accounts = accounts.filter { it.name != "All" },
+                        accounts = accounts,
                         currencySymbol = currencySymbol,
                         onSelect = {
                             if (accountIndex == 0)
@@ -265,8 +265,8 @@ fun AddScreen(
                 if (showCategoryBottomSheet) {
                     _root_ide_package_.com.example.spend.ui.screen.CategoryBottomSheet(
                         categories =
-                            if (selectedIndex == 0) incomeCategories.filter { it.name != "All" }
-                            else expenseCategories.filter { it.name != "All" && it.name != "Transfer" },
+                            if (selectedIndex == 0) incomeCategories
+                            else expenseCategories,
                         onSelect = { viewModel.changeCategoryId(value = it) },
                         onDismiss = { showCategoryBottomSheet = false },
                     )
