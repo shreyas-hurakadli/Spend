@@ -1,12 +1,10 @@
 package com.example.spend.ui.viewmodel.entry
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.sqlite.SQLiteException
 import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.dto.EntryCategory
-import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.entry.Entry
@@ -20,6 +18,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
@@ -165,23 +164,65 @@ class EntryViewModel @Inject constructor(
             try {
                 if (validateEditedInput(editedEntry = editedEntry)) {
                     val change = editedEntry.amount - (_selectedEntry.value?.entry?.amount ?: 0.00)
-                    val firstAccount = defaultAccountRepository.getFirstAccount().firstOrNull()
-                    firstAccount?.let {
-                        defaultRepository.update(entry = editedEntry)
-                        defaultAccountRepository.update(
-                            account = it.copy(
-                                balance = it.balance + change
+                    val allAccount = defaultAccountRepository.getFirstAccount().first()
+
+                    if (_selectedEntry.value?.entry?.accountId != editedEntry.accountId) {
+                        val editedAccount =
+                            defaultAccountRepository.getAccountById(id = editedEntry.accountId)
+                                .first()
+                        val prevAccount =
+                            defaultAccountRepository.getAccountById(
+                                id = _selectedEntry.value?.entry?.accountId ?: 0
                             )
-                        )
-                        val editedAccount = defaultAccountRepository.getAccountById(id = editedEntry.accountId).firstOrNull()
-                        editedAccount?.let { acct ->
+                                .first()
+
+                        if (change != 0.00) {
+                            editedAccount?.let {
+                                defaultAccountRepository.update(
+                                    account = it.copy(balance = it.balance + editedEntry.amount)
+                                )
+                            }
+                        } else {
+                            editedAccount?.let {
+                                defaultAccountRepository.update(
+                                    account = it.copy(
+                                        balance = it.balance + (_selectedEntry.value?.entry?.amount
+                                            ?: 0.00)
+                                    )
+                                )
+                            }
+                        }
+
+                        prevAccount?.let {
                             defaultAccountRepository.update(
-                                account = acct.copy(balance = acct.balance + change)
+                                account = it.copy(
+                                    balance = it.balance - (_selectedEntry.value?.entry?.amount
+                                        ?: 0.00)
+                                )
                             )
                         }
-                        _selectedEntry.value = _selectedEntry.value?.copy(entry = editedEntry)
-                        showSnackBarMessage(message = "Successful transaction editing")
+                    } else {
+                        if (change != 0.00) {
+                            val curAccount =
+                                defaultAccountRepository.getAccountById(id = editedEntry.accountId)
+                                    .first()
+                            curAccount?.let {
+                                defaultAccountRepository.update(
+                                    account = it.copy(balance = it.balance + change)
+                                )
+                            }
+                        }
                     }
+
+                    if (change != 0.00) {
+                        defaultAccountRepository.update(
+                            account = allAccount.copy(balance = allAccount.balance + change)
+                        )
+                    }
+
+                    defaultRepository.update(entry = editedEntry)
+                    _selectedEntry.value = _selectedEntry.value?.copy(entry = editedEntry)
+                    showSnackBarMessage(message = "Successful transaction editing")
                 } else {
                     showSnackBarMessage(message = "Specify the fields correctly")
                 }

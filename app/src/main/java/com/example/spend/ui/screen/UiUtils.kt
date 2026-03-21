@@ -303,9 +303,11 @@ fun TransactionCard(
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
             Box(
                 modifier = Modifier
-                    .clip(CircleShape)
-                    .size(50.dp)
-                    .background(color = entryCategory.color),
+                    .background(
+                        color = entryCategory.color,
+                        shape = RoundedCornerShape(size = 16.dp)
+                    )
+                    .size(55.dp),
                 contentAlignment = Alignment.Center
             ) {
                 entryCategory.icon?.let { icon ->
@@ -335,7 +337,7 @@ fun TransactionCard(
                     )
                     Text(
                         text = (if (entryCategory.entry.isExpense) "- " else "") + currencySymbol + " " + getFormattedAmount(
-                            entryCategory.entry.amount
+                            value = entryCategory.entry.amount
                         ),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold

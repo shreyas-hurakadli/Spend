@@ -170,6 +170,8 @@ fun EditTransactionScreen(
                                     editedEntry.copy(amount = amountInput.toDouble().toTwoDecimal())
                                 isEditingAmount = false
                                 keyboardController?.hide()
+                            } else {
+                                viewModel.showSnackBarMessage(message = "Invalid amount input")
                             }
                         }
                     ),
@@ -206,7 +208,15 @@ fun EditTransactionScreen(
                     ?: ""),
                 icon = ImageVector.vectorResource(id = R.drawable.baseline_wallet),
                 action = {
-                    IconButton(onClick = { showAccountBottomSheet = true }) {
+                    IconButton(
+                        onClick = {
+                            if ((selectedEntry?.entry?.categoryId ?: 0L) in 3..4) {
+                                viewModel.showSnackBarMessage(message = "Account of transfer transactions cannot be edited")
+                            } else {
+                                showAccountBottomSheet = true
+                            }
+                        }
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.KeyboardArrowDown,
                             contentDescription = null
@@ -219,7 +229,15 @@ fun EditTransactionScreen(
                 currentValue = selectedCategory,
                 icon = ImageVector.vectorResource(id = R.drawable.baseline_category),
                 action = {
-                    IconButton(onClick = { showCategoryBottomSheet = true }) {
+                    IconButton(
+                        onClick = {
+                            if ((selectedEntry?.entry?.categoryId ?: 0L) in 3..4) {
+                                viewModel.showSnackBarMessage(message = "Category of transfer transactions cannot be edited")
+                            } else {
+                                showCategoryBottomSheet = true
+                            }
+                        }
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.KeyboardArrowDown,
                             contentDescription = null
@@ -422,7 +440,8 @@ private fun AutoSizeBasicTextField(
     BoxWithConstraints(modifier = modifier) {
         val scope = this
         val density = LocalDensity.current
-        val availableWidthPx = with(receiver = density) { scope.minWidth.toPx() }.toInt() - 16
+        val availableWidthPx =
+            with(receiver = density) { scope.minWidth.toPx() }.toInt() - with(receiver = density) { 16.dp.toPx() }.toInt()
 
         val computedFontSize: TextUnit = remember(key1 = value, key2 = availableWidthPx) {
             var size = maxFontSize

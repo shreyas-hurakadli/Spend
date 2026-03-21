@@ -44,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.data.room.account.Account
+import com.example.spend.getFormattedAmount
 import com.example.spend.ui.accountIcons
 import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.navigation.Routes
@@ -182,13 +183,13 @@ private fun AccountView(
             modifier = Modifier
                 .background(
                     color = account.color,
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(size = 16.dp)
                 )
                 .size(size = 55.dp)
         ) {
             account.icon?.let {
                 Icon(
-                    imageVector = ImageVector.vectorResource(accountIcons[it]!!),
+                    imageVector = ImageVector.vectorResource(id = accountIcons[it]!!),
                     contentDescription = null,
                     modifier = modifier.size(size = 30.dp)
                 )
@@ -198,8 +199,9 @@ private fun AccountView(
         Text(text = account.name, style = MaterialTheme.typography.labelLarge)
         Spacer(modifier.weight(weight = 1f))
         Text(
-            text = "$currencySymbol ${account.balance}",
-            style = MaterialTheme.typography.labelLarge
+            text = "$currencySymbol ${getFormattedAmount(value = account.balance)}",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
         )
     }
 }
