@@ -1,5 +1,6 @@
 package com.example.spend.ui.viewmodel.entry
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -77,6 +78,8 @@ class AddViewModel @Inject constructor(
     private val _is24hr = MutableStateFlow(value = false)
     val is24hr = _is24hr.asStateFlow()
 
+    private var allAccount = Account()
+
     val accounts = defaultAccountRepository
         .getAllAccounts()
         .map { list -> list.filter { it.name != "All" } }
@@ -139,6 +142,7 @@ class AddViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _is24hr.value = defaultPreferencesRepository.timeFormat.first() == "24h"
+            allAccount = defaultAccountRepository.getFirstAccount().first()
         }
     }
 
@@ -263,7 +267,7 @@ class AddViewModel @Inject constructor(
                         )
                         if (selectedIndex == 1) {
                             defaultAccountRepository.update(
-                                account = accounts.value.first().copy(
+                                account = allAccount.copy(
                                     balance = accounts.value.first().balance - amount.toDouble()
                                 )
                             )
@@ -275,7 +279,7 @@ class AddViewModel @Inject constructor(
                             )
                         )
                         defaultAccountRepository.update(
-                            account = accounts.value.first().copy(
+                            account = allAccount.copy(
                                 balance = accounts.value.first().balance + amount.toDouble()
                             )
                         )
