@@ -10,17 +10,17 @@ import com.example.spend.getMonthStart
 import com.example.spend.getSunday
 import com.example.spend.getTodayStart
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-private const val subscriptionDuration = 5_000L
+private const val DURATION_MILLIS = 1_000L
 
 data class ExpenseUiState(
     val income: Double = 0.00,
@@ -38,6 +38,28 @@ class SummaryViewModel @Inject constructor(
     var selectedIndex = MutableStateFlow(0)
         private set
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val expenseSlices = selectedIndex
+        .flatMapLatest {
+            when (it) {
+                0 -> getExpenseByCategory(from = getTodayStart())
+                1 -> getExpenseByCategory(from = getSunday())
+                2 -> getExpenseByCategory(from = getMonthStart())
+                else -> getExpenseByCategory(from = getMonthStart())
+            }
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val incomeSlices = selectedIndex
+        .flatMapLatest {
+            when (it) {
+                0 -> getIncomeByCategory(from = getTodayStart())
+                1 -> getIncomeByCategory(from = getSunday())
+                2 -> getIncomeByCategory(from = getMonthStart())
+                else -> getIncomeByCategory(from = getMonthStart())
+            }
+        }
+
     init {
         updateIndex(0)
     }
@@ -45,7 +67,7 @@ class SummaryViewModel @Inject constructor(
     val currencySymbol = defaultPreferencesRepository.baseCurrencySymbol
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Lazily,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = DURATION_MILLIS),
             initialValue = ""
         )
 
@@ -62,7 +84,7 @@ class SummaryViewModel @Inject constructor(
             }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(subscriptionDuration),
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = DURATION_MILLIS),
                 initialValue = emptyList()
             )
 
@@ -79,7 +101,7 @@ class SummaryViewModel @Inject constructor(
             }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(subscriptionDuration),
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = DURATION_MILLIS),
                 initialValue = emptyList()
             )
 
@@ -93,7 +115,7 @@ class SummaryViewModel @Inject constructor(
     )
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(subscriptionDuration),
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = DURATION_MILLIS),
             initialValue = 0.00
         )
 
@@ -107,7 +129,7 @@ class SummaryViewModel @Inject constructor(
     )
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(subscriptionDuration),
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = DURATION_MILLIS),
             initialValue = 0.00
         )
 
@@ -130,34 +152,28 @@ class SummaryViewModel @Inject constructor(
 
     private fun updateMonthlyInfo() {
         viewModelScope.launch {
-            withContext(context = Dispatchers.IO) {
-                uiState.value = ExpenseUiState(
-                    income = defaultRepository.getIncome(getMonthStart()).first(),
-                    expense = defaultRepository.getExpense(getMonthStart()).first()
-                )
-            }
+            uiState.value = ExpenseUiState(
+                income = defaultRepository.getIncome(from = getMonthStart()).first(),
+                expense = defaultRepository.getExpense(from = getMonthStart()).first()
+            )
         }
     }
 
     private fun updateDailyInfo() {
         viewModelScope.launch {
-            withContext(context = Dispatchers.IO) {
-                uiState.value = ExpenseUiState(
-                    income = defaultRepository.getIncome(getTodayStart()).first(),
-                    expense = defaultRepository.getExpense(getTodayStart()).first()
-                )
-            }
+            uiState.value = ExpenseUiState(
+                income = defaultRepository.getIncome(from = getTodayStart()).first(),
+                expense = defaultRepository.getExpense(from = getTodayStart()).first()
+            )
         }
     }
 
     private fun updateWeekInfo() {
         viewModelScope.launch {
-            withContext(context = Dispatchers.IO) {
-                uiState.value = ExpenseUiState(
-                    income = defaultRepository.getIncome(getSunday()).first(),
-                    expense = defaultRepository.getExpense(getSunday()).first()
-                )
-            }
+            uiState.value = ExpenseUiState(
+                income = defaultRepository.getIncome(from = getSunday()).first(),
+                expense = defaultRepository.getExpense(from = getSunday()).first()
+            )
         }
     }
 }

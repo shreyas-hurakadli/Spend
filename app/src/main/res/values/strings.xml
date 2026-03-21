@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">BudgetWise</string>
     <string name="home">Home</string>
-    <string name="total_balance">Total Balance</string>
+    <string name="net_income">Net Income</string>
     <string name="recent_transaction">Recent Transaction</string>
     <string name="see_all">See All</string>
     <string name="total_expense">Total Expense</string>

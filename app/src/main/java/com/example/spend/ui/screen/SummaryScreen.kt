@@ -45,7 +45,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorProducer
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -62,9 +61,6 @@ import co.yml.charts.ui.piechart.models.PieChartConfig
 import co.yml.charts.ui.piechart.models.PieChartData
 import com.example.spend.R
 import com.example.spend.getFormattedAmount
-import com.example.spend.getMonthStart
-import com.example.spend.getSunday
-import com.example.spend.getTodayStart
 import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.viewmodel.SummaryViewModel
@@ -78,10 +74,10 @@ fun SummaryScreen(
     navHostController: NavHostController,
     viewModel: SummaryViewModel = hiltViewModel()
 ) {
-    var index by remember { mutableIntStateOf(1) }
+    var index by remember { mutableIntStateOf(value = 1) }
     val total = 2
 
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val drawerScope = rememberCoroutineScope()
 
     val income by viewModel.getIncomeByTime().collectAsState()
@@ -109,36 +105,20 @@ fun SummaryScreen(
         ) { innerPadding ->
             val selectedIndex by viewModel.selectedIndex.collectAsState()
             val uiState by viewModel.uiState.collectAsState()
-
-            val expenseSlices by remember(selectedIndex) {
-                when (selectedIndex) {
-                    0 -> viewModel.getExpenseByCategory(getTodayStart())
-                    1 -> viewModel.getExpenseByCategory(getSunday())
-                    2 -> viewModel.getExpenseByCategory(getMonthStart())
-                    else -> viewModel.getExpenseByCategory(getMonthStart())
-                }
-            }.collectAsState()
-
-            val incomeSlices by remember(selectedIndex) {
-                when (selectedIndex) {
-                    0 -> viewModel.getIncomeByCategory(getTodayStart())
-                    1 -> viewModel.getIncomeByCategory(getSunday())
-                    2 -> viewModel.getIncomeByCategory(getMonthStart())
-                    else -> viewModel.getIncomeByCategory(getMonthStart())
-                }
-            }.collectAsState()
+            val expenseSlices by viewModel.expenseSlices.collectAsState(initial = emptyList())
+            val incomeSlices by viewModel.incomeSlices.collectAsState(initial = emptyList())
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(paddingValues = innerPadding)
             ) {
                 Box(
                     modifier = Modifier.verticalScroll(state = rememberScrollState())
                 ) {
                     Column(
                         modifier = Modifier
-                            .padding(8.dp)
+                            .padding(all = 8.dp)
                             .fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -148,13 +128,13 @@ fun SummaryScreen(
                             onSegmentSelected = { viewModel.updateIndex(it) },
                             modifier = Modifier.padding(horizontal = 8.dp)
                         )
-                        Spacer(Modifier.padding(8.dp))
+                        Spacer(Modifier.padding(all = 8.dp))
                         InfoBar(
                             balance = uiState.income - uiState.expense,
                             expense = uiState.expense,
                             currencySymbol = currencySymbol
                         )
-                        Spacer(Modifier.padding(16.dp))
+                        Spacer(Modifier.padding(all = 16.dp))
                         Text(
                             text = stringResource(R.string.analytics),
                             style = MaterialTheme.typography.labelLarge,
@@ -162,7 +142,7 @@ fun SummaryScreen(
                             color = Color.Black,
                             modifier = Modifier.align(Alignment.Start)
                         )
-                        Spacer(Modifier.padding(8.dp))
+                        Spacer(Modifier.padding(all = 8.dp))
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
@@ -218,7 +198,7 @@ fun SummaryScreen(
                             color = Color.Black,
                             modifier = Modifier.align(Alignment.Start)
                         )
-                        Spacer(Modifier.padding(8.dp))
+                        Spacer(Modifier.padding(all = 8.dp))
                         when (index) {
                             1 -> CategoryList(
                                 slices = expenseSlices,
@@ -251,7 +231,7 @@ private fun InfoBar(
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(24.dp))
+            .background(color = MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(size = 24.dp))
             .padding(all = 16.dp)
             .animateContentSize()
     ) {
@@ -260,13 +240,13 @@ private fun InfoBar(
             modifier = Modifier.weight(weight = 1f)
         ) {
             Text(
-                text = stringResource(R.string.total_balance),
+                text = stringResource(id = R.string.net_income),
                 color = Color(0xFF4CAF50),
                 style = MaterialTheme.typography.labelLarge,
                 textAlign = TextAlign.Center
             )
             BasicText(
-                text = "$currencySymbol ${getFormattedAmount(balance)}",
+                text = "$currencySymbol ${getFormattedAmount(value = balance)}",
                 maxLines = 1,
                 color = ColorProducer { Color(0xFF4CAF50) },
                 autoSize = TextAutoSize.StepBased(

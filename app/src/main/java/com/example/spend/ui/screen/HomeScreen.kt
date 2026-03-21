@@ -318,7 +318,7 @@ private fun BalanceBar(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = stringResource(R.string.total_balance),
+                    text = stringResource(R.string.net_income),
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.labelLarge,
                 )
