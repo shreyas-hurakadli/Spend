@@ -53,6 +53,10 @@ sealed class Routes {
 
     @Serializable
     data object EditAccountScreen: Routes()
+
+    @Serializable
+    data object EditBudgetScreen: Routes()
+
     @Serializable
     data object CurrencyConverterScreen: Routes()
 }
