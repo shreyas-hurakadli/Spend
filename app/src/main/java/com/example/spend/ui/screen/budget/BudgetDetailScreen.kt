@@ -18,10 +18,12 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -90,144 +92,160 @@ fun BudgetDetailScreen(
             )
         }
     ) { innerPadding ->
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
+        Column(
             modifier = Modifier
                 .padding(paddingValues = innerPadding)
                 .padding(all = 8.dp)
                 .fillMaxSize()
         ) {
-            item {
-                Text(
-                    text = budget.name,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.SansSerif,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(modifier = Modifier.height(height = 16.dp))
-                Text(
-                    text = stringResource(id = R.string.expense),
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Gray
-                )
-                BasicText(
-                    text = "$currencySymbol ${getFormattedAmount(value = expense)}",
-                    maxLines = 1,
-                    style = MaterialTheme.typography.displayMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    autoSize = TextAutoSize.StepBased(
-                        minFontSize = 24.sp,
-                        maxFontSize = 48.sp
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top,
+                modifier = Modifier.weight(weight = 1f)
+            ) {
+                item {
+                    Text(
+                        text = budget.name,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.SansSerif,
+                        style = MaterialTheme.typography.titleLarge
                     )
-                )
-                Spacer(modifier = Modifier.height(height = 8.dp))
-                if (!progress.isNaN()) {
-                    LinearProgressIndicator(
-                        progress = { progress },
-                        color = if (progress >= 1f) MaterialTheme.colorScheme.error
-                        else MaterialTheme.colorScheme.secondary,
-                        trackColor = MaterialTheme.colorScheme.background,
-                        modifier = Modifier
-                            .fillMaxWidth(fraction = 0.8f)
-                            .border(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                shape = RoundedCornerShape(size = 16.dp)
-                            )
-                            .height(height = 24.dp)
+                    Spacer(modifier = Modifier.height(height = 16.dp))
+                    Text(
+                        text = stringResource(id = R.string.expense),
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Gray
                     )
-                }
-                Spacer(modifier = Modifier.height(height = 4.dp))
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.remaining),
-                            color = Color.Gray,
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                lineHeight = MaterialTheme.typography.labelSmall.fontSize
-                            ),
+                    BasicText(
+                        text = "$currencySymbol ${getFormattedAmount(value = expense)}",
+                        maxLines = 1,
+                        style = MaterialTheme.typography.displayMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        autoSize = TextAutoSize.StepBased(
+                            minFontSize = 24.sp,
+                            maxFontSize = 48.sp
                         )
-
-                        BasicText(
-                            text = "$currencySymbol ${
-                                getFormattedAmount(
-                                    value = max(a = budget.amount - expense, b = 0.00)
+                    )
+                    Spacer(modifier = Modifier.height(height = 8.dp))
+                    if (!progress.isNaN()) {
+                        LinearProgressIndicator(
+                            progress = { progress },
+                            color = if (progress >= 1f) MaterialTheme.colorScheme.error
+                            else MaterialTheme.colorScheme.secondary,
+                            trackColor = MaterialTheme.colorScheme.background,
+                            modifier = Modifier
+                                .fillMaxWidth(fraction = 0.8f)
+                                .border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    shape = RoundedCornerShape(size = 16.dp)
                                 )
-                            }",
-                            maxLines = 1,
-                            style = MaterialTheme.typography.displayMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                lineHeight = 1.em
-                            ),
-                            autoSize = TextAutoSize.StepBased(
-                                minFontSize = 8.sp,
-                                maxFontSize = 24.sp
-                            ),
+                                .height(height = 24.dp)
                         )
                     }
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                    Spacer(modifier = Modifier.height(height = 4.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.limit),
-                            color = Color.Gray,
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                lineHeight = MaterialTheme.typography.labelSmall.fontSize
-                            ),
-                        )
-                        BasicText(
-                            text = "$currencySymbol ${getFormattedAmount(value = budget.amount)}",
-                            maxLines = 1,
-                            style = MaterialTheme.typography.displayMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                lineHeight = 1.em
-                            ),
-                            autoSize = TextAutoSize.StepBased(
-                                minFontSize = 8.sp,
-                                maxFontSize = 24.sp
-                            ),
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.remaining),
+                                color = Color.Gray,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    lineHeight = MaterialTheme.typography.labelSmall.fontSize
+                                ),
+                            )
+
+                            BasicText(
+                                text = "$currencySymbol ${
+                                    getFormattedAmount(
+                                        value = max(a = budget.amount - expense, b = 0.00)
+                                    )
+                                }",
+                                maxLines = 1,
+                                style = MaterialTheme.typography.displayMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    lineHeight = 1.em
+                                ),
+                                autoSize = TextAutoSize.StepBased(
+                                    minFontSize = 8.sp,
+                                    maxFontSize = 24.sp
+                                ),
+                            )
+                        }
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.limit),
+                                color = Color.Gray,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    lineHeight = MaterialTheme.typography.labelSmall.fontSize
+                                ),
+                            )
+                            BasicText(
+                                text = "$currencySymbol ${getFormattedAmount(value = budget.amount)}",
+                                maxLines = 1,
+                                style = MaterialTheme.typography.displayMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    lineHeight = 1.em
+                                ),
+                                autoSize = TextAutoSize.StepBased(
+                                    minFontSize = 8.sp,
+                                    maxFontSize = 24.sp
+                                ),
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(height = 8.dp))
+                    Text(
+                        text = stringResource(id = R.string.transactions),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start
+                    )
+                    Spacer(modifier = Modifier.height(height = 8.dp))
+                    if (transactions?.isEmpty() ?: true) {
+                        NoTransactions()
                     }
                 }
-                Spacer(modifier = Modifier.height(height = 8.dp))
-                Text(
-                    text = stringResource(id = R.string.transactions),
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Start
-                )
-                Spacer(modifier = Modifier.height(height = 8.dp))
-                if (transactions?.isEmpty() ?: true) {
-                    NoTransactions()
+                transactions?.let {
+                    items(items = it) { entryCategory ->
+                        TransactionCard(
+                            entryCategory = entryCategory,
+                            currencySymbol = currencySymbol,
+                            iconTint = Color.Black,
+                            showDate = true,
+                            clickable = true,
+                            onClick = {
+                                entryViewModel.selectEntry(entry = entryCategory)
+                                navHostController.navigate(route = Routes.EntryDetailScreen)
+                            }
+                        )
+                    }
                 }
             }
-            transactions?.let {
-                items(items = it) { entryCategory ->
-                    TransactionCard(
-                        entryCategory = entryCategory,
-                        currencySymbol = currencySymbol,
-                        iconTint = Color.Black,
-                        showDate = true,
-                        clickable = true,
-                        onClick = {
-                            entryViewModel.selectEntry(entry = entryCategory)
-                            navHostController.navigate(route = Routes.EntryDetailScreen)
-                        }
-                    )
-                }
+            OutlinedButton(
+                onClick = { navHostController.navigate(Routes.EditBudgetScreen) },
+                colors= ButtonDefaults.filledTonalButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(id = R.string.edit_budget),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
     }
