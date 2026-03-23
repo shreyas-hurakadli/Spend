@@ -1,24 +1,19 @@
 package com.example.spend.ui.screen.budget
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
@@ -39,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -46,15 +42,19 @@ import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.data.room.budget.Budget
 import com.example.spend.getFormattedAmount
+import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.DialogBox
 import com.example.spend.ui.screen.NoTransactions
 import com.example.spend.ui.screen.TransactionCard
 import com.example.spend.ui.viewmodel.budget.BudgetViewModel
+import com.example.spend.ui.viewmodel.entry.EntryViewModel
+import kotlin.math.max
 
 @Composable
 fun BudgetDetailScreen(
     navHostController: NavHostController,
+    entryViewModel: EntryViewModel = hiltViewModel(),
     viewModel: BudgetViewModel = hiltViewModel()
 ) {
     val selectedBudget by viewModel.selectedBudget.collectAsState()
@@ -85,27 +85,22 @@ fun BudgetDetailScreen(
             )
         }
     ) { innerPadding ->
-        Box(
-            contentAlignment = Alignment.Center,
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .padding(paddingValues = innerPadding)
-                .verticalScroll(state = rememberScrollState())
+                .padding(all = 8.dp)
                 .fillMaxSize()
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .padding(all = 8.dp)
-                    .fillMaxSize()
-            ) {
+            item {
                 Text(
                     text = budget.name,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.SansSerif,
                     style = MaterialTheme.typography.titleLarge
                 )
-                Spacer(modifier = Modifier.fillMaxSize(fraction = 0.08f))
+                Spacer(modifier = Modifier.height(height = 16.dp))
                 Text(
                     text = stringResource(id = R.string.expense),
                     style = MaterialTheme.typography.bodySmall,
@@ -123,7 +118,7 @@ fun BudgetDetailScreen(
                         maxFontSize = 48.sp
                     )
                 )
-                Spacer(modifier = Modifier.fillMaxHeight(fraction = 0.05f))
+                Spacer(modifier = Modifier.height(height = 8.dp))
                 if (!progress.isNaN()) {
                     LinearProgressIndicator(
                         progress = { progress },
@@ -140,7 +135,7 @@ fun BudgetDetailScreen(
                             .height(height = 24.dp)
                     )
                 }
-                Spacer(modifier = Modifier.fillMaxHeight(fraction = 0.02f))
+                Spacer(modifier = Modifier.height(height = 4.dp))
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
@@ -151,12 +146,15 @@ fun BudgetDetailScreen(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = stringResource(id = R.string.spent),
+                            text = stringResource(id = R.string.remaining),
                             color = Color.Gray,
                             style = MaterialTheme.typography.labelSmall
                         )
+
+                        val remaining = max(a = budget.amount - expense, b = 0.00)
+
                         BasicText(
-                            text = "$currencySymbol ${getFormattedAmount(value = expense)}",
+                            text = "$currencySymbol ${getFormattedAmount(value = remaining)}",
                             maxLines = 1,
                             style = MaterialTheme.typography.displayMedium.copy(
                                 fontWeight = FontWeight.Bold
@@ -189,67 +187,52 @@ fun BudgetDetailScreen(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(height = 16.dp))
+                Spacer(modifier = Modifier.height(height = 8.dp))
                 Text(
-                    text = stringResource(R.string.transactions),
+                    text = stringResource(id = R.string.transactions),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.align(alignment = Alignment.Start)
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start
                 )
-                Spacer(modifier = Modifier.fillMaxHeight(fraction = 0.01f))
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = MaterialTheme.colorScheme.background,
-                            shape = RoundedCornerShape(size = 8.dp)
-                        )
-                        .fillMaxSize(),
-                    contentAlignment = if (transactions?.isNotEmpty()
-                            ?: false
-                    ) Alignment.TopCenter else Alignment.Center
-                ) {
-                    transactions?.let {
-                        LazyColumn {
-                            items(items = it) { entryCategory ->
-                                TransactionCard(
-                                    entryCategory = entryCategory,
-                                    currencySymbol = currencySymbol,
-                                    iconTint = Color.Black,
-                                    showDate = true,
-                                )
-                            }
-                        }
-                    }
-                    if (transactions?.isEmpty() ?: true) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            NoTransactions()
-                        }
-                    }
+                if (transactions?.isEmpty() ?: true) {
+                    NoTransactions()
                 }
-                if (showDialogBox) {
-                    DialogBox(
-                        onDismissRequest = { showDialogBox = false },
-                        onConfirmation = {
-                            navHostController.popBackStack()
-                            viewModel.deleteBudget(selectedBudget?.first ?: Budget())
-                        },
-                        dialogTitle = stringResource(id = R.string.delete_budget),
-                        dialogText = stringResource(id = R.string.budget_delete_message),
-                        confirmText = {
-                            Text(
-                                text = stringResource(id = R.string.delete),
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        },
-                        dismissText = { Text(text = stringResource(id = R.string.cancel)) },
+            }
+            transactions?.let {
+                items(items = it) { entryCategory ->
+                    TransactionCard(
+                        entryCategory = entryCategory,
+                        currencySymbol = currencySymbol,
+                        iconTint = Color.Black,
+                        showDate = true,
+                        clickable = true,
+                        onClick = {
+                            entryViewModel.selectEntry(entry = entryCategory)
+                            navHostController.navigate(route = Routes.EntryDetailScreen)
+                        }
                     )
                 }
             }
         }
+    }
+    if (showDialogBox) {
+        DialogBox(
+            onDismissRequest = { showDialogBox = false },
+            onConfirmation = {
+                navHostController.popBackStack()
+                viewModel.deleteBudget(selectedBudget?.first ?: Budget())
+            },
+            dialogTitle = stringResource(id = R.string.delete_budget),
+            dialogText = stringResource(id = R.string.budget_delete_message),
+            confirmText = {
+                Text(
+                    text = stringResource(id = R.string.delete),
+                    color = MaterialTheme.colorScheme.error
+                )
+            },
+            dismissText = { Text(text = stringResource(id = R.string.cancel)) },
+        )
     }
 }
