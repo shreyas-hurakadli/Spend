@@ -17,11 +17,15 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -63,6 +67,8 @@ fun AccountDetailScreen(
 
     var showDialogBox by remember { mutableStateOf(value = false) }
 
+    val snackBarHostState = remember { SnackbarHostState() }
+
     Scaffold(
         topBar = {
             AppTopBar(
@@ -74,12 +80,13 @@ fun AccountDetailScreen(
                         Icon(
                             imageVector = Icons.Default.Delete,
                             tint = MaterialTheme.colorScheme.primary,
-                            contentDescription = stringResource(R.string.delete)
+                            contentDescription = stringResource(id = R.string.delete)
                         )
                     }
                 }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
     ) { innerPadding ->
         Box(
             contentAlignment = Alignment.Center,
@@ -92,8 +99,13 @@ fun AccountDetailScreen(
                     .padding(all = 8.dp)
                     .fillMaxSize()
             ) {
+                if (selectedAccount == null) {
+                    CircularProgressIndicator()
+                }
                 selectedAccount?.let {
-                    LazyColumn {
+                    LazyColumn(
+                        modifier = Modifier.weight(weight = 1f)
+                    ) {
                         item {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -147,8 +159,7 @@ fun AccountDetailScreen(
                                     Column(
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         verticalArrangement = Arrangement.Center,
-                                        modifier = Modifier
-                                            .fillMaxSize()
+                                        modifier = Modifier.fillMaxSize()
                                     ) {
                                         NoTransactions()
                                     }
@@ -171,9 +182,18 @@ fun AccountDetailScreen(
                             }
                         }
                     }
-                }
-                if (selectedAccount == null) {
-                    CircularProgressIndicator()
+                    OutlinedButton(
+                        onClick = { navHostController.navigate(route = Routes.EditAccountScreen) },
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(all = 8.dp)
+                    ) {
+                        Text(text = stringResource(id = R.string.edit_account))
+                    }
                 }
                 if (showDialogBox) {
                     DialogBox(

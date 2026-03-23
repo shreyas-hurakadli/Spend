@@ -25,6 +25,7 @@ import com.example.spend.ui.screen.SummaryScreen
 import com.example.spend.ui.screen.account.AccountDetailScreen
 import com.example.spend.ui.screen.account.AccountScreen
 import com.example.spend.ui.screen.account.AddAccountScreen
+import com.example.spend.ui.screen.account.EditAccountScreen
 import com.example.spend.ui.screen.budget.AddBudgetScreen
 import com.example.spend.ui.screen.budget.BudgetDetailScreen
 import com.example.spend.ui.screen.budget.BudgetScreen
@@ -167,6 +168,22 @@ fun NavigationManager(
                     }
                 }
                 EditTransactionScreen(
+                    navHostController = navHostController,
+                    viewModel = if (backStackEntry != null) hiltViewModel(viewModelStoreOwner = backStackEntry)
+                    else hiltViewModel()
+                )
+            }
+            composable<Routes.EditAccountScreen> {
+                val backStackEntry = remember(key1 = it) {
+                    try {
+                        navHostController.getBackStackEntry(route = Routes.AccountScreen)
+                    } catch (e: IllegalArgumentException) {
+                        navHostController.getBackStackEntry(route = Routes.EntryScreen)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+                EditAccountScreen(
                     navHostController = navHostController,
                     viewModel = if (backStackEntry != null) hiltViewModel(viewModelStoreOwner = backStackEntry)
                     else hiltViewModel()

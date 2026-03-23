@@ -6,6 +6,7 @@ import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.entry.EntryRepository
+import com.example.spend.ui.MAX_ACCOUNT_NAME_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,7 @@ class AccountViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
     private val defaultAccountRepository: AccountRepository,
     private val defaultPreferencesRepository: PreferencesRepository
-): ViewModel() {
+) : ViewModel() {
     val accounts = defaultAccountRepository.getAllAccounts()
         .stateIn(
             scope = viewModelScope,
@@ -48,6 +49,12 @@ class AccountViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = DURATION_MILLIS),
             initialValue = false
         )
+
+    private val _showSnackBar = MutableStateFlow(value = false)
+    val showSnackBar = _showSnackBar.asStateFlow()
+
+    private val _snackBarMessage = MutableStateFlow(value = "")
+    val snackBarMessage = _snackBarMessage.asStateFlow()
 
     private val _selectedAccount: MutableStateFlow<Account?> = MutableStateFlow(value = null)
     val selectedAccount = _selectedAccount.asStateFlow()
@@ -77,8 +84,34 @@ class AccountViewModel @Inject constructor(
                 withContext(context = Dispatchers.IO) {
                     defaultAccountRepository.delete(account)
                     val firstAccount = defaultAccountRepository.getFirstAccount().first()
-                    defaultAccountRepository.update(firstAccount.copy(balance = firstAccount.balance - account.balance))
+                    defaultAccountRepository.update(account = firstAccount.copy(balance = firstAccount.balance - account.balance))
                 }
+            }
+        }
+    }
+
+    fun showSnackBar(message: String) {
+        _snackBarMessage.value = message
+        _showSnackBar.value = true
+    }
+
+    private fun validateEditedAccount(editedAccount: Account): Boolean =
+        editedAccount.name.length <= MAX_ACCOUNT_NAME_LENGTH
+
+    fun editAccount(editedAccount: Account) {
+        viewModelScope.launch {
+            try {
+                if (validateEditedAccount(editedAccount)) {
+                    if (_selectedAccount.value != editedAccount) {
+                        defaultAccountRepository.update(account = editedAccount)
+                        _selectedAccount.value = editedAccount
+                    }
+                    showSnackBar(message = "Successfully edited account")
+                } else {
+                    showSnackBar(message = "Account name should be less than ${MAX_ACCOUNT_NAME_LENGTH + 1} characters")
+                }
+            } catch (e: Exception) {
+                showSnackBar(message = "Account with this name already exists")
             }
         }
     }

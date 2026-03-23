@@ -96,4 +96,7 @@
     <string name="amount">Amount</string>
     <string name="edit_transaction">Edit Transaction</string>
     <string name="save_changes">Save Changes</string>
+    <string name="edit_account">Edit Account</string>
+    <string name="select_color">Select Color</string>
+    <string name="select_icon">Select Icon</string>
 </resources>
