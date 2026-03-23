@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-private const val TIMEOUT_MILLIS = 5_000L
+private const val TIMEOUT_MILLIS = 1_000L
 
 @HiltViewModel
 class BudgetViewModel @Inject constructor(
@@ -36,6 +36,12 @@ class BudgetViewModel @Inject constructor(
     private val _selectedBudget: MutableStateFlow<Pair<Budget, Double>?> =
         MutableStateFlow(value = null)
     val selectedBudget = _selectedBudget.asStateFlow()
+
+    private val _showSnackBar = MutableStateFlow(value = false)
+    val showSnackBar = _showSnackBar.asStateFlow()
+
+    private val _snackBarMessage = MutableStateFlow(value = "")
+    val snackBarMessage = _snackBarMessage.asStateFlow()
 
     val currencySymbol = defaultPreferencesRepository.baseCurrencySymbol
         .stateIn(
@@ -157,5 +163,10 @@ class BudgetViewModel @Inject constructor(
         viewModelScope.launch {
             budgetRepository.delete(budget = budget)
         }
+    }
+
+    fun showSnackBar(message: String) {
+        _snackBarMessage.value = message
+        _showSnackBar.value = true
     }
 }
