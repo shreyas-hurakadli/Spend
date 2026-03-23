@@ -129,7 +129,11 @@ fun NavigationManager(
                     try {
                         navHostController.getBackStackEntry(route = Routes.EntryScreen)
                     } catch (e: IllegalArgumentException) {
-                        navHostController.getBackStackEntry(route = Routes.AccountDetailScreen)
+                        try {
+                            navHostController.getBackStackEntry(route = Routes.AccountDetailScreen)
+                        } catch (e: Exception) {
+                            navHostController.getBackStackEntry(route = Routes.BudgetDetailScreen)
+                        }
                     } catch (e: Exception) {
                         null
                     }
@@ -162,7 +166,11 @@ fun NavigationManager(
                     try {
                         navHostController.getBackStackEntry(route = Routes.EntryScreen)
                     } catch (e: IllegalArgumentException) {
-                        navHostController.getBackStackEntry(route = Routes.AccountDetailScreen)
+                        try {
+                            navHostController.getBackStackEntry(route = Routes.AccountDetailScreen)
+                        } catch (e: Exception) {
+                            navHostController.getBackStackEntry(route = Routes.BudgetDetailScreen)
+                        }
                     } catch (e: Exception) {
                         null
                     }
@@ -176,9 +184,13 @@ fun NavigationManager(
             composable<Routes.EditAccountScreen> {
                 val backStackEntry = remember(key1 = it) {
                     try {
-                        navHostController.getBackStackEntry(route = Routes.AccountScreen)
-                    } catch (e: IllegalArgumentException) {
                         navHostController.getBackStackEntry(route = Routes.EntryScreen)
+                    } catch (e: IllegalArgumentException) {
+                        try {
+                            navHostController.getBackStackEntry(route = Routes.AccountScreen)
+                        } catch (e: Exception) {
+                            navHostController.getBackStackEntry(route = Routes.BudgetDetailScreen)
+                        }
                     } catch (e: Exception) {
                         null
                     }
