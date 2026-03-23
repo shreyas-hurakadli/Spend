@@ -209,6 +209,7 @@ fun BudgetDetailScreen(
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Start
                 )
+                Spacer(modifier = Modifier.height(height = 8.dp))
                 if (transactions?.isEmpty() ?: true) {
                     NoTransactions()
                 }
