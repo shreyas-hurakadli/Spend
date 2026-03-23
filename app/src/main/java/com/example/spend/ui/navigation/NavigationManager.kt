@@ -35,7 +35,6 @@ import com.example.spend.ui.screen.entry.EditTransactionScreen
 import com.example.spend.ui.screen.entry.EntryDetailScreen
 import com.example.spend.ui.screen.entry.EntryScreen
 import com.example.spend.ui.viewmodel.AppViewModel
-import com.example.spend.ui.viewmodel.entry.EntryViewModel
 
 private const val durationMillis = 150
 
@@ -126,13 +125,19 @@ fun NavigationManager(
             }
             composable<Routes.EntryDetailScreen> {
                 val backStackEntry = remember(key1 = it) {
-                    navHostController.getBackStackEntry(route = Routes.EntryScreen)
+                    try {
+                        navHostController.getBackStackEntry(route = Routes.EntryScreen)
+                    } catch (e: IllegalArgumentException) {
+                        navHostController.getBackStackEntry(route = Routes.AccountDetailScreen)
+                    } catch (e: Exception) {
+                        null
+                    }
                 }
                 EntryDetailScreen(
                     navHostController = navHostController,
-                    viewModel = hiltViewModel(
+                    viewModel = if (backStackEntry != null) hiltViewModel(
                         viewModelStoreOwner = backStackEntry
-                    )
+                    ) else hiltViewModel()
                 )
             }
             composable<Routes.BudgetDetailScreen> {
@@ -153,11 +158,18 @@ fun NavigationManager(
             }
             composable<Routes.EditTransactionScreen> {
                 val backStackEntry = remember(key1 = it) {
-                    navHostController.getBackStackEntry(route = Routes.EntryScreen)
+                    try {
+                        navHostController.getBackStackEntry(route = Routes.EntryScreen)
+                    } catch (e: IllegalArgumentException) {
+                        navHostController.getBackStackEntry(route = Routes.AccountDetailScreen)
+                    } catch (e: Exception) {
+                        null
+                    }
                 }
                 EditTransactionScreen(
                     navHostController = navHostController,
-                    viewModel = hiltViewModel(viewModelStoreOwner = backStackEntry)
+                    viewModel = if (backStackEntry != null) hiltViewModel(viewModelStoreOwner = backStackEntry)
+                    else hiltViewModel()
                 )
             }
         }
