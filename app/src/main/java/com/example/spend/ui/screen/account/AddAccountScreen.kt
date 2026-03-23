@@ -123,7 +123,7 @@ fun AddAccountScreen(
                         modifier = Modifier
                             .clip(CircleShape)
                             .size(size = 55.dp)
-                            .background(color = uiState.color),
+                            .background(color = uiState.color, shape = RoundedCornerShape(size = 16.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         if (accountIcons[uiState.icon] != null) {
