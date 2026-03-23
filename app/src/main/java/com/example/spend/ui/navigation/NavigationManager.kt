@@ -29,6 +29,7 @@ import com.example.spend.ui.screen.account.EditAccountScreen
 import com.example.spend.ui.screen.budget.AddBudgetScreen
 import com.example.spend.ui.screen.budget.BudgetDetailScreen
 import com.example.spend.ui.screen.budget.BudgetScreen
+import com.example.spend.ui.screen.budget.EditBudgetScreen
 import com.example.spend.ui.screen.currency.CurrencyConverterScreen
 import com.example.spend.ui.screen.currency.SelectCurrencyScreen
 import com.example.spend.ui.screen.entry.AddScreen
@@ -184,20 +185,32 @@ fun NavigationManager(
             composable<Routes.EditAccountScreen> {
                 val backStackEntry = remember(key1 = it) {
                     try {
-                        navHostController.getBackStackEntry(route = Routes.EntryScreen)
-                    } catch (e: IllegalArgumentException) {
-                        try {
-                            navHostController.getBackStackEntry(route = Routes.AccountScreen)
-                        } catch (e: Exception) {
-                            navHostController.getBackStackEntry(route = Routes.BudgetDetailScreen)
-                        }
+                        navHostController.getBackStackEntry(route = Routes.AccountScreen)
                     } catch (e: Exception) {
                         null
                     }
                 }
                 EditAccountScreen(
                     navHostController = navHostController,
-                    viewModel = if (backStackEntry != null) hiltViewModel(viewModelStoreOwner = backStackEntry)
+                    viewModel = if (backStackEntry != null) hiltViewModel(
+                        viewModelStoreOwner = backStackEntry
+                    )
+                    else hiltViewModel()
+                )
+            }
+            composable<Routes.EditBudgetScreen> {
+                val backStackEntry = remember(key1 = it) {
+                    try {
+                        navHostController.getBackStackEntry(route = Routes.BudgetScreen)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+                EditBudgetScreen(
+                    navHostController = navHostController,
+                    viewModel = if (backStackEntry != null) hiltViewModel(
+                        viewModelStoreOwner = backStackEntry
+                    )
                     else hiltViewModel()
                 )
             }
