@@ -103,4 +103,5 @@
     <string name="edit_budget">Edit Budget</string>
     <string name="total_balance">Total Balance</string>
     <string name="budget_end_date">Budget End Date</string>
+    <string name="categories">Categories</string>
 </resources>

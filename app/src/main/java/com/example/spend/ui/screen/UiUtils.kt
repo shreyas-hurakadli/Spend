@@ -117,6 +117,12 @@ private val navigationIcon = listOf(
         contentDescription = "Accounts"
     ),
     NavigationIcon(
+        baseLineIcon = R.drawable.baseline_category,
+        outlinedIcon = R.drawable.baseline_category,
+        route = Routes.CategoryScreen,
+        contentDescription = "Categories"
+    ),
+    NavigationIcon(
         baseLineIcon = R.drawable.coin,
         outlinedIcon = R.drawable.coin,
         route = Routes.BudgetScreen,

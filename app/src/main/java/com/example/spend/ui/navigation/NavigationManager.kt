@@ -30,6 +30,7 @@ import com.example.spend.ui.screen.budget.AddBudgetScreen
 import com.example.spend.ui.screen.budget.BudgetDetailScreen
 import com.example.spend.ui.screen.budget.BudgetScreen
 import com.example.spend.ui.screen.budget.EditBudgetScreen
+import com.example.spend.ui.screen.category.CategoryScreen
 import com.example.spend.ui.screen.currency.CurrencyConverterScreen
 import com.example.spend.ui.screen.currency.SelectCurrencyScreen
 import com.example.spend.ui.screen.entry.AddScreen
@@ -109,6 +110,9 @@ fun NavigationManager(
             }
             composable<Routes.AccountScreen> {
                 AccountScreen(navHostController = navHostController)
+            }
+            composable<Routes.CategoryScreen> {
+                CategoryScreen(navHostController = navHostController)
             }
             composable<Routes.AddAccountScreen> {
                 AddAccountScreen(navHostController = navHostController)
