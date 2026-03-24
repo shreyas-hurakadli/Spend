@@ -187,12 +187,14 @@ private fun AccountView(
                 )
                 .size(size = 55.dp)
         ) {
-            account.icon?.let {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = accountIcons[it]!!),
-                    contentDescription = null,
-                    modifier = modifier.size(size = 30.dp)
-                )
+            account.icon?.let { icon ->
+                accountIcons[icon]?.let { resourceId ->
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = resourceId),
+                        contentDescription = null,
+                        modifier = modifier.size(size = 30.dp)
+                    )
+                }
             }
         }
         Spacer(modifier.width(16.dp))

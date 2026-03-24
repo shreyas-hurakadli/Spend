@@ -121,12 +121,14 @@ fun AccountDetailScreen(
                                         .size(size = 60.dp)
                                 ) {
                                     it.icon?.let { icon ->
-                                        Icon(
-                                            imageVector = ImageVector.vectorResource(id = accountIcons[icon]!!),
-                                            tint = MaterialTheme.colorScheme.onBackground,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(size = 30.dp)
-                                        )
+                                        accountIcons[icon]?.let { resourceId ->
+                                            Icon(
+                                                imageVector = ImageVector.vectorResource(id = resourceId),
+                                                tint = MaterialTheme.colorScheme.onBackground,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(size = 30.dp)
+                                            )
+                                        }
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(height = 8.dp))
