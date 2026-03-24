@@ -1,4 +1,4 @@
-package com.example.spend.ui.viewmodel
+package com.example.spend.ui.viewmodel.category
 
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
@@ -8,11 +8,9 @@ import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class CreateCategoryViewModel @Inject constructor(

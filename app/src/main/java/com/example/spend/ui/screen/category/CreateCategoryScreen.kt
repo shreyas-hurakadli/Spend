@@ -59,7 +59,7 @@ import com.example.spend.ui.icons
 import com.example.spend.ui.pastelColors
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.SegmentedControl
-import com.example.spend.ui.viewmodel.CreateCategoryViewModel
+import com.example.spend.ui.viewmodel.category.CreateCategoryViewModel
 import kotlin.collections.get
 
 @OptIn(ExperimentalMaterial3Api::class)
