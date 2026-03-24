@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.example.spend.data.dto.CategoryAmount
 import com.example.spend.data.dto.EntryCategory
+import com.example.spend.data.room.category.Category
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -170,4 +171,7 @@ interface EntryDao {
         startTime: Long,
         endTime: Long
     ): Flow<List<EntryCategory>>
+
+    @Query("SELECT * FROM entries WHERE category_id = :id")
+    fun getEntriesByCategoryId(id: Long): Flow<List<Entry>>
 }

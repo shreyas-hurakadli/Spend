@@ -88,4 +88,6 @@ interface EntryRepository {
         startTime: Long,
         endTime: Long,
     ): Flow<List<EntryCategory>>
+
+    fun getEntriesByCategoryId(id: Long): Flow<List<Entry>>
 }

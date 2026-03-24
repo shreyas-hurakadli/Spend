@@ -128,4 +128,6 @@ class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : En
         startTime = startTime,
         endTime = endTime
     )
+
+    override fun getEntriesByCategoryId(id: Long): Flow<List<Entry>> = entryDao.getEntriesByCategoryId(id = id)
 }
