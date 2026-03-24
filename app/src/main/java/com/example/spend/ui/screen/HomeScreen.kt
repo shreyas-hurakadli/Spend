@@ -310,7 +310,7 @@ private fun BalanceBar(
                 )
             )
             .fillMaxWidth()
-            .padding(24.dp),
+            .padding(all = 24.dp),
     ) {
         Column {
             Row(
@@ -318,7 +318,7 @@ private fun BalanceBar(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = stringResource(R.string.net_income),
+                    text = stringResource(id = R.string.total_balance),
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.labelLarge,
                 )
