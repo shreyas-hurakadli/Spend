@@ -1,4 +1,4 @@
-package com.example.spend.ui.screen
+package com.example.spend.ui.screen.category
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -57,7 +57,10 @@ import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.ui.icons
 import com.example.spend.ui.pastelColors
+import com.example.spend.ui.screen.AppTopBar
+import com.example.spend.ui.screen.SegmentedControl
 import com.example.spend.ui.viewmodel.CreateCategoryViewModel
+import kotlin.collections.get
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

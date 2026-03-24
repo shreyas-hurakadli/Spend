@@ -18,7 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import co.yml.charts.common.extensions.isNotNull
 import com.example.spend.ui.IntroductionScreen
-import com.example.spend.ui.screen.CreateCategoryScreen
+import com.example.spend.ui.screen.category.CreateCategoryScreen
 import com.example.spend.ui.screen.HomeScreen
 import com.example.spend.ui.screen.SettingsScreen
 import com.example.spend.ui.screen.SummaryScreen
