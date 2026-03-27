@@ -24,8 +24,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -67,8 +65,6 @@ fun AccountDetailScreen(
 
     var showDialogBox by remember { mutableStateOf(value = false) }
 
-    val snackBarHostState = remember { SnackbarHostState() }
-
     Scaffold(
         topBar = {
             AppTopBar(
@@ -86,7 +82,6 @@ fun AccountDetailScreen(
                 }
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
     ) { innerPadding ->
         Box(
             contentAlignment = Alignment.Center,
