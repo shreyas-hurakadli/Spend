@@ -10,6 +10,8 @@ import com.example.spend.data.room.budget.Budget
 import com.example.spend.data.room.budget.BudgetRepository
 import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
+import com.example.spend.ui.MAX_BUDGET_NAME_LENGTH
+import com.example.spend.ui.MAX_ENTRY_AMOUNT
 import com.example.spend.validateCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -36,11 +38,11 @@ class AddBudgetViewModel @Inject constructor(
     private val _period = MutableStateFlow(value = Period.NONE)
     val period = _period.asStateFlow()
 
-    private val _snackBarMessage = MutableStateFlow(value = "")
-    val snackBarMessage = _snackBarMessage.asStateFlow()
+    private val _toastMessage = MutableStateFlow(value = "")
+    val toastMessage = _toastMessage.asStateFlow()
 
-    private val _showSnackBar = MutableStateFlow(value = false)
-    val showSnackBar = _showSnackBar.asStateFlow()
+    private val _showToast = MutableStateFlow(value = false)
+    val showSnackBar = _showToast.asStateFlow()
 
     val accounts = accountRepository.getAllAccounts()
         .stateIn(
@@ -176,33 +178,48 @@ class AddBudgetViewModel @Inject constructor(
 
     fun toggleShowSnackBar() {
         viewModelScope.launch {
-            _showSnackBar.value = !(_showSnackBar.value)
+            _showToast.value = !(_showToast.value)
         }
     }
 
-    fun checkAmount(amount: String): Boolean = amount.isNotEmpty() && amount.toDouble() > 100000000000
+    fun checkAmount(amount: String): Boolean =
+        amount.isNotEmpty() && amount.toDouble() > 100000000000
 
     private fun validateInput(): Boolean {
-        return if (_uiState.value.name.trim() == "") false
-        else if (_uiState.value.name.length > 20) false
-        else if (_uiState.value.amount > 100000000000) false
-        else if (_uiState.value.amount <= 0.00) false
-        else if (_uiState.value.period <= 0L) false
-        else true
+        return if (_uiState.value.name.isBlank()) {
+            showToast(message = "Name should not be blank")
+            false
+        } else if (_uiState.value.name.length > MAX_BUDGET_NAME_LENGTH) {
+            showToast(message = "Length of the name should not exceed $MAX_BUDGET_NAME_LENGTH")
+            false
+        } else if (_uiState.value.amount > MAX_ENTRY_AMOUNT) {
+            showToast(message = "Amount must not exceed $MAX_ENTRY_AMOUNT")
+            false
+        } else if (_uiState.value.amount <= 0.00) {
+            showToast(message = "Amount should not be negative")
+            false
+        } else if (_uiState.value.period <= 0L) {
+            showToast(message = "Start date must be before end date")
+            false
+        } else {
+            true
+        }
     }
 
     fun save() {
         _uiState.value =
             _uiState.value.copy(startTimeStamp = System.currentTimeMillis() / 1000L)
         if (uiState.value.period == 0L) {
-            if (_toDate.value != null && _fromDate.value != null) {
+            _fromDate.value?.let { fromDate ->
                 _uiState.value = _uiState.value.copy(
-                    startTimeStamp = (_fromDate.value!! / 1000L)
+                    startTimeStamp = (fromDate / 1000L)
                 )
-                setPeriod(Period.ONE_TIME, (_toDate.value!! - _fromDate.value!!) / 1000L)
-            } else {
-                _snackBarMessage.value = "Error: Invalid date range"
-                _showSnackBar.value = true
+                _toDate.value?.let { toDate ->
+                    setPeriod(Period.ONE_TIME, time = (toDate - fromDate) / 1000L)
+                }
+            }
+            if (_fromDate.value == null || _toDate.value == null) {
+                showToast(message = "Specify a period")
                 return
             }
         }
@@ -211,20 +228,23 @@ class AddBudgetViewModel @Inject constructor(
                 if (validateInput()) {
                     budgetRepository.insert(budget = _uiState.value)
                     clear()
-                    _snackBarMessage.value = "Successful insertion"
-                    _showSnackBar.value = true
-                } else {
-                    _snackBarMessage.value = "Error: Invalid input"
-                    _showSnackBar.value = true
+                    showToast(message = "Successfully created a budget")
                 }
             } catch (e: SQLiteConstraintException) {
-                _snackBarMessage.value = "Budget with same name exists"
-                _showSnackBar.value = true
+                showToast(message = "Budget with same name exists")
             } catch (e: Exception) {
-                _snackBarMessage.value = "Unknown error occurred"
-                _showSnackBar.value = true
+                showToast(message = "An unknown error has occurred")
             }
         }
+    }
+
+    fun showToast(message: String) {
+        _toastMessage.value = message
+        _showToast.value = true
+    }
+
+    fun onToastShow() {
+        _showToast.value = false
     }
 }
 

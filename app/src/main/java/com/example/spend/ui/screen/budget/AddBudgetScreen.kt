@@ -33,8 +33,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -45,13 +43,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -71,6 +69,7 @@ import com.example.spend.ui.screen.AccountBottomSheet
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.CategoryBottomSheet
 import com.example.spend.ui.screen.DatePicker
+import com.example.spend.ui.screen.showToast
 import com.example.spend.ui.viewmodel.budget.AddBudgetViewModel
 import com.example.spend.ui.viewmodel.budget.Period
 import com.example.spend.validateCurrency
@@ -85,7 +84,7 @@ fun AddBudgetScreen(
     val interactionSource = remember { MutableInteractionSource() }
     val fromDateInteractionSource = remember { MutableInteractionSource() }
     val toDateInteractionSource = remember { MutableInteractionSource() }
-    val snackBarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsState()
     val period by viewModel.period.collectAsState()
@@ -96,8 +95,8 @@ fun AddBudgetScreen(
     val selectedPeriod by viewModel.period.collectAsState()
     val fromDate by viewModel.fromDate.collectAsState()
     val toDate by viewModel.toDate.collectAsState()
-    val showSnackBar by viewModel.showSnackBar.collectAsState()
-    val snackBarMessage by viewModel.snackBarMessage.collectAsState()
+    val showToast by viewModel.showSnackBar.collectAsState()
+    val toastMessage by viewModel.toastMessage.collectAsState()
     val currencySymbol by viewModel.currencySymbol.collectAsState()
     val currencyCode by viewModel.currencyCode.collectAsState()
 
@@ -110,10 +109,10 @@ fun AddBudgetScreen(
     val isToDatePressed by toDateInteractionSource.collectIsPressedAsState()
     var isFromDate by remember { mutableStateOf(value = false) }
 
-    LaunchedEffect(key1 = showSnackBar) {
-        if (showSnackBar && snackBarMessage.isNotEmpty()) {
-            snackBarHostState.showSnackbar(message = snackBarMessage)
-            viewModel.toggleShowSnackBar()
+    LaunchedEffect(key1 = showToast) {
+        if (showToast && toastMessage.isNotBlank()) {
+            showToast(message = toastMessage, context = context)
+            viewModel.onToastShow()
         }
     }
 
@@ -139,7 +138,6 @@ fun AddBudgetScreen(
                 onBackClick = { navHostController.popBackStack() },
             )
         },
-        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Box(
             contentAlignment = Alignment.Center,
