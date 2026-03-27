@@ -32,8 +32,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -59,6 +58,7 @@ import com.example.spend.R
 import com.example.spend.ui.accountIcons
 import com.example.spend.ui.pastelColors
 import com.example.spend.ui.screen.AppTopBar
+import com.example.spend.ui.screen.showToast
 import com.example.spend.ui.viewmodel.account.AddAccountViewModel
 
 @Composable
@@ -66,8 +66,8 @@ fun AddAccountScreen(
     navHostController: NavHostController,
     viewModel: AddAccountViewModel = hiltViewModel()
 ) {
-    val showSnackBar by viewModel.showSnackBar.collectAsState()
-    val snackBarMessage by viewModel.snackBarMessage.collectAsState()
+    val showToast by viewModel.showToast.collectAsState()
+    val toastMessage by viewModel.toastMessage.collectAsState()
 
     val uiState by viewModel.uiState.collectAsState()
     val balance by viewModel.balance.collectAsState()
@@ -76,12 +76,12 @@ fun AddAccountScreen(
 
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
-    val snackBarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
-    LaunchedEffect(key1 = showSnackBar) {
-        if (showSnackBar && snackBarMessage.isNotEmpty()) {
-            snackBarHostState.showSnackbar(message = snackBarMessage)
-            viewModel.toggleShowSnackBar()
+    LaunchedEffect(key1 = showToast) {
+        if (showToast && toastMessage.isNotBlank()) {
+            showToast(message = toastMessage, context = context)
+            viewModel.onToastShow()
         }
     }
 
@@ -93,7 +93,6 @@ fun AddAccountScreen(
                 onBackClick = { navHostController.popBackStack() },
             )
         },
-        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Box(
             contentAlignment = Alignment.Center,

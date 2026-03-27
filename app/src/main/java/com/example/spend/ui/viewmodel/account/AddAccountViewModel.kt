@@ -7,6 +7,7 @@ import androidx.sqlite.SQLiteException
 import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
+import com.example.spend.ui.MAX_ACCOUNT_NAME_LENGTH
 import com.example.spend.ui.MAX_ENTRY_AMOUNT
 import com.example.spend.validateCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,11 +33,11 @@ class AddAccountViewModel @Inject constructor(
     private var _balance = MutableStateFlow("")
     val balance = _balance.asStateFlow()
 
-    private val _showSnackBar = MutableStateFlow(value = false)
-    val showSnackBar = _showSnackBar.asStateFlow()
+    private val _showToast = MutableStateFlow(value = false)
+    val showToast = _showToast.asStateFlow()
 
-    private val _snackBarMessage = MutableStateFlow(value = "")
-    val snackBarMessage = _snackBarMessage.asStateFlow()
+    private val _toastMessage = MutableStateFlow(value = "")
+    val toastMessage = _toastMessage.asStateFlow()
 
     val currencySymbol = defaultPreferencesRepository.baseCurrencySymbol
         .stateIn(
@@ -85,10 +86,13 @@ class AddAccountViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(icon = value)
     }
 
-    fun toggleShowSnackBar() {
-        viewModelScope.launch {
-            _showSnackBar.value = !(_showSnackBar.value)
-        }
+    fun onToastShow() {
+        _showToast.value = false
+    }
+
+    fun showToast(message: String) {
+        _toastMessage.value = message
+        _showToast.value = true
     }
 
     fun clear() {
@@ -101,11 +105,25 @@ class AddAccountViewModel @Inject constructor(
         return number > MAX_ENTRY_AMOUNT
     }
 
-    private fun validateInput(balance: String): Boolean {
-        if (_uiState.value.name.length > 20) return false
-        if (balance.isEmpty() || balance.toDouble() > 100000000000) return false
-        return balance.trim() != "" && validateCurrency(input = balance) && _uiState.value.name != ""
-    }
+    private fun validateInput(balance: String): Boolean =
+        if (_uiState.value.name.length > MAX_ACCOUNT_NAME_LENGTH) {
+            showToast(message = "Name length should not exceed $MAX_ACCOUNT_NAME_LENGTH")
+            false
+        } else if (balance.isBlank()) {
+            showToast(message = "Amount should not be blank")
+            false
+        } else if (balance.toDouble() > MAX_ENTRY_AMOUNT) {
+            showToast(message = "Amount should not exceed $MAX_ENTRY_AMOUNT")
+            false
+        } else if (!validateCurrency(input = balance)) {
+            showToast(message = "Amount input is invalid")
+            false
+        } else if (_uiState.value.name.isBlank()) {
+            showToast(message = "Name should not be blank")
+            false
+        } else {
+            true
+        }
 
     fun save(balance: String) {
         if (validateInput(balance)) {
@@ -120,23 +138,16 @@ class AddAccountViewModel @Inject constructor(
                             )
                         )
                         clear()
-                        _snackBarMessage.value = "Successful account creation"
-                        _showSnackBar.value = true
+                        showToast(message = "Account is created successfully")
                     } catch (e: SQLiteException) {
-                        _snackBarMessage.value = "An account by this name already exists"
-                        _showSnackBar.value = true
+                        showToast(message = "Account with the same name exists")
                     } catch (e: Exception) {
-                        _snackBarMessage.value = "Unknown error has occurred"
-                        _showSnackBar.value = true
+                        showToast(message = "An unknown error has occurred")
                     }
                 } else {
-                    _snackBarMessage.value = "Unknown Error has occurred"
-                    _showSnackBar.value = true
+                    showToast(message = "An unknown error has occurred")
                 }
             }
-        } else {
-            _snackBarMessage.value = "Error: Specify all the fields correctly"
-            _showSnackBar.value = true
         }
     }
 }
