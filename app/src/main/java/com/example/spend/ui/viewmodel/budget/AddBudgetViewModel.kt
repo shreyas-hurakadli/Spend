@@ -196,7 +196,7 @@ class AddBudgetViewModel @Inject constructor(
             showToast(message = "Amount must not exceed $MAX_ENTRY_AMOUNT")
             false
         } else if (_uiState.value.amount <= 0.00) {
-            showToast(message = "Amount should not be negative")
+            showToast(message = "Amount should not be non positive")
             false
         } else if (_uiState.value.period <= 0L) {
             showToast(message = "Start date must be before end date")
@@ -231,7 +231,7 @@ class AddBudgetViewModel @Inject constructor(
                     showToast(message = "Successfully created a budget")
                 }
             } catch (e: SQLiteConstraintException) {
-                showToast(message = "Budget with same name exists")
+                showToast(message = "Budget with the same name exists")
             } catch (e: Exception) {
                 showToast(message = "An unknown error has occurred")
             }
