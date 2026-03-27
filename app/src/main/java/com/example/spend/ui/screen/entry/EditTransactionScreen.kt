@@ -32,8 +32,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,6 +46,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -74,6 +73,7 @@ import com.example.spend.ui.screen.AccountBottomSheet
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.CategoryBottomSheet
 import com.example.spend.ui.screen.DatePicker
+import com.example.spend.ui.screen.showToast
 import com.example.spend.ui.viewmodel.entry.EntryViewModel
 import com.example.spend.validateCurrency
 
@@ -107,14 +107,15 @@ fun EditTransactionScreen(
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val showSnackBar by viewModel.showSnackBar.collectAsState()
-    val snackBarMessage by viewModel.snackBarMessage.collectAsState()
-    val snackBarHostState = remember { SnackbarHostState() }
+    val showToast by viewModel.showToast.collectAsState()
+    val toastMessage by viewModel.toastMessage.collectAsState()
 
-    LaunchedEffect(key1 = showSnackBar) {
-        if (showSnackBar && snackBarMessage.isNotEmpty()) {
-            snackBarHostState.showSnackbar(snackBarMessage)
-            viewModel.toggleSnackBar()
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = showToast) {
+        if (showToast && toastMessage.isNotBlank()) {
+            showToast(message = toastMessage, context = context)
+            viewModel.onToastShow()
         }
     }
 
@@ -126,7 +127,6 @@ fun EditTransactionScreen(
                 onBackClick = { navHostController.popBackStack() }
             )
         },
-        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -171,7 +171,7 @@ fun EditTransactionScreen(
                                 isEditingAmount = false
                                 keyboardController?.hide()
                             } else {
-                                viewModel.showSnackBarMessage(message = "Invalid amount input")
+                                viewModel.showToast(message = "Invalid amount input")
                             }
                         }
                     ),
@@ -211,7 +211,7 @@ fun EditTransactionScreen(
                     IconButton(
                         onClick = {
                             if ((selectedEntry?.entry?.categoryId ?: 0L) in 3..4) {
-                                viewModel.showSnackBarMessage(message = "Account of transfer transactions cannot be edited")
+                                viewModel.showToast(message = "Account of transfer transactions cannot be edited")
                             } else {
                                 showAccountBottomSheet = true
                             }
@@ -232,7 +232,7 @@ fun EditTransactionScreen(
                     IconButton(
                         onClick = {
                             if ((selectedEntry?.entry?.categoryId ?: 0L) in 3..4) {
-                                viewModel.showSnackBarMessage(message = "Category of transfer transactions cannot be edited")
+                                viewModel.showToast(message = "Category of transfer transactions cannot be edited")
                             } else {
                                 showCategoryBottomSheet = true
                             }

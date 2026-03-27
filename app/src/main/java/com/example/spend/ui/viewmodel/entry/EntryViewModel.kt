@@ -85,11 +85,11 @@ class EntryViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    private val _showSnackBar = MutableStateFlow(value = false)
-    val showSnackBar = _showSnackBar.asStateFlow()
+    private val _showToast = MutableStateFlow(value = false)
+    val showToast = _showToast.asStateFlow()
 
-    private val _snackBarMessage = MutableStateFlow(value = "")
-    val snackBarMessage = _snackBarMessage.asStateFlow()
+    private val _toastMessage = MutableStateFlow(value = "")
+    val toastMessage = _toastMessage.asStateFlow()
 
     val transactions =
         defaultRepository.getEntryIconAndColor()
@@ -103,8 +103,8 @@ class EntryViewModel @Inject constructor(
                 initialValue = emptyMap()
             )
 
-    fun toggleSnackBar() {
-        _showSnackBar.value = !(_showSnackBar.value)
+    fun onToastShow() {
+        _showToast.value = false
     }
 
     fun selectEntry(entry: EntryCategory) {
@@ -125,18 +125,18 @@ class EntryViewModel @Inject constructor(
                     }
                     defaultRepository.delete(_selectedEntry.value!!.entry)
                 }
-                showSnackBarMessage(message = "Successful deletion")
+                showToast(message = "Successful deletion")
             } catch (e: SQLiteException) {
-                showSnackBarMessage(message = "Unexpected error occurred")
+                showToast(message = "Unexpected error occurred")
             } catch (e: Exception) {
-                showSnackBarMessage(message = "Unexpected error occurred")
+                showToast(message = "Unexpected error occurred")
             }
         }
     }
 
-    fun showSnackBarMessage(message: String) {
-        _snackBarMessage.value = message
-        _showSnackBar.value = true
+    fun showToast(message: String) {
+        _toastMessage.value = message
+        _showToast.value = true
     }
 
     private fun validateEditedInput(editedEntry: Entry): Boolean =
@@ -152,7 +152,7 @@ class EntryViewModel @Inject constructor(
 
     fun validateDescription(description: String): Boolean =
         if (description.length > MAX_ENTRY_DESCRIPTION_LENGTH) {
-            showSnackBarMessage(message = "The maximum allowed length for description is $MAX_ENTRY_DESCRIPTION_LENGTH")
+            showToast(message = "The maximum allowed length for description is $MAX_ENTRY_DESCRIPTION_LENGTH")
             false
         } else {
             true
@@ -222,14 +222,14 @@ class EntryViewModel @Inject constructor(
 
                     defaultRepository.update(entry = editedEntry)
                     _selectedEntry.value = _selectedEntry.value?.copy(entry = editedEntry)
-                    showSnackBarMessage(message = "Successful transaction editing")
+                    showToast(message = "Successful transaction editing")
                 } else {
-                    showSnackBarMessage(message = "Specify the fields correctly")
+                    showToast(message = "Specify the fields correctly")
                 }
             } catch (e: SQLiteException) {
-                showSnackBarMessage(message = "Failed to edit transaction")
+                showToast(message = "Failed to edit transaction")
             } catch (e: Exception) {
-                showSnackBarMessage(message = "Failed to edit transaction")
+                showToast(message = "Failed to edit transaction")
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.example.spend.ui.screen.entry
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
-import com.example.spend.longToDate
 import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppNavigationDrawer
@@ -60,8 +58,8 @@ fun EntryScreen(
     val thereAreEntries by viewModel.thereAreEntries.collectAsState()
     val currencySymbol by viewModel.currencySymbol.collectAsState()
 
-    val showSnackBar by viewModel.showSnackBar.collectAsState()
-    val snackBarMessage by viewModel.snackBarMessage.collectAsState()
+    val showSnackBar by viewModel.showToast.collectAsState()
+    val snackBarMessage by viewModel.toastMessage.collectAsState()
 
     val snackBarHostState = remember { SnackbarHostState() }
 
@@ -71,7 +69,7 @@ fun EntryScreen(
     LaunchedEffect(key1 = showSnackBar) {
         if (showSnackBar && snackBarMessage.isNotEmpty()) {
             snackBarHostState.showSnackbar(snackBarMessage)
-            viewModel.toggleSnackBar()
+            viewModel.onToastShow()
         }
     }
 
