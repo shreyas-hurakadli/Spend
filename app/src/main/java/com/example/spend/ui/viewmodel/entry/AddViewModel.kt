@@ -1,6 +1,5 @@
 package com.example.spend.ui.viewmodel.entry
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -25,7 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -33,7 +31,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private const val TIMEOUT_MILLIS = 5_000L
+private const val TIMEOUT_MILLIS = 1_000L
 
 @HiltViewModel
 class AddViewModel @Inject constructor(
@@ -133,11 +131,11 @@ class AddViewModel @Inject constructor(
             initialValue = Category()
         )
 
-    private val _showSnackBar = MutableStateFlow(value = false)
-    val showSnackBar = _showSnackBar.asStateFlow()
+    private val _showToast = MutableStateFlow(value = false)
+    val showToast = _showToast.asStateFlow()
 
-    private val _snackBarMessage = MutableStateFlow(value = "")
-    val snackBarMessage = _snackBarMessage.asStateFlow()
+    private val _toastMessage = MutableStateFlow(value = "")
+    val toastMessage = _toastMessage.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -158,9 +156,9 @@ class AddViewModel @Inject constructor(
         category = value
     }
 
-    fun toggleShowSnackBar() {
+    fun onToastShow() {
         viewModelScope.launch {
-            _showSnackBar.value = !(_showSnackBar.value)
+            _showToast.value = false
         }
     }
 
@@ -306,19 +304,20 @@ class AddViewModel @Inject constructor(
                         defaultBudgetNotificationRepository.checkBudgetStatus()
                     }
                     clear()
-                    _snackBarMessage.value = "Successful insertion"
-                    _showSnackBar.value = true
+                    showToast(message = "Successfully created the entry")
                 } catch (e: SQLiteException) {
-                    _snackBarMessage.value = "An entry of this name exists"
-                    _showSnackBar.value = true
+                    showToast(message = "An entry of this name exists")
                 } catch (e: Exception) {
-                    _snackBarMessage.value = "An unknown error has occurred"
-                    _showSnackBar.value = true
+                    showToast(message = "An unknown error has occurred")
                 }
             }
         } else {
-            _snackBarMessage.value = "Specify all the fields correctly"
-            _showSnackBar.value = true
+            showToast(message = "Specify all the fields correctly")
         }
+    }
+
+    fun showToast(message: String) {
+        _toastMessage.value = message
+        _showToast.value = true
     }
 }

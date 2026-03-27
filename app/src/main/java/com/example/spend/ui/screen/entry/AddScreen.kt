@@ -26,8 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
@@ -45,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -64,6 +63,7 @@ import com.example.spend.getTodayStart
 import com.example.spend.longToDate
 import com.example.spend.longToDayTime
 import com.example.spend.longToDayTime12Hour
+import com.example.spend.ui.screen.showToast
 import com.example.spend.ui.viewmodel.entry.AddViewModel
 import java.time.Instant
 import java.time.ZoneId
@@ -87,8 +87,8 @@ fun AddScreen(
     var showCategoryBottomSheet by remember { mutableStateOf(false) }
     var accountIndex by remember { mutableIntStateOf(0) }
 
-    val showSnackBar by viewModel.showSnackBar.collectAsState()
-    val snackBarMessage by viewModel.snackBarMessage.collectAsState()
+    val showToast by viewModel.showToast.collectAsState()
+    val toastMessage by viewModel.toastMessage.collectAsState()
     val selectedIndex = viewModel.selectedIndex
     val amount = viewModel.amount
     val time = viewModel.time
@@ -105,12 +105,13 @@ fun AddScreen(
     val is24hr by viewModel.is24hr.collectAsState()
 
     val keyboardController = LocalSoftwareKeyboardController.current
-    val snackBarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(showSnackBar) {
-        if (showSnackBar && snackBarMessage.isNotEmpty()) {
-            snackBarHostState.showSnackbar(message = snackBarMessage)
-            viewModel.toggleShowSnackBar()
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = showToast) {
+        if (showToast && toastMessage.isNotBlank()) {
+            showToast(message = toastMessage, context = context)
+            viewModel.onToastShow()
         }
     }
 
@@ -131,12 +132,11 @@ fun AddScreen(
                 }
             )
         },
-        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         BoxWithConstraints(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .padding(innerPadding)
+                .padding(paddingValues = innerPadding)
                 .padding(horizontal = 8.dp)
                 .fillMaxSize()
         ) {
