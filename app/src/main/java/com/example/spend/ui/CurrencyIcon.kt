@@ -1,7 +1,11 @@
 package com.example.spend.ui
 
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import com.example.spend.R
 
+@Immutable
+@Stable
 data class CurrencyIcon(
     val name: String,
     val code: String,

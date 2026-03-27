@@ -63,8 +63,10 @@
     <string name="delete">Delete</string>
     <string name="transaction_delete_message">Are you sure you want to delete this transaction? This action cannot be undone.</string>
     <string name="account_delete_message">Are you sure you want to delete this account? This action will delete all the associated transactions and cannot be undone.</string>
+    <string name="category_delete_message">Are you sure you want to delete this category? This action will delete all the associated transactions and cannot be undone.</string>
     <string name="budget_delete_message">Are you sure you want to delete this budget? This action cannot be undone.</string>
     <string name="delete_account">Delete Account</string>
+    <string name="delete_category">Delete Category</string>
     <string name="select_currency">Select Currency</string>
     <string name="india">India</string>
     <string name="currency_converter">Currency Converter</string>
@@ -97,6 +99,7 @@
     <string name="edit_transaction">Edit Transaction</string>
     <string name="save_changes">Save Changes</string>
     <string name="edit_account">Edit Account</string>
+    <string name="edit_category">Edit Category</string>
     <string name="select_color">Select Color</string>
     <string name="select_icon">Select Icon</string>
     <string name="remaining">Remaining</string>
@@ -104,4 +107,5 @@
     <string name="total_balance">Total Balance</string>
     <string name="budget_end_date">Budget End Date</string>
     <string name="categories">Categories</string>
+    <string name="category_detail">Category Detail</string>
 </resources>

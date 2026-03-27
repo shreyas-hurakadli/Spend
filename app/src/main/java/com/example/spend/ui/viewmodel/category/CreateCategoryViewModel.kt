@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.sqlite.SQLiteException
 import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
+import com.example.spend.ui.MAX_CATEGORY_NAME_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,17 +23,11 @@ class CreateCategoryViewModel @Inject constructor(
     private val _selectedIndex = MutableStateFlow(value = 0)
     val selectedIndex = _selectedIndex.asStateFlow()
 
-    private val _showSnackBar = MutableStateFlow(value = false)
-    val showSnackBar = _showSnackBar.asStateFlow()
+    private val _showToast = MutableStateFlow(value = false)
+    val showToast = _showToast.asStateFlow()
 
-    private val _snackBarMessage = MutableStateFlow(value = "")
-    val snackBarMessage = _snackBarMessage.asStateFlow()
-
-    fun toggleShowSnackBar() {
-        viewModelScope.launch {
-            _showSnackBar.value = !(_showSnackBar.value)
-        }
-    }
+    private val _toastMessage = MutableStateFlow(value = "")
+    val toastMessage = _toastMessage.asStateFlow()
 
     fun changeSelectedIndex() {
         _selectedIndex.value = if (_selectedIndex.value == 1) 0 else 1
@@ -54,28 +49,40 @@ class CreateCategoryViewModel @Inject constructor(
         _category.value = Category()
     }
 
-    fun validateInput(): Boolean = _category.value.name != "" && _category.value.name.length <= 20
+    fun showToast(message: String) {
+        _toastMessage.value = message
+        _showToast.value = true
+    }
+
+    fun onToastShown() {
+        _showToast.value = false
+    }
+
+    fun validateInput(): Boolean =
+        if (_category.value.name.isBlank()) {
+            showToast(message = "Name cannot be blank")
+            false
+        } else if (_category.value.name.length > MAX_CATEGORY_NAME_LENGTH) {
+            showToast(message = "Name length cannot be more than $MAX_CATEGORY_NAME_LENGTH")
+            false
+        } else {
+            true
+        }
 
     fun save() {
         if (validateInput()) {
             viewModelScope.launch {
                 _category.value = _category.value.copy(isExpense = (_selectedIndex.value == 1))
                 try {
-                    defaultCategoryRepository.insert(_category.value)
+                    defaultCategoryRepository.insert(category = _category.value)
                     clear()
-                    _snackBarMessage.value = "Successful Insertion"
-                    _showSnackBar.value = true
+                    showToast(message = "Successfully created the category")
                 } catch (e: SQLiteException) {
-                    _snackBarMessage.value = "A category of this name or type already exists"
-                    _showSnackBar.value = true
+                    showToast(message = "A category of this name or type already exists")
                 } catch (e: Exception) {
-                    _snackBarMessage.value = "Unknown Error has occurred"
-                    _showSnackBar.value = true
+                    showToast(message = "Unknown error has occurred")
                 }
             }
-        } else {
-            _snackBarMessage.value = "Error: Specify the name correctly (length should not exceed 20)"
-            _showSnackBar.value = true
         }
     }
 }

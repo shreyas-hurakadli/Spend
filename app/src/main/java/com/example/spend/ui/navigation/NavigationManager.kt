@@ -30,7 +30,9 @@ import com.example.spend.ui.screen.budget.AddBudgetScreen
 import com.example.spend.ui.screen.budget.BudgetDetailScreen
 import com.example.spend.ui.screen.budget.BudgetScreen
 import com.example.spend.ui.screen.budget.EditBudgetScreen
+import com.example.spend.ui.screen.category.CategoryDetailScreen
 import com.example.spend.ui.screen.category.CategoryScreen
+import com.example.spend.ui.screen.category.EditCategoryScreen
 import com.example.spend.ui.screen.currency.CurrencyConverterScreen
 import com.example.spend.ui.screen.currency.SelectCurrencyScreen
 import com.example.spend.ui.screen.entry.AddScreen
@@ -137,7 +139,11 @@ fun NavigationManager(
                         try {
                             navHostController.getBackStackEntry(route = Routes.AccountDetailScreen)
                         } catch (e: Exception) {
-                            navHostController.getBackStackEntry(route = Routes.BudgetDetailScreen)
+                            try {
+                                navHostController.getBackStackEntry(route = Routes.BudgetDetailScreen)
+                            } catch (e: Exception) {
+                                navHostController.getBackStackEntry(route = Routes.CategoryDetailScreen)
+                            }
                         }
                     } catch (e: Exception) {
                         null
@@ -156,6 +162,15 @@ fun NavigationManager(
                     viewModel = if (navHostController.previousBackStackEntry != null) hiltViewModel(
                         viewModelStoreOwner = navHostController.previousBackStackEntry!!
                     ) else hiltViewModel()
+                )
+            }
+            composable<Routes.CategoryDetailScreen> {
+                val backStackEntry = remember(key1 = it) {
+                    navHostController.getBackStackEntry(route = Routes.CategoryScreen)
+                }
+                CategoryDetailScreen(
+                    navHostController = navHostController,
+                    viewModel = hiltViewModel(viewModelStoreOwner = backStackEntry)
                 )
             }
             composable<Routes.AccountDetailScreen> {
@@ -211,6 +226,22 @@ fun NavigationManager(
                     }
                 }
                 EditBudgetScreen(
+                    navHostController = navHostController,
+                    viewModel = if (backStackEntry != null) hiltViewModel(
+                        viewModelStoreOwner = backStackEntry
+                    )
+                    else hiltViewModel()
+                )
+            }
+            composable<Routes.EditCategoryScreen> {
+                val backStackEntry = remember(key1 = it) {
+                    try {
+                        navHostController.getBackStackEntry(route = Routes.CategoryScreen)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+                EditCategoryScreen(
                     navHostController = navHostController,
                     viewModel = if (backStackEntry != null) hiltViewModel(
                         viewModelStoreOwner = backStackEntry

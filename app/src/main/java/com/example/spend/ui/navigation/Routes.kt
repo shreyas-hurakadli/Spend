@@ -62,4 +62,10 @@ sealed class Routes {
 
     @Serializable
     data object CategoryScreen: Routes()
+
+    @Serializable
+    data object CategoryDetailScreen: Routes()
+
+    @Serializable
+    data object EditCategoryScreen: Routes()
 }
