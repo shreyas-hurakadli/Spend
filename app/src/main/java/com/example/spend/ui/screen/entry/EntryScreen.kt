@@ -19,15 +19,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,20 +54,8 @@ fun EntryScreen(
     val thereAreEntries by viewModel.thereAreEntries.collectAsState()
     val currencySymbol by viewModel.currencySymbol.collectAsState()
 
-    val showSnackBar by viewModel.showToast.collectAsState()
-    val snackBarMessage by viewModel.toastMessage.collectAsState()
-
-    val snackBarHostState = remember { SnackbarHostState() }
-
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val drawerScope = rememberCoroutineScope()
-
-    LaunchedEffect(key1 = showSnackBar) {
-        if (showSnackBar && snackBarMessage.isNotEmpty()) {
-            snackBarHostState.showSnackbar(snackBarMessage)
-            viewModel.onToastShow()
-        }
-    }
 
     AppNavigationDrawer(
         currentScreenIndex = RouteNumbers.ENTRY_PAGE.screenNumber,
@@ -106,7 +90,6 @@ fun EntryScreen(
                     }
                 }
             },
-            snackbarHost = { SnackbarHost(snackBarHostState) }
         ) { innerPadding ->
             if (list.isNotEmpty()) {
                 LazyColumn(
