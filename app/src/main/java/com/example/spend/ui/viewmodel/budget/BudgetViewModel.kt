@@ -42,11 +42,11 @@ class BudgetViewModel @Inject constructor(
         MutableStateFlow(value = null)
     val selectedBudget = _selectedBudget.asStateFlow()
 
-    private val _showSnackBar = MutableStateFlow(value = false)
-    val showSnackBar = _showSnackBar.asStateFlow()
+    private val _showToast = MutableStateFlow(value = false)
+    val showToast = _showToast.asStateFlow()
 
-    private val _snackBarMessage = MutableStateFlow(value = "")
-    val snackBarMessage = _snackBarMessage.asStateFlow()
+    private val _toastMessage = MutableStateFlow(value = "")
+    val toastMessage = _toastMessage.asStateFlow()
 
     val currencySymbol = defaultPreferencesRepository.baseCurrencySymbol
         .stateIn(
@@ -191,9 +191,13 @@ class BudgetViewModel @Inject constructor(
         }
     }
 
-    fun showSnackBar(message: String) {
-        _snackBarMessage.value = message
-        _showSnackBar.value = true
+    fun showToast(message: String) {
+        _toastMessage.value = message
+        _showToast.value = true
+    }
+
+    fun onToastShow() {
+        _showToast.value = false
     }
 
     private fun validateEditedBudget(editedBudget: Budget): Boolean =
@@ -214,12 +218,12 @@ class BudgetViewModel @Inject constructor(
                         first = editedBudget,
                         second = max(a = _selectedBudget.value?.second ?: 0.00, b = 0.00)
                     )
-                    showSnackBar(message = "Successfully edited budget")
+                    showToast(message = "Successfully edited budget")
                 } else {
-                    showSnackBar(message = "Specify the fields correctly")
+                    showToast(message = "Specify the fields correctly")
                 }
             } catch (e: Exception) {
-                showSnackBar(message = "Failed to edit budget")
+                showToast(message = "Failed to edit budget")
             }
         }
     }

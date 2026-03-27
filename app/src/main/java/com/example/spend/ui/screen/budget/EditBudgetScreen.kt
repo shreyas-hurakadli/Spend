@@ -26,8 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -53,8 +52,6 @@ import com.example.spend.R
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.category.Category
 import com.example.spend.epochSecondsToDate
-import com.example.spend.getFormattedAmount
-import com.example.spend.getTodayStart
 import com.example.spend.isCurrencyAppropriate
 import com.example.spend.toTwoDecimal
 import com.example.spend.ui.MAX_BUDGET_NAME_LENGTH
@@ -65,6 +62,7 @@ import com.example.spend.ui.screen.AccountBottomSheet
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.CategoryBottomSheet
 import com.example.spend.ui.screen.DatePicker
+import com.example.spend.ui.screen.showToast
 import com.example.spend.ui.viewmodel.budget.BudgetViewModel
 import com.example.spend.validateCurrency
 import kotlinx.coroutines.Dispatchers
@@ -75,15 +73,13 @@ fun EditBudgetScreen(
     navHostController: NavHostController,
     viewModel: BudgetViewModel = hiltViewModel()
 ) {
-    val showSnackBar by viewModel.showSnackBar.collectAsState()
-    val snackBarMessage by viewModel.snackBarMessage.collectAsState()
+    val showToast by viewModel.showToast.collectAsState()
+    val toastMessage by viewModel.toastMessage.collectAsState()
     val selectedBudget by viewModel.selectedBudget.collectAsState()
     val currencyCode by viewModel.currencyCode.collectAsState()
     val currencySymbol by viewModel.currencySymbol.collectAsState()
     val accounts by viewModel.accounts.collectAsState()
     val categories by viewModel.categories.collectAsState()
-
-    val snackBarHostState = remember { SnackbarHostState() }
 
     var editedBudget by remember { mutableStateOf(value = selectedBudget?.first) }
     var showDatePicker by remember { mutableStateOf(value = false) }
@@ -93,9 +89,12 @@ fun EditBudgetScreen(
     var selectedCategory: Category? by remember { mutableStateOf(value = null) }
     var amountInput by remember { mutableStateOf(value = editedBudget?.amount?.toString() ?: "") }
 
-    LaunchedEffect(key1 = showSnackBar) {
-        if (showSnackBar && snackBarMessage.isNotEmpty()) {
-            snackBarHostState.showSnackbar(message = snackBarMessage)
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = showToast) {
+        if (showToast && toastMessage.isNotBlank()) {
+            showToast(message = toastMessage, context = context)
+            viewModel.onToastShow()
         }
     }
 
@@ -122,7 +121,6 @@ fun EditBudgetScreen(
                 onBackClick = { navHostController.popBackStack() },
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
     ) { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -375,7 +373,7 @@ fun EditBudgetScreen(
                             editedBudget = it.copy(amount = amountInput.toDouble().toTwoDecimal())
                             viewModel.editBudget(editedBudget = editedBudget ?: it)
                         } else {
-                            viewModel.showSnackBar(message = "Invalid Amount Input")
+                            viewModel.showToast(message = "Invalid Amount Input")
                         }
                     },
                     colors = ButtonDefaults.filledTonalButtonColors(
