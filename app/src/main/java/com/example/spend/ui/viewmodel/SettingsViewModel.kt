@@ -57,11 +57,11 @@ class SettingsViewModel @Inject constructor(
     private val _openSettingsEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val openSettingsEvent = _openSettingsEvent.asSharedFlow()
 
-    private val _showSnackBar = MutableStateFlow(value = false)
-    val showSnackBar = _showSnackBar.asStateFlow()
+    private val _showToast = MutableStateFlow(value = false)
+    val showToast = _showToast.asStateFlow()
 
-    private val _snackBarMessage = MutableStateFlow(value = "")
-    val snackBarMessage = _snackBarMessage.asStateFlow()
+    private val _toastMessage = MutableStateFlow(value = "")
+    val toastMessage = _toastMessage.asStateFlow()
 
     private val _selectedTimeFormat = MutableStateFlow(value = "12h")
     val selectedTimeFormat = _selectedTimeFormat.asStateFlow()
@@ -82,8 +82,9 @@ class SettingsViewModel @Inject constructor(
     private fun areNotificationsEnabled(): Boolean =
         notificationManagerCompat.areNotificationsEnabled()
 
-    fun toggleShowSnackBar() {
-        _showSnackBar.value = !_showSnackBar.value
+    fun showToast(message: String) {
+        _toastMessage.value = message
+        _showToast.value = true
     }
 
     fun toggleShowNotificationRequestPermissionDialog(turnOn: Boolean) {
@@ -107,6 +108,10 @@ class SettingsViewModel @Inject constructor(
 
     private fun registerDirectory(directory: Uri) {
         selectedDirectory.value = directory
+    }
+
+    fun onToastShown() {
+        _showToast.value = false
     }
 
     fun exportCsvFiles(directory: Uri) {
@@ -141,12 +146,10 @@ class SettingsViewModel @Inject constructor(
                     header = Budget.HEADER,
                     data = budgets
                 )
-                _snackBarMessage.value = "Successful export"
-                toggleShowSnackBar()
+                showToast(message = "Successful export")
             }
         } catch (e: Exception) {
-            _snackBarMessage.value = "Failed to export files"
-            toggleShowSnackBar()
+            showToast(message = "Failed to export export")
         }
     }
 
@@ -158,14 +161,11 @@ class SettingsViewModel @Inject constructor(
                 defaultCategoryRepository.resetData()
                 defaultBudgetRepository.deleteAll()
                 defaultCurrencyRepository.deleteAll()
-                _snackBarMessage.value = "Successful data reset"
-                toggleShowSnackBar()
+                showToast(message = "Successful data reset")
             } catch (e: SQLiteException) {
-                _snackBarMessage.value = "Failed to reset data"
-                toggleShowSnackBar()
+                showToast(message = "Failed to reset data")
             } catch (e: Exception) {
-                _snackBarMessage.value = "An unknown error has occurred"
-                toggleShowSnackBar()
+                showToast(message = "An unknown error has occurred")
             }
         }
     }

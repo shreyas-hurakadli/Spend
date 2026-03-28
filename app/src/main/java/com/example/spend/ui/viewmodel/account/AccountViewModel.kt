@@ -50,11 +50,11 @@ class AccountViewModel @Inject constructor(
             initialValue = false
         )
 
-    private val _showSnackBar = MutableStateFlow(value = false)
-    val showSnackBar = _showSnackBar.asStateFlow()
+    private val _showToast = MutableStateFlow(value = false)
+    val showToast = _showToast.asStateFlow()
 
-    private val _snackBarMessage = MutableStateFlow(value = "")
-    val snackBarMessage = _snackBarMessage.asStateFlow()
+    private val _toastMessage = MutableStateFlow(value = "")
+    val toastMessage = _toastMessage.asStateFlow()
 
     private val _selectedAccount: MutableStateFlow<Account?> = MutableStateFlow(value = null)
     val selectedAccount = _selectedAccount.asStateFlow()
@@ -90,9 +90,13 @@ class AccountViewModel @Inject constructor(
         }
     }
 
-    fun showSnackBar(message: String) {
-        _snackBarMessage.value = message
-        _showSnackBar.value = true
+    fun showToast(message: String) {
+        _toastMessage.value = message
+        _showToast.value = true
+    }
+
+    fun onToastShown() {
+        _showToast.value = false
     }
 
     private fun validateEditedAccount(editedAccount: Account): Boolean =
@@ -106,12 +110,12 @@ class AccountViewModel @Inject constructor(
                         defaultAccountRepository.update(account = editedAccount)
                         _selectedAccount.value = editedAccount
                     }
-                    showSnackBar(message = "Successfully edited account")
+                    showToast(message = "Successfully edited account")
                 } else {
-                    showSnackBar(message = "Account name should be less than ${MAX_ACCOUNT_NAME_LENGTH + 1} characters")
+                    showToast(message = "Account name should be less than ${MAX_ACCOUNT_NAME_LENGTH + 1} characters")
                 }
             } catch (e: Exception) {
-                showSnackBar(message = "Account with this name already exists")
+                showToast(message = "Account with this name already exists")
             }
         }
     }

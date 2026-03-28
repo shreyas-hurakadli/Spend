@@ -22,15 +22,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -77,7 +72,6 @@ fun SettingsScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val drawerScope = rememberCoroutineScope()
-    val snackBarHostState = remember { SnackbarHostState() }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) {
@@ -101,8 +95,8 @@ fun SettingsScreen(
     val showNotificationRequestPermissionDialog by viewModel.showNotificationRequestPermissionDialog.collectAsState()
     val showDeleteDialogBox by viewModel.showDeleteDialogBox.collectAsState()
     val notificationPermissionTurnedOn by viewModel.notificationPermissionTurnedOn.collectAsState()
-    val showSnackBar by viewModel.showSnackBar.collectAsState()
-    val snackBarMessage by viewModel.snackBarMessage.collectAsState()
+    val showToast by viewModel.showToast.collectAsState()
+    val toastMessage by viewModel.toastMessage.collectAsState()
     val selectedTimeFormat by viewModel.selectedTimeFormat.collectAsState()
 
     LaunchedEffect(key1 = lifecycleOwner) {
@@ -115,10 +109,10 @@ fun SettingsScreen(
         }
     }
 
-    LaunchedEffect(key1 = showSnackBar) {
-        if (showSnackBar && snackBarMessage.isNotEmpty()) {
-            snackBarHostState.showSnackbar(message = snackBarMessage)
-            viewModel.toggleShowSnackBar()
+    LaunchedEffect(key1 = showToast) {
+        if (showToast && toastMessage.isNotBlank()) {
+            showToast(message = toastMessage, context = context)
+            viewModel.onToastShown()
         }
     }
 
@@ -147,7 +141,6 @@ fun SettingsScreen(
                     }
                 )
             },
-            snackbarHost = { SnackbarHost(snackBarHostState) }
         ) { innerPadding ->
             Column(
                 modifier = Modifier

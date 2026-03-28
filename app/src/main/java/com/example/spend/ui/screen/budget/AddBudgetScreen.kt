@@ -95,7 +95,7 @@ fun AddBudgetScreen(
     val selectedPeriod by viewModel.period.collectAsState()
     val fromDate by viewModel.fromDate.collectAsState()
     val toDate by viewModel.toDate.collectAsState()
-    val showToast by viewModel.showSnackBar.collectAsState()
+    val showToast by viewModel.showToast.collectAsState()
     val toastMessage by viewModel.toastMessage.collectAsState()
     val currencySymbol by viewModel.currencySymbol.collectAsState()
     val currencyCode by viewModel.currencyCode.collectAsState()

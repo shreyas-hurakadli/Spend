@@ -32,8 +32,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -61,6 +60,7 @@ import com.example.spend.ui.MAX_ACCOUNT_NAME_LENGTH
 import com.example.spend.ui.accountIcons
 import com.example.spend.ui.pastelColors
 import com.example.spend.ui.screen.AppTopBar
+import com.example.spend.ui.screen.showToast
 import com.example.spend.ui.viewmodel.account.AccountViewModel
 
 @Composable
@@ -69,16 +69,17 @@ fun EditAccountScreen(
     viewModel: AccountViewModel = hiltViewModel()
 ) {
     val selectedAccount by viewModel.selectedAccount.collectAsState()
-    val showSnackBar by viewModel.showSnackBar.collectAsState()
-    val snackBarMessage by viewModel.snackBarMessage.collectAsState()
+    val showToast by viewModel.showToast.collectAsState()
+    val toastMessage by viewModel.toastMessage.collectAsState()
 
     var editedAccount by remember { mutableStateOf(value = selectedAccount) }
 
-    val snackBarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
-    LaunchedEffect(key1 = showSnackBar) {
-        if (showSnackBar && snackBarMessage.isNotEmpty()) {
-            snackBarHostState.showSnackbar(snackBarMessage)
+    LaunchedEffect(key1 = showToast) {
+        if (showToast && toastMessage.isNotBlank()) {
+            showToast(message = toastMessage, context = context)
+            viewModel.onToastShown()
         }
     }
 
@@ -90,7 +91,6 @@ fun EditAccountScreen(
                 onBackClick = { navHostController.popBackStack() },
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

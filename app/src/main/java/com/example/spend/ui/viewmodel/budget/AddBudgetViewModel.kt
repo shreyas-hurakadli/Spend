@@ -42,7 +42,7 @@ class AddBudgetViewModel @Inject constructor(
     val toastMessage = _toastMessage.asStateFlow()
 
     private val _showToast = MutableStateFlow(value = false)
-    val showSnackBar = _showToast.asStateFlow()
+    val showToast = _showToast.asStateFlow()
 
     val accounts = accountRepository.getAllAccounts()
         .stateIn(
@@ -175,13 +175,6 @@ class AddBudgetViewModel @Inject constructor(
             }
         }
     }
-
-    fun toggleShowSnackBar() {
-        viewModelScope.launch {
-            _showToast.value = !(_showToast.value)
-        }
-    }
-
     fun checkAmount(amount: String): Boolean =
         amount.isNotEmpty() && amount.toDouble() > 100000000000
 
