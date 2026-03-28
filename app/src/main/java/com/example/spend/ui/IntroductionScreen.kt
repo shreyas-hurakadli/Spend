@@ -17,7 +17,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,7 +35,6 @@ import com.example.spend.R
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.ScrollIndicator
 import com.example.spend.ui.theme.SpendTheme
-import kotlinx.coroutines.launch
 
 @Composable
 fun IntroductionScreen(
