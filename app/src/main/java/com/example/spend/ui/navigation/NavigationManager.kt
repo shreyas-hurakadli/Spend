@@ -16,9 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import co.yml.charts.common.extensions.isNotNull
 import com.example.spend.ui.IntroductionScreen
-import com.example.spend.ui.screen.category.CreateCategoryScreen
 import com.example.spend.ui.screen.HomeScreen
 import com.example.spend.ui.screen.SettingsScreen
 import com.example.spend.ui.screen.SummaryScreen
@@ -32,6 +30,7 @@ import com.example.spend.ui.screen.budget.BudgetScreen
 import com.example.spend.ui.screen.budget.EditBudgetScreen
 import com.example.spend.ui.screen.category.CategoryDetailScreen
 import com.example.spend.ui.screen.category.CategoryScreen
+import com.example.spend.ui.screen.category.CreateCategoryScreen
 import com.example.spend.ui.screen.category.EditCategoryScreen
 import com.example.spend.ui.screen.currency.CurrencyConverterScreen
 import com.example.spend.ui.screen.currency.SelectCurrencyScreen
@@ -50,7 +49,7 @@ fun NavigationManager(
 ) {
     val startDestination by viewModel.startDestination.collectAsState()
 
-    if (!startDestination.isNotNull()) {
+    if (startDestination == null) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
