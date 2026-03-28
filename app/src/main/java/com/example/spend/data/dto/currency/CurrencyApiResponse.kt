@@ -1,8 +1,8 @@
 package com.example.spend.data.dto.currency
 
-import androidx.annotation.Keep
+import kotlinx.serialization.Serializable
 
-@Keep
+@Serializable
 data class CurrencyApiResponse(
     val amount: Double,
     val base: String,

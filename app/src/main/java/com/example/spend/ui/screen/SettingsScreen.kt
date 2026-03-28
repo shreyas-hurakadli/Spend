@@ -236,14 +236,9 @@ fun SettingsScreen(
                         name = stringResource(R.string.export_csv),
                         icon = ImageVector.vectorResource(id = R.drawable.download),
                         description = "",
-                        action = {
-                            IconButton(onClick = { folderPickerLauncher.launch(input = null) }) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                    contentDescription = stringResource(id = R.string.export_csv)
-                                )
-                            }
-                        }
+                        clickable = true,
+                        onClick = { folderPickerLauncher.launch(input = null) },
+                        action = {}
                     )
                     SettingTile(
                         name = "Reset All Data",
@@ -269,12 +264,6 @@ fun SettingsScreen(
                     SettingTile(
                         name = "Privacy Policy",
                         icon = ImageVector.vectorResource(id = R.drawable.policy),
-                        description = "",
-                        action = {}
-                    )
-                    SettingTile(
-                        name = "Terms of Service",
-                        icon = ImageVector.vectorResource(id = R.drawable.terms_of_service),
                         description = "",
                         action = {}
                     )

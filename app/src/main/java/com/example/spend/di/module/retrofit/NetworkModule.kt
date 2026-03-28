@@ -1,14 +1,14 @@
 package com.example.spend.di.module.retrofit
 
 import com.example.spend.data.api.currency.CurrencyApiService
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -16,15 +16,15 @@ import javax.inject.Singleton
 object NetworkModule {
     @Provides
     @Singleton
-    fun provideGson(): Gson = GsonBuilder().create()
+    fun provideJson(): Json = Json { ignoreUnknownKeys = true }
 
     @Provides
     @Singleton
     fun provideRetrofit(
-        gson: Gson
+        json: Json
     ): Retrofit = Retrofit.Builder()
         .baseUrl("https://api.frankfurter.dev/")
-        .addConverterFactory(GsonConverterFactory.create(gson))
+        .addConverterFactory(json.asConverterFactory(MediaType.get("application/json")))
         .build()
 
     @Provides

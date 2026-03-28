@@ -40,17 +40,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorProducer
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -254,15 +251,6 @@ private fun ActionCard(
                     color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(24.dp)
                 )
-                .dropShadow(
-                    shape = RoundedCornerShape(24.dp),
-                    shadow = Shadow(
-                        radius = 4.dp,
-                        spread = 2.dp,
-                        color = Color(0x40000000),
-                        offset = DpOffset(x = 4.dp, 4.dp)
-                    )
-                )
                 .padding(vertical = 24.dp)
                 .width((maxWidth - 16.dp) / 3)
         ) {
@@ -299,15 +287,6 @@ private fun BalanceBar(
             .background(
                 color = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(24.dp)
-            )
-            .dropShadow(
-                shape = RoundedCornerShape(24.dp),
-                shadow = Shadow(
-                    radius = 10.dp,
-                    spread = 6.dp,
-                    color = Color(0x40000000),
-                    offset = DpOffset(x = 4.dp, 4.dp)
-                )
             )
             .fillMaxWidth()
             .padding(all = 24.dp),
