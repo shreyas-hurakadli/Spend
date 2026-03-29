@@ -58,6 +58,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.ui.navigation.RouteNumbers
+import com.example.spend.ui.screen.currency.CurrencyBottomSheet
 import com.example.spend.ui.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
 
@@ -98,6 +99,9 @@ fun SettingsScreen(
     val showToast by viewModel.showToast.collectAsState()
     val toastMessage by viewModel.toastMessage.collectAsState()
     val selectedTimeFormat by viewModel.selectedTimeFormat.collectAsState()
+    val currencySymbol by viewModel.currencySymbol.collectAsState()
+    val currency by viewModel.currency.collectAsState()
+    val showCurrencySheet by viewModel.showCurrencySheet.collectAsState()
 
     LaunchedEffect(key1 = lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
@@ -220,6 +224,19 @@ fun SettingsScreen(
                             }
                         }
                     )
+                    SettingTile(
+                        name = stringResource(id = R.string.currency),
+                        icon = ImageVector.vectorResource(id = R.drawable.money),
+                        description = stringResource(id = R.string.currency_setting_message),
+                        clickable = true,
+                        onClick = { viewModel.toggleShowCurrencySheet() },
+                        action = {
+                            Text(
+                                text = "$currency ($currencySymbol)",
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+                    )
                     Spacer(modifier = Modifier.height(height = 16.dp))
                     Text(
                         text = "DATA MANAGEMENT",
@@ -272,6 +289,13 @@ fun SettingsScreen(
                         dialogText = stringResource(id = R.string.reset_data_message),
                         confirmText = { Text(text = stringResource(id = R.string.confirm)) },
                         dismissText = { Text(text = stringResource(id = R.string.cancel)) }
+                    )
+                }
+
+                if (showCurrencySheet) {
+                    CurrencyBottomSheet(
+                        onSelect = { viewModel.onCurrencySelect(currency = "${it.code} ${it.symbol}") },
+                        onDismiss = { viewModel.toggleShowCurrencySheet() }
                     )
                 }
             }

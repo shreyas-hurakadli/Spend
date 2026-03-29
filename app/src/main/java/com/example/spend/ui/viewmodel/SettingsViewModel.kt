@@ -21,11 +21,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+private const val DURATION_MILLIS = 1_000L
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -66,6 +70,25 @@ class SettingsViewModel @Inject constructor(
     private val _selectedTimeFormat = MutableStateFlow(value = "12h")
     val selectedTimeFormat = _selectedTimeFormat.asStateFlow()
 
+    private val _showCurrencySheet = MutableStateFlow(value = false)
+    val showCurrencySheet = _showCurrencySheet.asStateFlow()
+
+    val currencySymbol = defaultPreferencesRepository
+        .baseCurrencySymbol
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = DURATION_MILLIS),
+            initialValue = "$"
+        )
+
+    val currency = defaultPreferencesRepository
+        .baseCurrency
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = DURATION_MILLIS),
+            initialValue = "$"
+        )
+
     init {
         viewModelScope.launch {
             _selectedTimeFormat.value = defaultPreferencesRepository.timeFormat.first()
@@ -85,6 +108,10 @@ class SettingsViewModel @Inject constructor(
     fun showToast(message: String) {
         _toastMessage.value = message
         _showToast.value = true
+    }
+
+    fun toggleShowCurrencySheet() {
+        _showCurrencySheet.value = !_showCurrencySheet.value
     }
 
     fun toggleShowNotificationRequestPermissionDialog(turnOn: Boolean) {
@@ -108,6 +135,16 @@ class SettingsViewModel @Inject constructor(
 
     private fun registerDirectory(directory: Uri) {
         selectedDirectory.value = directory
+    }
+
+    fun onCurrencySelect(currency: String) {
+        viewModelScope.launch {
+            try {
+                defaultPreferencesRepository.registerBaseCurrency(baseCurrency = currency)
+            } catch (e: Exception) {
+                showToast(message = "Failed to change currency")
+            }
+        }
     }
 
     fun onToastShown() {

@@ -430,7 +430,7 @@ fun CalculatorButtonRow(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CurrencyBottomSheet(
+fun CurrencyBottomSheet(
     onSelect: (CurrencyIcon) -> Unit,
     onDismiss: () -> Unit,
 ) {

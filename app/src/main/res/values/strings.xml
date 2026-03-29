@@ -108,4 +108,6 @@
     <string name="budget_end_date">Budget End Date</string>
     <string name="categories">Categories</string>
     <string name="category_detail">Category Detail</string>
+    <string name="currency">Currency</string>
+    <string name="currency_setting_message">Choose your preferred currency</string>
 </resources>
