@@ -268,7 +268,10 @@ fun SettingsScreen(
                         icon = ImageVector.vectorResource(id = R.drawable.information),
                         description = "",
                         action = {
-                            Text(text = "v1.0.0", style = MaterialTheme.typography.labelSmall)
+                            Text(
+                                text = "1.0.0",
+                                style = MaterialTheme.typography.labelSmall
+                            )
                         }
                     )
                     SettingTile(
