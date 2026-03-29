@@ -114,9 +114,4 @@ object RoomProvidesModule {
     @Singleton
     fun provideCurrencyDao(roomDatabaseClass: RoomDatabaseClass): CurrencyDao =
         roomDatabaseClass.currencyDao()
-
-    @Provides
-    @Singleton
-    fun provideWorkManager(@ApplicationContext context: Context): WorkManager =
-        WorkManager.getInstance(context)
 }

@@ -35,7 +35,4 @@ abstract class RoomBindModule {
 
     @Binds
     abstract fun bindCurrencyRepository(defaultCurrencyRepository: DefaultCurrencyRepository): CurrencyRepository
-
-    @Binds
-    abstract fun bindBudgetNotificationRepository(defaultBudgetNotificationRepository: DefaultBudgetNotificationRepository): BudgetNotificationRepository
 }
