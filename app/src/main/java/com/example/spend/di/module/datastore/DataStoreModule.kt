@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import com.example.spend.di.annotations.PermissionRepository
 import com.example.spend.di.annotations.PreferencesRepository
 import dagger.Module
 import dagger.Provides
@@ -20,7 +19,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
     private const val PREFERENCES = "preferences"
-    private const val POST_NOTIFICATIONS = "post_notifications"
 
     @Provides
     @Singleton
@@ -32,19 +30,6 @@ object DataStoreModule {
             ),
             produceFile = {
                 context.preferencesDataStoreFile(PREFERENCES)
-            }
-        )
-
-    @Provides
-    @Singleton
-    @PermissionRepository
-    fun getPermissionDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
-        PreferenceDataStoreFactory.create(
-            corruptionHandler = ReplaceFileCorruptionHandler(
-                produceNewData = { emptyPreferences() }
-            ),
-            produceFile = {
-                context.preferencesDataStoreFile(POST_NOTIFICATIONS)
             }
         )
 }

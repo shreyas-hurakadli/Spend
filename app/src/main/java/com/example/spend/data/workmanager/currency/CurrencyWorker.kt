@@ -9,7 +9,6 @@ import com.example.spend.data.api.currency.CurrencyRepository
 import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.dto.currency.CurrencyResponse
 import com.example.spend.data.room.currency.Currency
-import com.example.spend.di.annotations.PermissionRepository
 import com.example.spend.toTwoDecimal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first

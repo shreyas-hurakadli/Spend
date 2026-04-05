@@ -10,9 +10,6 @@ import com.example.spend.data.room.currency.CurrencyRepository
 import com.example.spend.data.room.currency.DefaultCurrencyRepository
 import com.example.spend.data.room.entry.DefaultRepository
 import com.example.spend.data.room.entry.EntryRepository
-import com.example.spend.data.workmanager.budget.BudgetNotificationRepository
-import com.example.spend.data.workmanager.budget.DefaultBudgetNotificationRepository
-import com.example.spend.data.workmanager.currency.CurrencyApiRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
