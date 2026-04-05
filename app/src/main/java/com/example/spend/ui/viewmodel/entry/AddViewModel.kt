@@ -157,9 +157,7 @@ class AddViewModel @Inject constructor(
     }
 
     fun onToastShow() {
-        viewModelScope.launch {
-            _showToast.value = false
-        }
+        _showToast.value = false
     }
 
     fun resetIds() {
