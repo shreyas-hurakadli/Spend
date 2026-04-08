@@ -1,4 +1,4 @@
-package com.example.spend.ui
+package com.example.spend.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,7 +33,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spend.R
 import com.example.spend.ui.navigation.Routes
-import com.example.spend.ui.screen.ScrollIndicator
 import com.example.spend.ui.theme.SpendTheme
 
 @Composable
