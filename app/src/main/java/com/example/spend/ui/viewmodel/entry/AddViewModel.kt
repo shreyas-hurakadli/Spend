@@ -8,15 +8,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.sqlite.SQLiteException
 import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.entry.Entry
-import com.example.spend.data.room.entry.EntryRepository
 import com.example.spend.data.workmanager.budget.BudgetNotificationRepository
+import com.example.spend.domain.AddEntryToDb
 import com.example.spend.getTodayStart
 import com.example.spend.toTwoDecimal
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,11 +34,11 @@ private const val TIMEOUT_MILLIS = 1_000L
 
 @HiltViewModel
 class AddViewModel @Inject constructor(
-    private val defaultRepository: EntryRepository,
     private val defaultAccountRepository: AccountRepository,
     private val defaultCategoryRepository: CategoryRepository,
     private val defaultBudgetNotificationRepository: BudgetNotificationRepository,
-    private val defaultPreferencesRepository: PreferencesRepository
+    private val defaultPreferencesRepository: PreferencesRepository,
+    private val addEntryToDb: AddEntryToDb
 ) : ViewModel() {
     var selectedIndex by mutableIntStateOf(1)
         private set
@@ -225,9 +224,16 @@ class AddViewModel @Inject constructor(
     }
 
     private fun validateInput(): Boolean {
-        if (amount == "Infinity" || amount.toDouble() <= 0.00) return false
-        if (fromAccount == toAccount) return false
-        if (selectedIndex != 2 && category == Category()) return false
+        if (amount == "Infinity" || amount.toDouble() <= 0.00) {
+            showToast(message = "The amount must be greater than 0 and must not be infinity")
+            return false
+        } else if (fromAccount == toAccount) {
+            showToast(message = "From Account should not be equal to To Account")
+            return false
+        } else if (selectedIndex != 2 && category == Category()) {
+            showToast(message = "Category must be specified")
+            return false
+        }
         return true
     }
 
@@ -243,74 +249,28 @@ class AddViewModel @Inject constructor(
 
     fun save() {
         if (validateInput()) {
+            val entry = Entry(
+                amount = amount.toDouble(),
+                isExpense = (selectedIndex >= 1),
+                epochSeconds = time + date,
+                categoryId = if (selectedIndex == 2) transferCategory.value.id else category.id,
+                accountId = fromAccount.id,
+                description = description.trim()
+            )
             viewModelScope.launch {
-                try {
-                    defaultRepository.insert(
-                        entry = Entry(
-                            amount = amount.toDouble(),
-                            isExpense = (selectedIndex >= 1),
-                            epochSeconds = time + date,
-                            categoryId = if (selectedIndex == 2) transferCategory.value.id else category.id,
-                            accountId = fromAccount.id,
-                            description = description.trim()
-                        )
-                    )
-                    if (selectedIndex > 0) {
-                        defaultAccountRepository.update(
-                            account = fromAccount.copy(
-                                balance = fromAccount.balance - amount.toDouble()
-                            )
-                        )
-                        if (selectedIndex == 1) {
-                            defaultAccountRepository.update(
-                                account = allAccount.copy(
-                                    balance = allAccount.balance - amount.toDouble()
-                                )
-                            )
-                        }
-                    } else {
-                        defaultAccountRepository.update(
-                            account = fromAccount.copy(
-                                balance = fromAccount.balance + amount.toDouble()
-                            )
-                        )
-                        defaultAccountRepository.update(
-                            account = allAccount.copy(
-                                balance = allAccount.balance + amount.toDouble()
-                            )
-                        )
-                    }
-
-                    if (toAccount != Account()) {
-                        defaultAccountRepository.update(
-                            account = toAccount.copy(
-                                balance = toAccount.balance + amount.toDouble()
-                            )
-                        )
-                        defaultRepository.insert(
-                            entry = Entry(
-                                amount = amount.toDouble(),
-                                isExpense = false,
-                                epochSeconds = time + date,
-                                categoryId = transferCategoryIncome.value.id,
-                                accountId = toAccount.id,
-                                description = description.trim()
-                            )
-                        )
-                    }
-                    if (selectedIndex >= 1) {
-                        defaultBudgetNotificationRepository.checkBudgetStatus()
-                    }
-                    clear()
-                    showToast(message = "Successfully created the entry")
-                } catch (e: SQLiteException) {
-                    showToast(message = "An entry of this name exists")
-                } catch (e: Exception) {
-                    showToast(message = "An unknown error has occurred")
+                addEntryToDb(
+                    entry = entry,
+                    fromAccount = fromAccount,
+                    toAccount = toAccount,
+                    allAccount = allAccount,
+                    transferIncomeId = transferCategoryIncome.value.id,
+                    selectedIndex = selectedIndex
+                )
+                if (selectedIndex >= 1) {
+                    defaultBudgetNotificationRepository.checkBudgetStatus()
                 }
+                clear()
             }
-        } else {
-            showToast(message = "Specify all the fields correctly")
         }
     }
 
