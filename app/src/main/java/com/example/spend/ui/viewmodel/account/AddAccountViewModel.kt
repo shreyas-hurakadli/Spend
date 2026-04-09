@@ -7,8 +7,8 @@ import androidx.sqlite.SQLiteException
 import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
-import com.example.spend.ui.MAX_ACCOUNT_NAME_LENGTH
-import com.example.spend.ui.MAX_ENTRY_AMOUNT
+import com.example.spend.ui.data.MAX_ACCOUNT_NAME_LENGTH
+import com.example.spend.ui.data.MAX_ENTRY_AMOUNT
 import com.example.spend.validateCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject

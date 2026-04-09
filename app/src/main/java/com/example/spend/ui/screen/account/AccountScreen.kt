@@ -45,7 +45,7 @@ import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.data.room.account.Account
 import com.example.spend.getFormattedAmount
-import com.example.spend.ui.accountIcons
+import com.example.spend.ui.data.accountIcons
 import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppNavigationDrawer

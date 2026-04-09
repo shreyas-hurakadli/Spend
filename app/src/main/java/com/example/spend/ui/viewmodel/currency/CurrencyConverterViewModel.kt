@@ -6,8 +6,8 @@ import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.currency.CurrencyRepository
 import com.example.spend.data.workmanager.currency.CurrencyApiRepository
 import com.example.spend.toTwoDecimal
-import com.example.spend.ui.CurrencyIcon
-import com.example.spend.ui.currencyIcons
+import com.example.spend.ui.data.CurrencyIcon
+import com.example.spend.ui.data.currencyIcons
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

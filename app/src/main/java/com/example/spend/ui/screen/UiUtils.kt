@@ -82,8 +82,8 @@ import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.category.Category
 import com.example.spend.getFormattedAmount
 import com.example.spend.longToDate
-import com.example.spend.ui.accountIcons
-import com.example.spend.ui.icons
+import com.example.spend.ui.data.accountIcons
+import com.example.spend.ui.data.icons
 import com.example.spend.ui.navigation.Routes
 import kotlinx.coroutines.launch
 import java.util.Calendar

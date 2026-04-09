@@ -7,7 +7,7 @@ import com.example.spend.data.dto.EntryCategory
 import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.entry.EntryRepository
-import com.example.spend.ui.MAX_CATEGORY_NAME_LENGTH
+import com.example.spend.ui.data.MAX_CATEGORY_NAME_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

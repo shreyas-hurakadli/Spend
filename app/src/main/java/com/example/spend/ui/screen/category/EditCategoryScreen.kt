@@ -55,9 +55,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
-import com.example.spend.ui.MAX_CATEGORY_NAME_LENGTH
-import com.example.spend.ui.icons
-import com.example.spend.ui.pastelColors
+import com.example.spend.ui.data.MAX_CATEGORY_NAME_LENGTH
+import com.example.spend.ui.data.icons
+import com.example.spend.ui.data.pastelColors
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.SegmentedControl
 import com.example.spend.ui.screen.showToast

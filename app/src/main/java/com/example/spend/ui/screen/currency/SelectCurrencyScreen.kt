@@ -21,8 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxColors
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -44,8 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
-import com.example.spend.ui.CurrencyIcon
-import com.example.spend.ui.currencyIcons
+import com.example.spend.ui.data.CurrencyIcon
+import com.example.spend.ui.data.currencyIcons
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.viewmodel.currency.CurrencyScreenViewModel

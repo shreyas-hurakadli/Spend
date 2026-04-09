@@ -54,10 +54,10 @@ import com.example.spend.data.room.category.Category
 import com.example.spend.epochSecondsToDate
 import com.example.spend.isCurrencyAppropriate
 import com.example.spend.toTwoDecimal
-import com.example.spend.ui.MAX_BUDGET_NAME_LENGTH
-import com.example.spend.ui.MAX_ENTRY_AMOUNT
-import com.example.spend.ui.accountIcons
-import com.example.spend.ui.icons
+import com.example.spend.ui.data.MAX_BUDGET_NAME_LENGTH
+import com.example.spend.ui.data.MAX_ENTRY_AMOUNT
+import com.example.spend.ui.data.accountIcons
+import com.example.spend.ui.data.icons
 import com.example.spend.ui.screen.AccountBottomSheet
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.CategoryBottomSheet

@@ -6,7 +6,7 @@ import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.entry.EntryRepository
-import com.example.spend.ui.MAX_ACCOUNT_NAME_LENGTH
+import com.example.spend.ui.data.MAX_ACCOUNT_NAME_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers

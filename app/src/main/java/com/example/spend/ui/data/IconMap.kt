@@ -1,4 +1,4 @@
-package com.example.spend.ui
+package com.example.spend.ui.data
 
 import com.example.spend.R
 

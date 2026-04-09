@@ -63,8 +63,8 @@ import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.getTodayStart
 import com.example.spend.longToDate
-import com.example.spend.ui.accountIcons
-import com.example.spend.ui.icons
+import com.example.spend.ui.data.accountIcons
+import com.example.spend.ui.data.icons
 import com.example.spend.ui.screen.AccountBottomSheet
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.CategoryBottomSheet

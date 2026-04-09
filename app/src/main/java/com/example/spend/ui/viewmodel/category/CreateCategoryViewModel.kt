@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.sqlite.SQLiteException
 import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
-import com.example.spend.ui.MAX_CATEGORY_NAME_LENGTH
+import com.example.spend.ui.data.MAX_CATEGORY_NAME_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

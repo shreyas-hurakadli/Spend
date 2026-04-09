@@ -1,4 +1,4 @@
-package com.example.spend.ui
+package com.example.spend.ui.data
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable

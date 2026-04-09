@@ -1,4 +1,4 @@
-package com.example.spend.ui
+package com.example.spend.ui.data
 
 import androidx.compose.ui.graphics.Color
 

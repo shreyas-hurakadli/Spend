@@ -1,4 +1,4 @@
-package com.example.spend.ui
+package com.example.spend.ui.data
 
 const val MAX_ENTRY_AMOUNT = 100000000000
 const val MAX_ENTRY_DESCRIPTION_LENGTH = 100

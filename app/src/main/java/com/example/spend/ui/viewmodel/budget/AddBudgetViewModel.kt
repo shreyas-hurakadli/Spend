@@ -10,8 +10,8 @@ import com.example.spend.data.room.budget.Budget
 import com.example.spend.data.room.budget.BudgetRepository
 import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
-import com.example.spend.ui.MAX_BUDGET_NAME_LENGTH
-import com.example.spend.ui.MAX_ENTRY_AMOUNT
+import com.example.spend.ui.data.MAX_BUDGET_NAME_LENGTH
+import com.example.spend.ui.data.MAX_ENTRY_AMOUNT
 import com.example.spend.validateCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject

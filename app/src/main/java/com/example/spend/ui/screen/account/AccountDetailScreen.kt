@@ -44,7 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.getFormattedAmount
-import com.example.spend.ui.accountIcons
+import com.example.spend.ui.data.accountIcons
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.DialogBox

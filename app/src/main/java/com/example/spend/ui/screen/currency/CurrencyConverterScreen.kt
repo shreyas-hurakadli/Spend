@@ -62,8 +62,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
 import com.example.spend.getFormattedAmount
-import com.example.spend.ui.CurrencyIcon
-import com.example.spend.ui.currencyIcons
+import com.example.spend.ui.data.CurrencyIcon
+import com.example.spend.ui.data.currencyIcons
 import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.screen.AppNavigationDrawer
 import com.example.spend.ui.screen.AppTopBar
