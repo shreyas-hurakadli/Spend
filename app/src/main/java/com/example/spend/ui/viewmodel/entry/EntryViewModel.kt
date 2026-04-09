@@ -9,6 +9,7 @@ import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
+import com.example.spend.domain.DeleteTransaction
 import com.example.spend.longToDate
 import com.example.spend.ui.data.MAX_ENTRY_AMOUNT
 import com.example.spend.ui.data.MAX_ENTRY_DESCRIPTION_LENGTH
@@ -19,7 +20,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -34,7 +34,8 @@ class EntryViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
     private val defaultAccountRepository: AccountRepository,
     private val defaultCategoryRepository: CategoryRepository,
-    private val defaultPreferencesRepository: PreferencesRepository
+    private val defaultPreferencesRepository: PreferencesRepository,
+    private val deleteTransactionUseCase: DeleteTransaction
 ) : ViewModel() {
     private val _selectedEntry: MutableStateFlow<EntryCategory?> = MutableStateFlow(value = null)
     val selectedEntry = _selectedEntry.asStateFlow()
@@ -113,22 +114,13 @@ class EntryViewModel @Inject constructor(
 
     fun deleteTransaction() {
         viewModelScope.launch {
-            try {
-                val account =
-                    defaultAccountRepository.getAccountById(_selectedEntry.value!!.entry.accountId)
-                        .firstOrNull()
-                val firstAccount = defaultAccountRepository.getFirstAccount().firstOrNull()
-                if (account != null) {
-                    defaultAccountRepository.update(account.copy(balance = account.balance + (_selectedEntry.value!!.entry.amount * if (_selectedEntry.value!!.entry.isExpense) 1 else -1)))
-                    if (firstAccount != null) {
-                        defaultAccountRepository.update(account = firstAccount.copy(balance = firstAccount.balance + (_selectedEntry.value!!.entry.amount * if (_selectedEntry.value!!.entry.isExpense) 1 else -1)))
-                    }
-                    defaultRepository.delete(_selectedEntry.value!!.entry)
-                }
-                showToast(message = "Successful deletion")
-            } catch (e: SQLiteException) {
-                showToast(message = "Unexpected error occurred")
-            } catch (e: Exception) {
+            val result = deleteTransactionUseCase(
+                entry = _selectedEntry.value?.entry ?: Entry(),
+                accountId = _selectedEntry.value?.entry?.accountId ?: -1L
+            )
+            if (result) {
+                showToast(message = "Entry successfully deleted")
+            } else {
                 showToast(message = "Unexpected error occurred")
             }
         }
@@ -146,6 +138,7 @@ class EntryViewModel @Inject constructor(
             } else if (description.length <= MAX_ENTRY_DESCRIPTION_LENGTH) {
                 true
             } else {
+                showToast(message = "Specify the fields correctly")
                 false
             }
         }
@@ -222,9 +215,7 @@ class EntryViewModel @Inject constructor(
 
                     defaultRepository.update(entry = editedEntry)
                     _selectedEntry.value = _selectedEntry.value?.copy(entry = editedEntry)
-                    showToast(message = "Successful transaction editing")
-                } else {
-                    showToast(message = "Specify the fields correctly")
+                    showToast(message = "Transaction editing successful")
                 }
             } catch (e: SQLiteException) {
                 showToast(message = "Failed to edit transaction")
