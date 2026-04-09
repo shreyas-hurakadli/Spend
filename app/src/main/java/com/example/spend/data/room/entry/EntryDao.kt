@@ -4,20 +4,20 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.MapColumn
+import androidx.room.OnConflictStrategy.Companion.ABORT
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.example.spend.data.dto.CategoryAmount
 import com.example.spend.data.dto.EntryCategory
-import com.example.spend.data.room.category.Category
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EntryDao {
-    @Insert
+    @Insert(onConflict = ABORT)
     suspend fun insert(entry: Entry)
 
-    @Update
+    @Update(onConflict = ABORT)
     suspend fun update(entry: Entry)
 
     @Delete

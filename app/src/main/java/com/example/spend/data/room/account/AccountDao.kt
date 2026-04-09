@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy.Companion.ABORT
 import androidx.room.OnConflictStrategy.Companion.IGNORE
 import androidx.room.Query
 import androidx.room.Transaction
@@ -13,13 +14,13 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AccountDao {
-    @Insert
-    suspend fun insert(account: Account): Long
+    @Insert(onConflict = ABORT)
+    suspend fun insert(account: Account)
 
     @Delete
     suspend fun delete(account: Account)
 
-    @Update
+    @Update(onConflict = ABORT)
     suspend fun update(account: Account)
 
     @Upsert

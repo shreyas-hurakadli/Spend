@@ -3,7 +3,7 @@ package com.example.spend.data.room.account
 import kotlinx.coroutines.flow.Flow
 
 interface AccountRepository {
-    suspend fun insert(account: Account): Long
+    suspend fun insert(account: Account)
 
     suspend fun update(account: Account)
 

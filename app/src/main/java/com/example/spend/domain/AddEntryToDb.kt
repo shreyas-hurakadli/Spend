@@ -1,7 +1,7 @@
 package com.example.spend.domain
 
-import androidx.room.RoomDatabase
 import androidx.room.withTransaction
+import com.example.spend.data.room.RoomDatabaseClass
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.entry.Entry
@@ -11,7 +11,7 @@ import javax.inject.Inject
 class AddEntryToDb @Inject constructor(
     private val entryRepository: EntryRepository,
     private val accountRepository: AccountRepository,
-    private val database: RoomDatabase
+    private val database: RoomDatabaseClass
 ) {
     suspend operator fun invoke(
         entry: Entry,
@@ -20,7 +20,7 @@ class AddEntryToDb @Inject constructor(
         allAccount: Account,
         transferIncomeId: Long,
         selectedIndex: Int
-    ) {
+    ): Boolean = try {
         database.withTransaction {
             entryRepository.insert(entry)
             if (selectedIndex > 0) {
@@ -60,5 +60,8 @@ class AddEntryToDb @Inject constructor(
                 )
             }
         }
+        true
+    } catch (e: Exception) {
+        false
     }
 }

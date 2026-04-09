@@ -258,7 +258,7 @@ class AddViewModel @Inject constructor(
                 description = description.trim()
             )
             viewModelScope.launch {
-                addEntryToDb(
+                val result = addEntryToDb(
                     entry = entry,
                     fromAccount = fromAccount,
                     toAccount = toAccount,
@@ -266,10 +266,15 @@ class AddViewModel @Inject constructor(
                     transferIncomeId = transferCategoryIncome.value.id,
                     selectedIndex = selectedIndex
                 )
-                if (selectedIndex >= 1) {
-                    defaultBudgetNotificationRepository.checkBudgetStatus()
+                if (result) {
+                    if (selectedIndex >= 1) {
+                        defaultBudgetNotificationRepository.checkBudgetStatus()
+                    }
+                    clear()
+                    showToast(message = "Transaction is successfully added")
+                } else {
+                    showToast(message = "Transaction could not be added")
                 }
-                clear()
             }
         }
     }
