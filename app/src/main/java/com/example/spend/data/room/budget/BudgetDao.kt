@@ -3,16 +3,17 @@ package com.example.spend.data.room.budget
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy.Companion.ABORT
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BudgetDao {
-    @Insert
+    @Insert(onConflict = ABORT)
     suspend fun insert(budget: Budget): Long
 
-    @Update
+    @Update(onConflict = ABORT)
     suspend fun update(budget: Budget)
 
     @Delete

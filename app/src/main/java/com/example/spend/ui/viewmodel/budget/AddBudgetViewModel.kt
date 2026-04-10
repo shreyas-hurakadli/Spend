@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private const val TIMEOUT_MILLIS = 5_000L
+private const val TIMEOUT_MILLIS = 1_000L
 
 @HiltViewModel
 class AddBudgetViewModel @Inject constructor(

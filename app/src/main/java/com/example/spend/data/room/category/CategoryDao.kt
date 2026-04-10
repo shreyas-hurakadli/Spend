@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy.Companion.ABORT
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
@@ -12,10 +13,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CategoryDao {
-    @Insert
+    @Insert(onConflict = ABORT)
     suspend fun insert(category: Category): Long
 
-    @Update
+    @Update(onConflict = ABORT)
     suspend fun update(category: Category)
 
     @Delete

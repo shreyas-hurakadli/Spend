@@ -132,7 +132,7 @@ class CategoryViewModel @Inject constructor(
                 if (validateEditedCategory(editedCategory = editedCategory)) {
                     defaultCategoryRepository.update(category = editedCategory.copy(name = editedCategory.name.trim()))
                     _selectedCategory.value = editedCategory
-                    showToast(message = "Successfully edited category")
+                    showToast(message = "Category editing successful")
                 }
             } catch (e: Exception) {
                 showToast(message = "Failed to edit category")
