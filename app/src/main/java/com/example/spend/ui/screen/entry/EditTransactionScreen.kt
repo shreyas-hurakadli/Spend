@@ -150,6 +150,9 @@ fun EditTransactionScreen(
                         ) else ""
                         if (reducedInput.isCurrencyAppropriate()) {
                             amountInput = reducedInput
+                            editedEntry = editedEntry.copy(amount = amountInput.toDouble())
+                        } else {
+                            viewModel.showToast(message = "Invalid amount input")
                         }
                     },
                     baseStyle = MaterialTheme.typography.displayMedium.copy(
@@ -162,18 +165,6 @@ fun EditTransactionScreen(
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            if (validateCurrency(input = amountInput)) {
-                                editedEntry =
-                                    editedEntry.copy(amount = amountInput.toDouble().toTwoDecimal())
-                                isEditingAmount = false
-                                keyboardController?.hide()
-                            } else {
-                                viewModel.showToast(message = "Invalid amount input")
-                            }
-                        }
                     ),
                     focusRequester = focusRequester,
                     modifier = Modifier.fillMaxWidth()
