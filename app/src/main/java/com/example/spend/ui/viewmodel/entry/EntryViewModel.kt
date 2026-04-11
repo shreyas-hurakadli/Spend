@@ -8,8 +8,8 @@ import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
-import com.example.spend.domain.DeleteTransaction
-import com.example.spend.domain.EditTransaction
+import com.example.spend.domain.Entry.DeleteTransaction
+import com.example.spend.domain.Entry.EditTransaction
 import com.example.spend.longToDate
 import com.example.spend.ui.data.MAX_ENTRY_AMOUNT
 import com.example.spend.ui.data.MAX_ENTRY_DESCRIPTION_LENGTH
