@@ -89,8 +89,8 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 
 data class NavigationIcon(
-    @DrawableRes val baseLineIcon: Int,
-    @DrawableRes val outlinedIcon: Int,
+    val baseLineIcon: Int,
+    val outlinedIcon: Int,
     val route: Routes,
     val contentDescription: String?
 )
