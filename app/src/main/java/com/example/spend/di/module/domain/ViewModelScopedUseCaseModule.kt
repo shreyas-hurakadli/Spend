@@ -3,6 +3,7 @@ package com.example.spend.di.module.domain
 import com.example.spend.data.room.RoomDatabaseClass
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.entry.EntryRepository
+import com.example.spend.domain.DeleteAccount
 import com.example.spend.domain.DeleteTransaction
 import com.example.spend.domain.EditTransaction
 import dagger.Module
@@ -23,7 +24,7 @@ object ViewModelScopedUseCaseModule {
         accountRepository = accountRepository,
         database = database
     )
-    
+
     @Provides
     fun provideEditTransaction(
         entryRepository: EntryRepository,
@@ -31,6 +32,15 @@ object ViewModelScopedUseCaseModule {
         database: RoomDatabaseClass
     ) = EditTransaction(
         entryRepository = entryRepository,
+        accountRepository = accountRepository,
+        database = database
+    )
+
+    @Provides
+    fun provideDeleteAccount(
+        accountRepository: AccountRepository,
+        database: RoomDatabaseClass
+    ) = DeleteAccount(
         accountRepository = accountRepository,
         database = database
     )

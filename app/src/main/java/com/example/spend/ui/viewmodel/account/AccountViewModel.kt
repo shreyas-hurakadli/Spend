@@ -6,20 +6,18 @@ import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.entry.EntryRepository
-import com.example.spend.ui.data.MAX_ACCOUNT_NAME_LENGTH
+import com.example.spend.di.module.domain.EditAccount
+import com.example.spend.domain.DeleteAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 private const val DURATION_MILLIS = 1_000L
 
@@ -27,7 +25,9 @@ private const val DURATION_MILLIS = 1_000L
 class AccountViewModel @Inject constructor(
     private val defaultRepository: EntryRepository,
     private val defaultAccountRepository: AccountRepository,
-    private val defaultPreferencesRepository: PreferencesRepository
+    private val defaultPreferencesRepository: PreferencesRepository,
+    private val deleteAccountUseCase: DeleteAccount,
+    private val editAccountUseCase: EditAccount
 ) : ViewModel() {
     val accounts = defaultAccountRepository.getAllAccounts()
         .stateIn(
@@ -81,10 +81,11 @@ class AccountViewModel @Inject constructor(
     fun deleteAccount(account: Account?) {
         account?.let {
             viewModelScope.launch {
-                withContext(context = Dispatchers.IO) {
-                    defaultAccountRepository.delete(account)
-                    val firstAccount = defaultAccountRepository.getFirstAccount().first()
-                    defaultAccountRepository.update(account = firstAccount.copy(balance = firstAccount.balance - account.balance))
+                val result = deleteAccountUseCase(account = it)
+                if (result) {
+                    showToast(message = "Account is successfully deleted")
+                } else {
+                    showToast(message = "Account could not be deleted")
                 }
             }
         }
@@ -99,23 +100,17 @@ class AccountViewModel @Inject constructor(
         _showToast.value = false
     }
 
-    private fun validateEditedAccount(editedAccount: Account): Boolean =
-        editedAccount.name.length <= MAX_ACCOUNT_NAME_LENGTH
-
     fun editAccount(editedAccount: Account) {
         viewModelScope.launch {
-            try {
-                if (validateEditedAccount(editedAccount)) {
-                    if (_selectedAccount.value != editedAccount) {
-                        defaultAccountRepository.update(account = editedAccount)
-                        _selectedAccount.value = editedAccount
-                    }
-                    showToast(message = "Successfully edited account")
-                } else {
-                    showToast(message = "Account name should be less than ${MAX_ACCOUNT_NAME_LENGTH + 1} characters")
-                }
-            } catch (e: Exception) {
-                showToast(message = "Account with this name already exists")
+            val result = editAccountUseCase(
+                account = _selectedAccount.value ?: Account(),
+                editedAccount = editedAccount,
+            )
+            if (result) {
+                showToast(message = "Account is successfully edited")
+                _selectedAccount.value = editedAccount
+            } else {
+                showToast(message = "Account could not be edited")
             }
         }
     }
