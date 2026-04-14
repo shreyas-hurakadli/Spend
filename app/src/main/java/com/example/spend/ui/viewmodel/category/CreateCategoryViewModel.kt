@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.sqlite.SQLiteException
 import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
+import com.example.spend.domain.category.AddCategory
 import com.example.spend.ui.data.MAX_CATEGORY_NAME_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class CreateCategoryViewModel @Inject constructor(
-    private val defaultCategoryRepository: CategoryRepository
+    private val defaultCategoryRepository: CategoryRepository,
+    private val addCategoryUseCase: AddCategory
 ) : ViewModel() {
     private val _category = MutableStateFlow(value = Category())
     val category = _category.asStateFlow()
@@ -71,16 +73,16 @@ class CreateCategoryViewModel @Inject constructor(
 
     fun save() {
         if (validateInput()) {
+            _category.value = _category.value.copy(isExpense = (_selectedIndex.value == 1))
             viewModelScope.launch {
-                _category.value = _category.value.copy(isExpense = (_selectedIndex.value == 1))
-                try {
-                    defaultCategoryRepository.insert(category = _category.value)
+                val result = addCategoryUseCase(
+                    category = _category.value
+                )
+                if (result) {
                     clear()
                     showToast(message = "Successfully created the category")
-                } catch (e: SQLiteException) {
-                    showToast(message = "A category of this name or type already exists")
-                } catch (e: Exception) {
-                    showToast(message = "Unknown error has occurred")
+                } else {
+                    showToast(message = "Failed to create category")
                 }
             }
         }
