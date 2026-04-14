@@ -23,5 +23,5 @@ data class Account(
         const val HEADER = "id,name,balance,color,icon"
     }
 
-    override fun toCsv(): String = "$id,${name.escapeCsv()},$balance,${color.value},$icon"
+    override fun toCsv(): String = "$id,${name.escapeCsv()},$balance,${color.value.toHexString()},$icon"
 }

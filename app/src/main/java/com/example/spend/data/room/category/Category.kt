@@ -24,5 +24,5 @@ data class Category(
         const val HEADER = "id,name,is_expense,color,icon"
     }
 
-    override fun toCsv(): String = "$id,$name,$isExpense,${color.value},$icon"
+    override fun toCsv(): String = "$id,$name,$isExpense,${color.value.toHexString()},$icon"
 }

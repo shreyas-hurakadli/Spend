@@ -53,12 +53,14 @@ object UseCaseModule {
         accountRepository: AccountRepository,
         categoryRepository: CategoryRepository,
         budgetRepository: BudgetRepository,
-        currencyRepository: CurrencyRepository
+        currencyRepository: CurrencyRepository,
+        database: RoomDatabaseClass
     ): ResetData = ResetData(
         entryRepository = entryRepository,
         accountRepository = accountRepository,
         categoryRepository = categoryRepository,
         budgetRepository = budgetRepository,
-        currencyRepository = currencyRepository
+        currencyRepository = currencyRepository,
+        database = database
     )
 }

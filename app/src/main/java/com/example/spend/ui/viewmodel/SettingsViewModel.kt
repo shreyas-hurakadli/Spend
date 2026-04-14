@@ -6,17 +6,9 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spend.data.datastore.config.PreferencesRepository
-import com.example.spend.data.local.file.CsvExportableRepository
-import com.example.spend.data.room.account.Account
-import com.example.spend.data.room.account.AccountRepository
-import com.example.spend.data.room.budget.Budget
-import com.example.spend.data.room.budget.BudgetRepository
-import com.example.spend.data.room.category.Category
-import com.example.spend.data.room.category.CategoryRepository
-import com.example.spend.data.room.currency.CurrencyRepository
-import com.example.spend.data.room.entry.Entry
-import com.example.spend.data.room.entry.EntryRepository
+import com.example.spend.domain.settings.ExportCsv
 import com.example.spend.domain.settings.ResetData
+import com.example.spend.ui.screen.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -34,18 +26,12 @@ private const val DURATION_MILLIS = 1_000L
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     @ApplicationContext context: Context,
-    private val defaultEntryRepository: EntryRepository,
-    private val defaultAccountRepository: AccountRepository,
-    private val defaultCategoryRepository: CategoryRepository,
-    private val defaultBudgetRepository: BudgetRepository,
-    private val defaultCurrencyRepository: CurrencyRepository,
-    private val defaultCsvExportableRepository: CsvExportableRepository,
     private val defaultPreferencesRepository: PreferencesRepository,
-    private val resetDataUseCase: ResetData
+    private val resetDataUseCase: ResetData,
+    private val exportCsvUseCase: ExportCsv
 ) : ViewModel() {
     private val notificationManagerCompat = NotificationManagerCompat.from(context)
 
-    private val selectedDirectory = MutableStateFlow(value = Uri.EMPTY)
     private val _notificationPermissionTurnedOn =
         MutableStateFlow(value = areNotificationsEnabled())
     val notificationPermissionTurnedOn = _notificationPermissionTurnedOn.asStateFlow()
@@ -134,10 +120,6 @@ class SettingsViewModel @Inject constructor(
         _notificationPermissionTurnedOn.value = areNotificationsEnabled()
     }
 
-    private fun registerDirectory(directory: Uri) {
-        selectedDirectory.value = directory
-    }
-
     fun onCurrencySelect(currency: String) {
         viewModelScope.launch {
             try {
@@ -153,41 +135,13 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun exportCsvFiles(directory: Uri) {
-        try {
-            registerDirectory(directory = directory)
-            viewModelScope.launch {
-                val entries = defaultEntryRepository.getAllEntries().first()
-                defaultCsvExportableRepository.writeFile(
-                    parentDirectory = selectedDirectory.value,
-                    fileName = "entries.csv",
-                    header = Entry.HEADER,
-                    data = entries
-                )
-                val categories = defaultCategoryRepository.getAllCategories().first()
-                defaultCsvExportableRepository.writeFile(
-                    parentDirectory = selectedDirectory.value,
-                    fileName = "categories.csv",
-                    header = Category.HEADER,
-                    data = categories
-                )
-                val accounts = defaultAccountRepository.getAllAccounts().first()
-                defaultCsvExportableRepository.writeFile(
-                    parentDirectory = selectedDirectory.value,
-                    fileName = "accounts.csv",
-                    header = Account.HEADER,
-                    data = accounts
-                )
-                val budgets = defaultBudgetRepository.getAllBudgets().first()
-                defaultCsvExportableRepository.writeFile(
-                    parentDirectory = selectedDirectory.value,
-                    fileName = "budgets.csv",
-                    header = Budget.HEADER,
-                    data = budgets
-                )
+        viewModelScope.launch {
+            val result = exportCsvUseCase(directory = directory)
+            if (result) {
                 showToast(message = "Successful export")
+            } else {
+                showToast(message = "Failed to export files")
             }
-        } catch (e: Exception) {
-            showToast(message = "Failed to export export")
         }
     }
 
