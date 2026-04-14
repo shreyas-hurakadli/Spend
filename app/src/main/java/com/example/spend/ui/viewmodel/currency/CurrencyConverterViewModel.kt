@@ -9,6 +9,7 @@ import com.example.spend.toTwoDecimal
 import com.example.spend.ui.data.CurrencyIcon
 import com.example.spend.ui.data.currencyIcons
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -144,7 +145,7 @@ class CurrencyConverterViewModel @Inject constructor(
         if (currencies.value.isEmpty()) {
             getExchangeData()
         }
-        viewModelScope.launch {
+        viewModelScope.launch(context = Dispatchers.Default) {
             _baseCurrency.value =
                 currencyIcons.find { it.code == defaultPreferencesRepository.baseCurrency.first() }
                     ?: currencyIcons[0]
