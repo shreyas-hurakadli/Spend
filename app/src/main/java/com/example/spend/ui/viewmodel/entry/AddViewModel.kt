@@ -15,7 +15,7 @@ import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.workmanager.budget.BudgetNotificationRepository
-import com.example.spend.domain.Entry.AddEntryToDb
+import com.example.spend.domain.entry.AddEntryToDb
 import com.example.spend.getTodayStart
 import com.example.spend.toTwoDecimal
 import dagger.hilt.android.lifecycle.HiltViewModel

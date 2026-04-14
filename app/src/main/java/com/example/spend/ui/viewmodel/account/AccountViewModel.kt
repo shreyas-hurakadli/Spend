@@ -7,7 +7,7 @@ import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.entry.EntryRepository
 import com.example.spend.di.module.domain.EditAccount
-import com.example.spend.domain.Account.DeleteAccount
+import com.example.spend.domain.account.DeleteAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi

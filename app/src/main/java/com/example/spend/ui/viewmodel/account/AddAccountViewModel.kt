@@ -3,29 +3,28 @@ package com.example.spend.ui.viewmodel.account
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.sqlite.SQLiteException
 import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
+import com.example.spend.domain.account.AddAccount
 import com.example.spend.ui.data.MAX_ACCOUNT_NAME_LENGTH
 import com.example.spend.ui.data.MAX_ENTRY_AMOUNT
 import com.example.spend.validateCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 private const val DURATION_MILLIS = 1_000L
 
 @HiltViewModel
 class AddAccountViewModel @Inject constructor(
     private val defaultAccountRepository: AccountRepository,
-    private val defaultPreferencesRepository: PreferencesRepository
+    private val defaultPreferencesRepository: PreferencesRepository,
+    private val addAccount: AddAccount
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(Account())
     val uiState = _uiState.asStateFlow()
@@ -52,19 +51,14 @@ class AddAccountViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = DURATION_MILLIS),
             initialValue = ""
         )
+    private val allAccount = MutableStateFlow(value = Account())
 
     init {
         viewModelScope.launch {
-            withContext(context = Dispatchers.IO) {
-                defaultAccountRepository.getFirstAccount()
-                    .collect {
-                        allAccount.value = it
-                    }
-            }
+            defaultAccountRepository.getFirstAccount()
+                .collect { allAccount.value = it }
         }
     }
-
-    private val allAccount = MutableStateFlow(value = Account())
 
     fun updateName(name: String) {
         _uiState.value = _uiState.value.copy(name = name)
@@ -129,23 +123,16 @@ class AddAccountViewModel @Inject constructor(
         if (validateInput(balance)) {
             _uiState.value = _uiState.value.copy(balance = balance.toDouble())
             viewModelScope.launch {
-                if (allAccount.value != Account()) {
-                    try {
-                        defaultAccountRepository.insert(account = _uiState.value)
-                        defaultAccountRepository.update(
-                            account = allAccount.value.copy(
-                                balance = balance.toDouble() + allAccount.value.balance
-                            )
-                        )
-                        clear()
-                        showToast(message = "Account is created successfully")
-                    } catch (e: SQLiteException) {
-                        showToast(message = "Account with the same name exists")
-                    } catch (e: Exception) {
-                        showToast(message = "An unknown error has occurred")
-                    }
+                val result = addAccount(
+                    account = _uiState.value,
+                    allAccount = allAccount.value,
+                    balance = balance.toDouble()
+                )
+                if (result) {
+                    clear()
+                    showToast(message = "Account is created successfully")
                 } else {
-                    showToast(message = "An unknown error has occurred")
+                    showToast(message = "Account could not be created")
                 }
             }
         }

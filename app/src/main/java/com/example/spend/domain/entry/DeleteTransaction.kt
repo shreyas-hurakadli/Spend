@@ -1,4 +1,4 @@
-package com.example.spend.domain.Entry
+package com.example.spend.domain.entry
 
 import androidx.room.withTransaction
 import com.example.spend.data.room.RoomDatabaseClass
