@@ -7,6 +7,7 @@ import com.example.spend.data.dto.EntryCategory
 import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.entry.EntryRepository
+import com.example.spend.domain.category.EditCategory
 import com.example.spend.ui.data.MAX_CATEGORY_NAME_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +29,8 @@ private const val DURATION_MILLIS = 1_000L
 class CategoryViewModel @Inject constructor(
     private val defaultEntryRepository: EntryRepository,
     private val defaultCategoryRepository: CategoryRepository,
-    private val defaultPreferencesRepository: PreferencesRepository
+    private val defaultPreferencesRepository: PreferencesRepository,
+    private val editCategoryUseCase: EditCategory
 ) : ViewModel() {
     private val _selectedCategory = MutableStateFlow(value = Category())
     val selectedCategory = _selectedCategory.asStateFlow()
@@ -127,15 +129,15 @@ class CategoryViewModel @Inject constructor(
         }
 
     fun editCategory(editedCategory: Category) {
-        viewModelScope.launch {
-            try {
-                if (validateEditedCategory(editedCategory = editedCategory)) {
-                    defaultCategoryRepository.update(category = editedCategory.copy(name = editedCategory.name.trim()))
+        if (validateEditedCategory(editedCategory = editedCategory)) {
+            viewModelScope.launch {
+                val result = editCategoryUseCase(editedCategory = editedCategory)
+                if (result) {
                     _selectedCategory.value = editedCategory
                     showToast(message = "Category editing successful")
+                } else {
+                    showToast(message = "Failed to edit category")
                 }
-            } catch (e: Exception) {
-                showToast(message = "Failed to edit category")
             }
         }
     }

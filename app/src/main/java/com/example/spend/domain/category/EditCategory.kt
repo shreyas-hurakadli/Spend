@@ -4,20 +4,21 @@ import androidx.room.withTransaction
 import com.example.spend.data.room.RoomDatabaseClass
 import com.example.spend.data.room.category.Category
 import com.example.spend.data.room.category.CategoryRepository
-import jakarta.inject.Inject
+import javax.inject.Inject
 
-class AddCategory @Inject constructor(
+class EditCategory @Inject constructor(
     private val categoryRepository: CategoryRepository,
     private val database: RoomDatabaseClass
 ) {
     suspend operator fun invoke(
-        category: Category
-    ): Boolean = try {
-        database.withTransaction {
-            categoryRepository.insert(category = category)
+        editedCategory: Category
+    ): Boolean =
+        try {
+            database.withTransaction {
+                categoryRepository.update(category = editedCategory.copy(name = editedCategory.name.trim()))
+            }
+            true
+        } catch (e: Exception) {
+            false
         }
-        true
-    } catch (e: Exception) {
-        false
-    }
 }

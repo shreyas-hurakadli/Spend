@@ -113,12 +113,12 @@ fun EditCategoryScreen(
                     modifier = Modifier
                         .size(55.dp)
                         .background(
-                            color = selectedCategory.color,
+                            color = editedCategory.color,
                             shape = RoundedCornerShape(size = 16.dp)
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    icons[selectedCategory.icon]?.let { resourceId ->
+                    icons[editedCategory.icon]?.let { resourceId ->
                         Icon(
                             imageVector = ImageVector.vectorResource(id = resourceId),
                             contentDescription = null,
