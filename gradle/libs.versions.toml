@@ -1,5 +1,5 @@
 [versions]
-agp = "9.1.0"
+agp = "9.1.1"
 datastorePreferences = "1.1.7"
 hiltAndroid = "2.57"
 kotlin = "2.2.10"
