@@ -83,7 +83,6 @@ object RoomProvidesModule {
             RoomDatabaseClass::class.java,
             "entries_database"
         )
-            .fallbackToDestructiveMigration(dropAllTables = false)
             .addCallback(callback = callback)
             .build()
 

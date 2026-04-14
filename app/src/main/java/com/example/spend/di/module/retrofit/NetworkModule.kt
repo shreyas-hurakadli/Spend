@@ -19,11 +19,15 @@ object NetworkModule {
     fun provideJson(): Json = Json { ignoreUnknownKeys = true }
 
     @Provides
+    fun provideUrl(): String = "https://api.frankfurter.dev/"
+
+    @Provides
     @Singleton
     fun provideRetrofit(
-        json: Json
+        json: Json,
+        url: String
     ): Retrofit = Retrofit.Builder()
-        .baseUrl("https://api.frankfurter.dev/")
+        .baseUrl(url)
         .addConverterFactory(json.asConverterFactory(MediaType.get("application/json")))
         .build()
 
