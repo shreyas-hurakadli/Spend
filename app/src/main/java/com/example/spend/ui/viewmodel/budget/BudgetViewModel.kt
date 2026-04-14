@@ -8,6 +8,7 @@ import com.example.spend.data.room.budget.Budget
 import com.example.spend.data.room.budget.BudgetRepository
 import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.entry.EntryRepository
+import com.example.spend.domain.budget.EditBudget
 import com.example.spend.ui.data.MAX_BUDGET_NAME_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -32,7 +33,8 @@ class BudgetViewModel @Inject constructor(
     private val budgetRepository: BudgetRepository,
     private val accountRepository: AccountRepository,
     private val categoryRepository: CategoryRepository,
-    private val defaultPreferencesRepository: PreferencesRepository
+    private val defaultPreferencesRepository: PreferencesRepository,
+    private val editBudgetUseCase: EditBudget
 ) : ViewModel() {
     private val _budgets: MutableStateFlow<List<Pair<Budget, Double>>> =
         MutableStateFlow(value = emptyList())
@@ -202,29 +204,31 @@ class BudgetViewModel @Inject constructor(
 
     private fun validateEditedBudget(editedBudget: Budget): Boolean =
         if (editedBudget.name.length > MAX_BUDGET_NAME_LENGTH) {
+            showToast(message = "Budget name length should be less than ${MAX_BUDGET_NAME_LENGTH + 1}")
             false
         } else if (editedBudget.period <= 0) {
+            showToast(message = "Invalid period specification")
             false
         } else {
             true
         }
 
     fun editBudget(editedBudget: Budget) {
-        viewModelScope.launch {
-            try {
-                if (validateEditedBudget(editedBudget)) {
-                    budgetRepository.update(budget = editedBudget)
+        if (validateEditedBudget(editedBudget)) {
+            viewModelScope.launch {
+                val result = editBudgetUseCase(editedBudget = editedBudget)
+                if (result) {
                     _selectedBudget.value = Pair(
                         first = editedBudget,
                         second = max(a = _selectedBudget.value?.second ?: 0.00, b = 0.00)
                     )
                     showToast(message = "Successfully edited budget")
                 } else {
-                    showToast(message = "Specify the fields correctly")
+                    showToast(message = "Failed to edit budget")
                 }
-            } catch (e: Exception) {
-                showToast(message = "Failed to edit budget")
             }
+        } else {
+            showToast(message = "Specify the fields correctly")
         }
     }
 }
