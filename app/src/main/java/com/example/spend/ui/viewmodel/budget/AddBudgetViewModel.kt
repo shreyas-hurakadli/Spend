@@ -86,24 +86,22 @@ class AddBudgetViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            withContext(context = Dispatchers.IO) {
-                launch {
-                    accountRepository.getFirstAccount()
-                        .collect {
-                            _selectedAccount.value = it
-                            setAccount(it)
-                        }
-                }
-                launch {
-                    categoryRepository.findCategoryByNameAndId(
-                        name = "All",
-                        isExpense = true
-                    )
-                        .collect {
-                            _selectedCategory.value = it
-                            setCategory(it)
-                        }
-                }
+            launch {
+                accountRepository.getFirstAccount()
+                    .collect {
+                        _selectedAccount.value = it
+                        setAccount(it)
+                    }
+            }
+            launch {
+                categoryRepository.findCategoryByNameAndId(
+                    name = "All",
+                    isExpense = true
+                )
+                    .collect {
+                        _selectedCategory.value = it
+                        setCategory(it)
+                    }
             }
         }
     }
@@ -154,27 +152,26 @@ class AddBudgetViewModel @Inject constructor(
         _period.value = Period.NONE
         _uiState.value = Budget()
         viewModelScope.launch {
-            withContext(context = Dispatchers.IO) {
-                launch {
-                    accountRepository.getFirstAccount()
-                        .collect {
-                            _selectedAccount.value = it
-                            setAccount(it)
-                        }
-                }
-                launch {
-                    categoryRepository.findCategoryByNameAndId(
-                        name = "All",
-                        isExpense = true
-                    )
-                        .collect {
-                            _selectedCategory.value = it
-                            setCategory(it)
-                        }
-                }
+            launch {
+                accountRepository.getFirstAccount()
+                    .collect {
+                        _selectedAccount.value = it
+                        setAccount(it)
+                    }
+            }
+            launch {
+                categoryRepository.findCategoryByNameAndId(
+                    name = "All",
+                    isExpense = true
+                )
+                    .collect {
+                        _selectedCategory.value = it
+                        setCategory(it)
+                    }
             }
         }
     }
+
     fun checkAmount(amount: String): Boolean =
         amount.isNotEmpty() && amount.toDouble() > 100000000000
 
