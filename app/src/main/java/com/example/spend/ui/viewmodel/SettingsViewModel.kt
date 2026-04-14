@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.sqlite.SQLiteException
 import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.local.file.CsvExportableRepository
 import com.example.spend.data.room.account.Account
@@ -17,6 +16,7 @@ import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.currency.CurrencyRepository
 import com.example.spend.data.room.entry.Entry
 import com.example.spend.data.room.entry.EntryRepository
+import com.example.spend.domain.settings.ResetData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -40,7 +40,8 @@ class SettingsViewModel @Inject constructor(
     private val defaultBudgetRepository: BudgetRepository,
     private val defaultCurrencyRepository: CurrencyRepository,
     private val defaultCsvExportableRepository: CsvExportableRepository,
-    private val defaultPreferencesRepository: PreferencesRepository
+    private val defaultPreferencesRepository: PreferencesRepository,
+    private val resetDataUseCase: ResetData
 ) : ViewModel() {
     private val notificationManagerCompat = NotificationManagerCompat.from(context)
 
@@ -192,17 +193,11 @@ class SettingsViewModel @Inject constructor(
 
     fun resetData() {
         viewModelScope.launch {
-            try {
-                defaultEntryRepository.deleteAll()
-                defaultAccountRepository.resetData()
-                defaultCategoryRepository.resetData()
-                defaultBudgetRepository.deleteAll()
-                defaultCurrencyRepository.deleteAll()
+            val result = resetDataUseCase()
+            if (result) {
                 showToast(message = "Successful data reset")
-            } catch (e: SQLiteException) {
+            } else {
                 showToast(message = "Failed to reset data")
-            } catch (e: Exception) {
-                showToast(message = "An unknown error has occurred")
             }
         }
     }

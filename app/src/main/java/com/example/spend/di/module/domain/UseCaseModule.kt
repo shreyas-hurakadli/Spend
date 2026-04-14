@@ -2,11 +2,14 @@ package com.example.spend.di.module.domain
 
 import com.example.spend.data.room.RoomDatabaseClass
 import com.example.spend.data.room.account.AccountRepository
+import com.example.spend.data.room.budget.BudgetRepository
 import com.example.spend.data.room.category.CategoryRepository
+import com.example.spend.data.room.currency.CurrencyRepository
 import com.example.spend.data.room.entry.EntryRepository
 import com.example.spend.domain.account.AddAccount
 import com.example.spend.domain.category.AddCategory
 import com.example.spend.domain.entry.AddEntryToDb
+import com.example.spend.domain.settings.ResetData
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,5 +45,20 @@ object UseCaseModule {
     ): AddAccount = AddAccount(
         accountRepository = accountRepository,
         database = database
+    )
+
+    @Provides
+    fun provideResetData(
+        entryRepository: EntryRepository,
+        accountRepository: AccountRepository,
+        categoryRepository: CategoryRepository,
+        budgetRepository: BudgetRepository,
+        currencyRepository: CurrencyRepository
+    ): ResetData = ResetData(
+        entryRepository = entryRepository,
+        accountRepository = accountRepository,
+        categoryRepository = categoryRepository,
+        budgetRepository = budgetRepository,
+        currencyRepository = currencyRepository
     )
 }
