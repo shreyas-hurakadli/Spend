@@ -1,6 +1,5 @@
 package com.example.spend.domain.entry
 
-import android.util.Log
 import androidx.room.withTransaction
 import com.example.spend.data.room.RoomDatabaseClass
 import com.example.spend.data.room.account.Account
