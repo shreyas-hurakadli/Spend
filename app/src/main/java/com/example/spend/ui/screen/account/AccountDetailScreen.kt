@@ -177,7 +177,7 @@ fun AccountDetailScreen(
                         }
                     }
                     OutlinedButton(
-                        onClick = { navHostController.navigate(route = Routes.EditAccountScreen) },
+                        onClick = { navHostController.navigate(route = Routes.EditAccountScreen(id = account?.id ?: -1L)) },
                         colors = ButtonDefaults.outlinedButtonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary

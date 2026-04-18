@@ -61,18 +61,18 @@ import com.example.spend.ui.data.accountIcons
 import com.example.spend.ui.data.pastelColors
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.showToast
-import com.example.spend.ui.viewmodel.account.AccountViewModel
+import com.example.spend.ui.viewmodel.account.EditAccountViewModel
 
 @Composable
 fun EditAccountScreen(
     navHostController: NavHostController,
-    viewModel: AccountViewModel = hiltViewModel()
+    viewModel: EditAccountViewModel = hiltViewModel()
 ) {
-    val selectedAccount by viewModel.selectedAccount.collectAsState()
+    val account by viewModel.account.collectAsState()
     val showToast by viewModel.showToast.collectAsState()
     val toastMessage by viewModel.toastMessage.collectAsState()
 
-    var editedAccount by remember { mutableStateOf(value = selectedAccount) }
+    var editedAccount by remember(key1 = account) { mutableStateOf(value = account) }
 
     val context = LocalContext.current
 
@@ -98,7 +98,7 @@ fun EditAccountScreen(
                 .padding(all = 8.dp)
                 .fillMaxSize()
         ) {
-            if (selectedAccount == null) {
+            if (account == null) {
                 CircularProgressIndicator()
             }
             editedAccount?.let {

@@ -52,7 +52,7 @@ sealed class Routes {
     data object EditTransactionScreen: Routes()
 
     @Serializable
-    data object EditAccountScreen: Routes()
+    data class EditAccountScreen(val id: Long): Routes()
 
     @Serializable
     data class EditBudgetScreen(val id: Long): Routes()
