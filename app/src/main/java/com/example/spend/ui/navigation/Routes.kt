@@ -46,7 +46,7 @@ sealed class Routes {
     data class BudgetDetailScreen(val id: Long): Routes()
 
     @Serializable
-    data object AccountDetailScreen: Routes()
+    data class AccountDetailScreen(val id: Long): Routes()
 
     @Serializable
     data object EditTransactionScreen: Routes()

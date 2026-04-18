@@ -50,17 +50,15 @@ import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.DialogBox
 import com.example.spend.ui.screen.NoTransactions
 import com.example.spend.ui.screen.TransactionCard
-import com.example.spend.ui.viewmodel.account.AccountViewModel
-import com.example.spend.ui.viewmodel.entry.EntryViewModel
+import com.example.spend.ui.viewmodel.account.AccountDetailViewModel
 
 @Composable
 fun AccountDetailScreen(
     navHostController: NavHostController,
-    viewModel: AccountViewModel = hiltViewModel(),
-    entryViewModel: EntryViewModel = hiltViewModel()
+    viewModel: AccountDetailViewModel = hiltViewModel(),
 ) {
-    val selectedAccount by viewModel.selectedAccount.collectAsState()
-    val selectedAccountTransactions by viewModel.selectedAccountTransactions.collectAsState(initial = emptyList())
+    val account by viewModel.account.collectAsState()
+    val transactions by viewModel.transactions.collectAsState(initial = emptyList())
     val currencySymbol by viewModel.currencySymbol.collectAsState()
 
     var showDialogBox by remember { mutableStateOf(value = false) }
@@ -94,10 +92,10 @@ fun AccountDetailScreen(
                     .padding(all = 8.dp)
                     .fillMaxSize()
             ) {
-                if (selectedAccount == null) {
+                if (account == null) {
                     CircularProgressIndicator()
                 }
-                selectedAccount?.let {
+                account?.let {
                     LazyColumn(
                         modifier = Modifier.weight(weight = 1f)
                     ) {
@@ -152,7 +150,7 @@ fun AccountDetailScreen(
                                     modifier = Modifier.align(Alignment.Start)
                                 )
                                 Spacer(modifier = Modifier.height(height = 8.dp))
-                                if (selectedAccountTransactions.isEmpty()) {
+                                if (transactions.isEmpty()) {
                                     Column(
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         verticalArrangement = Arrangement.Center,
@@ -163,16 +161,15 @@ fun AccountDetailScreen(
                                 }
                             }
                         }
-                        if (selectedAccountTransactions.isNotEmpty()) {
-                            items(items = selectedAccountTransactions) { entryCategory ->
+                        if (transactions.isNotEmpty()) {
+                            items(items = transactions) { entryCategory ->
                                 TransactionCard(
                                     entryCategory = entryCategory,
                                     currencySymbol = currencySymbol,
                                     iconTint = Color.Black,
                                     showDate = true,
-                                    clickable = true,
+                                    clickable = false,
                                     onClick = {
-                                        entryViewModel.selectEntry(entryCategory)
                                         navHostController.navigate(Routes.EntryDetailScreen)
                                     }
                                 )
@@ -197,7 +194,7 @@ fun AccountDetailScreen(
                         onDismissRequest = { showDialogBox = false },
                         onConfirmation = {
                             navHostController.popBackStack()
-                            viewModel.deleteAccount(selectedAccount)
+                            viewModel.deleteAccount()
                         },
                         dialogTitle = stringResource(R.string.delete_account),
                         dialogText = stringResource(id = R.string.account_delete_message),

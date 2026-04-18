@@ -167,12 +167,7 @@ fun NavigationManager(
                 )
             }
             composable<Routes.AccountDetailScreen> {
-                AccountDetailScreen(
-                    navHostController = navHostController,
-                    viewModel = if (navHostController.previousBackStackEntry != null) hiltViewModel(
-                        viewModelStoreOwner = navHostController.previousBackStackEntry!!
-                    ) else hiltViewModel()
-                )
+                AccountDetailScreen(navHostController = navHostController)
             }
             composable<Routes.EditTransactionScreen> {
                 val backStackEntry = remember(key1 = it) {

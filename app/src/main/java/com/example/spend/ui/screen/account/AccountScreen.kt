@@ -109,12 +109,9 @@ fun AccountScreen(
                             .fillMaxSize()
                     ) {
                         AccountList(
-                            accounts = accounts.filter { it.name != "All" },
+                            accounts = accounts,
                             currencySymbol = currencySymbol,
-                            onClick = {
-                                viewModel.selectAccount(it)
-                                navHostController.navigate(Routes.AccountDetailScreen)
-                            }
+                            onClick = { navHostController.navigate(Routes.AccountDetailScreen(id = it.id)) }
                         )
                     }
                 } else {

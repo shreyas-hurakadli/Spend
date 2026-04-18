@@ -6,16 +6,19 @@ import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.Account
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.entry.EntryRepository
-import com.example.spend.domain.account.EditAccount
 import com.example.spend.domain.account.DeleteAccount
+import com.example.spend.domain.account.EditAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -30,6 +33,8 @@ class AccountViewModel @Inject constructor(
     private val editAccountUseCase: EditAccount
 ) : ViewModel() {
     val accounts = defaultAccountRepository.getAllAccounts()
+        .map { list -> list.filter { it.name != "All" } }
+        .flowOn(context = Dispatchers.Default)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = DURATION_MILLIS),
