@@ -19,6 +19,10 @@ interface EntryRepository {
 
     suspend fun resetAutoincrement()
 
+    fun getEntryById(id: Long): Flow<Entry?>
+
+    fun getEntryCategoryById(id: Long): Flow<EntryCategory?>
+
     fun getExpense(from: Long): Flow<Double>
 
     fun getIncome(from: Long): Flow<Double>

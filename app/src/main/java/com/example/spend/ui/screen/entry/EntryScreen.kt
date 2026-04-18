@@ -117,10 +117,7 @@ fun EntryScreen(
                                 currencySymbol = currencySymbol,
                                 iconTint = Color.Black,
                                 clickable = true,
-                                onClick = {
-                                    viewModel.selectEntry(entryCategory)
-                                    navHostController.navigate(Routes.EntryDetailScreen)
-                                }
+                                onClick = { navHostController.navigate(Routes.EntryDetailScreen(id = entryCategory.entry.id)) }
                             )
                         }
                     }

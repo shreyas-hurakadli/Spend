@@ -15,11 +15,10 @@ class DeleteTransaction @Inject constructor(
 ) {
     suspend operator fun invoke(
         entry: Entry,
-        accountId: Long,
     ): Boolean =
         try {
             database.withTransaction {
-                val account = accountRepository.getAccountById(id = accountId).firstOrNull()
+                val account = accountRepository.getAccountById(id = entry.accountId).firstOrNull()
                 val firstAccount = accountRepository.getFirstAccount().firstOrNull()
                 account?.let { acct ->
                     accountRepository.update(acct.copy(balance = account.balance + (entry.amount * if (entry.isExpense) 1 else -1)))

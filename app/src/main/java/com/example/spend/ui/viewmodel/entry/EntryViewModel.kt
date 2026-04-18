@@ -119,7 +119,6 @@ class EntryViewModel @Inject constructor(
         viewModelScope.launch {
             val result = deleteTransactionUseCase(
                 entry = _selectedEntry.value?.entry ?: Entry(),
-                accountId = _selectedEntry.value?.entry?.accountId ?: -1L
             )
             if (result) {
                 showToast(message = "Entry successfully deleted")

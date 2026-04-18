@@ -35,6 +35,12 @@ interface EntryDao {
     @Query("DELETE FROM sqlite_sequence WHERE name = 'entries'")
     suspend fun resetAutoIncrement()
 
+    @Query("SELECT * FROM entries WHERE id = :id")
+    fun getEntryById(id: Long): Flow<Entry?>
+
+    @Query("SELECT e.*, c.name, c.icon, c.color FROM entries e, categories c WHERE e.id = :id AND e.category_id = c.id")
+    fun getEntryCategoryById(id: Long): Flow<EntryCategory?>
+
     @Query("SELECT SUM(amount) FROM entries WHERE is_expense = 1 AND epochSeconds >= :from")
     fun getExpense(from: Long): Flow<Double>
 

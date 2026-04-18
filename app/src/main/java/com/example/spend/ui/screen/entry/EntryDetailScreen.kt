@@ -53,16 +53,16 @@ import com.example.spend.getFormattedAmount
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.DialogBox
-import com.example.spend.ui.viewmodel.entry.EntryViewModel
+import com.example.spend.ui.viewmodel.entry.EntryDetailViewModel
 
 @Composable
 fun EntryDetailScreen(
     navHostController: NavHostController,
-    viewModel: EntryViewModel = hiltViewModel()
+    viewModel: EntryDetailViewModel = hiltViewModel()
 ) {
-    val selectedEntry by viewModel.selectedEntry.collectAsState()
+    val entry by viewModel.entry.collectAsState()
     val currencySymbol by viewModel.currencySymbol.collectAsState()
-    val selectedEntryAccount by viewModel.selectedEntryAccount.collectAsState(initial = null)
+    val account by viewModel.account.collectAsState(initial = null)
 
     var showDialogBox by remember { mutableStateOf(value = false) }
 
@@ -93,7 +93,7 @@ fun EntryDetailScreen(
                 .padding(all = 8.dp)
                 .verticalScroll(state = rememberScrollState())
         ) {
-            if (selectedEntry == null) {
+            if (entry == null || account == null) {
                 CircularProgressIndicator()
             } else {
                 Box(
@@ -102,7 +102,7 @@ fun EntryDetailScreen(
                 ) {
                     BasicText(
                         text = "$currencySymbol " + getFormattedAmount(
-                            value = selectedEntry?.entry?.amount ?: 0.00
+                            value = entry?.entry?.amount ?: 0.00
                         ),
                         style = MaterialTheme.typography.displayMedium.copy(
                             color = MaterialTheme.colorScheme.secondary,
@@ -119,14 +119,14 @@ fun EntryDetailScreen(
                 DetailRow(
                     icon = ImageVector.vectorResource(id = R.drawable.baseline_wallet),
                     detail = stringResource(R.string.account),
-                    information = selectedEntryAccount?.name ?: "",
+                    information = account?.name ?: "",
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(height = 8.dp))
                 DetailRow(
                     icon = ImageVector.vectorResource(id = R.drawable.baseline_category),
                     detail = stringResource(R.string.category),
-                    information = selectedEntry?.name ?: "",
+                    information = entry?.name ?: "",
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(height = 8.dp))
@@ -134,13 +134,13 @@ fun EntryDetailScreen(
                     icon = Icons.Default.DateRange,
                     detail = stringResource(R.string.date),
                     information = epochSecondsToDate(
-                        epochSeconds = selectedEntry?.entry?.epochSeconds
+                        epochSeconds = entry?.entry?.epochSeconds
                             ?: (System.currentTimeMillis() / 1000L)
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(height = 8.dp))
-                selectedEntry?.entry?.description?.let {
+                entry?.entry?.description?.let {
                     DetailRow(
                         icon = ImageVector.vectorResource(id = R.drawable.note),
                         detail = stringResource(R.string.description),
@@ -158,7 +158,7 @@ fun EntryDetailScreen(
                 Spacer(modifier = Modifier.weight(weight = 1f))
                 OutlinedButton(
                     onClick = { navHostController.navigate(Routes.EditTransactionScreen) },
-                    colors= ButtonDefaults.filledTonalButtonColors(
+                    colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     ),
                     modifier = Modifier.fillMaxWidth()
@@ -206,7 +206,10 @@ fun DetailRow(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(size = 16.dp))
+                .background(
+                    color = MaterialTheme.colorScheme.tertiary,
+                    shape = RoundedCornerShape(size = 16.dp)
+                )
                 .size(size = 48.dp)
         ) {
             Icon(

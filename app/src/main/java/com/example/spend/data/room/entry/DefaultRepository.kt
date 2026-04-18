@@ -20,6 +20,10 @@ class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : En
 
     override suspend fun resetAutoincrement() = entryDao.resetAutoIncrement()
 
+    override fun getEntryById(id: Long): Flow<Entry?> = entryDao.getEntryById(id = id)
+
+    override fun getEntryCategoryById(id: Long): Flow<EntryCategory?> = entryDao.getEntryCategoryById(id = id)
+
     override fun getExpense(from: Long): Flow<Double> = entryDao.getExpense(from)
 
     override fun getIncome(from: Long): Flow<Double> = entryDao.getIncome(from)
@@ -32,7 +36,8 @@ class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : En
 
     override fun areEntriesPresent(): Flow<Boolean> = entryDao.areEntriesPresent()
 
-    override fun getEntriesByAccountId(id: Long): Flow<List<EntryCategory>> = entryDao.getEntriesByAccountId(id)
+    override fun getEntriesByAccountId(id: Long): Flow<List<EntryCategory>> =
+        entryDao.getEntriesByAccountId(id)
 
     override fun getAllExpenseAmount(): Flow<List<Double>> = entryDao.getAllExpenseAmount()
 
@@ -129,5 +134,6 @@ class DefaultRepository @Inject constructor(private val entryDao: EntryDao) : En
         endTime = endTime
     )
 
-    override fun getEntriesByCategoryId(id: Long): Flow<List<Entry>> = entryDao.getEntriesByCategoryId(id = id)
+    override fun getEntriesByCategoryId(id: Long): Flow<List<Entry>> =
+        entryDao.getEntriesByCategoryId(id = id)
 }

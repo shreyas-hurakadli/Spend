@@ -130,29 +130,7 @@ fun NavigationManager(
                 CurrencyConverterScreen(navHostController = navHostController)
             }
             composable<Routes.EntryDetailScreen> {
-                val backStackEntry = remember(key1 = it) {
-                    try {
-                        navHostController.getBackStackEntry(route = Routes.EntryScreen)
-                    } catch (e: IllegalArgumentException) {
-                        try {
-                            navHostController.getBackStackEntry(route = Routes.AccountDetailScreen)
-                        } catch (e: Exception) {
-                            try {
-                                navHostController.getBackStackEntry(route = Routes.BudgetDetailScreen)
-                            } catch (e: Exception) {
-                                navHostController.getBackStackEntry(route = Routes.CategoryDetailScreen)
-                            }
-                        }
-                    } catch (e: Exception) {
-                        null
-                    }
-                }
-                EntryDetailScreen(
-                    navHostController = navHostController,
-                    viewModel = if (backStackEntry != null) hiltViewModel(
-                        viewModelStoreOwner = backStackEntry
-                    ) else hiltViewModel()
-                )
+                EntryDetailScreen(navHostController = navHostController)
             }
             composable<Routes.BudgetDetailScreen> {
                 BudgetDetailScreen(navHostController = navHostController)
