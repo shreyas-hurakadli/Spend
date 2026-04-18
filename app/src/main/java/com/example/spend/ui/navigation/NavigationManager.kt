@@ -148,24 +148,7 @@ fun NavigationManager(
                 AccountDetailScreen(navHostController = navHostController)
             }
             composable<Routes.EditTransactionScreen> {
-                val backStackEntry = remember(key1 = it) {
-                    try {
-                        navHostController.getBackStackEntry(route = Routes.EntryScreen)
-                    } catch (e: IllegalArgumentException) {
-                        try {
-                            navHostController.getBackStackEntry(route = Routes.AccountDetailScreen)
-                        } catch (e: Exception) {
-                            navHostController.getBackStackEntry(route = Routes.BudgetDetailScreen)
-                        }
-                    } catch (e: Exception) {
-                        null
-                    }
-                }
-                EditTransactionScreen(
-                    navHostController = navHostController,
-                    viewModel = if (backStackEntry != null) hiltViewModel(viewModelStoreOwner = backStackEntry)
-                    else hiltViewModel()
-                )
+                EditTransactionScreen(navHostController = navHostController)
             }
             composable<Routes.EditAccountScreen> {
                 EditAccountScreen(navHostController = navHostController)

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.account.AccountRepository
+import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.entry.EntryRepository
 import com.example.spend.domain.entry.DeleteTransaction
 import com.example.spend.ui.navigation.Routes
@@ -25,6 +26,7 @@ class EntryDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val entryRepository: EntryRepository,
     private val accountRepository: AccountRepository,
+    private val categoryRepository: CategoryRepository,
     private val preferencesRepository: PreferencesRepository,
     private val deleteTransactionUseCase: DeleteTransaction
 ): ViewModel() {
@@ -50,9 +52,14 @@ class EntryDetailViewModel @Inject constructor(
             if (entryCategory == null) {
                 emptyFlow()
             } else {
-                accountRepository.getAccountById(id = entryCategory.entry.id)
+                accountRepository.getAccountById(id = entryCategory.entry.accountId)
             }
         }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = durationMillis),
+            initialValue = null
+        )
 
     fun deleteTransaction() {
         entry.value?.let { entryCategory ->

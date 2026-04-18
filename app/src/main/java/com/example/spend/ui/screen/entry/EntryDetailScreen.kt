@@ -157,7 +157,13 @@ fun EntryDetailScreen(
                 }
                 Spacer(modifier = Modifier.weight(weight = 1f))
                 OutlinedButton(
-                    onClick = { navHostController.navigate(Routes.EditTransactionScreen) },
+                    onClick = {
+                        navHostController.navigate(
+                            Routes.EditTransactionScreen(
+                                id = entry?.entry?.id ?: -1L
+                            )
+                        )
+                    },
                     colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     ),

@@ -49,7 +49,7 @@ sealed class Routes {
     data class AccountDetailScreen(val id: Long): Routes()
 
     @Serializable
-    data object EditTransactionScreen: Routes()
+    data class EditTransactionScreen(val id: Long): Routes()
 
     @Serializable
     data class EditAccountScreen(val id: Long): Routes()

@@ -68,37 +68,37 @@ import com.example.spend.data.room.entry.Entry
 import com.example.spend.epochSecondsToDate
 import com.example.spend.getFormattedAmount
 import com.example.spend.isCurrencyAppropriate
-import com.example.spend.toTwoDecimal
 import com.example.spend.ui.screen.AccountBottomSheet
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.CategoryBottomSheet
 import com.example.spend.ui.screen.DatePicker
 import com.example.spend.ui.screen.showToast
-import com.example.spend.ui.viewmodel.entry.EntryViewModel
-import com.example.spend.validateCurrency
+import com.example.spend.ui.viewmodel.entry.EditEntryViewModel
 
 @Composable
 fun EditTransactionScreen(
     navHostController: NavHostController,
-    viewModel: EntryViewModel = hiltViewModel()
+    viewModel: EditEntryViewModel = hiltViewModel()
 ) {
-    val selectedEntry by viewModel.selectedEntry.collectAsState()
-    val selectedEntryAccount by viewModel.selectedEntryAccount.collectAsState(initial = null)
-    val currencySymbol by viewModel.currencySymbol.collectAsState()
-    val categories by viewModel.categories.collectAsState(initial = emptyList())
+    val entryCategory by viewModel.entry.collectAsState()
+    val account by viewModel.account.collectAsState(initial = null)
+    val category by viewModel.category.collectAsState()
+    val categories by viewModel.categories.collectAsState()
     val accounts by viewModel.accounts.collectAsState()
+    val currencySymbol by viewModel.currencySymbol.collectAsState()
 
-    var editedEntry by remember { mutableStateOf(value = selectedEntry?.entry ?: Entry()) }
-    var selectedCategory by remember { mutableStateOf(value = selectedEntry?.name ?: "") }
-    var selectedAccount by remember { mutableStateOf(value = selectedEntryAccount?.name ?: "") }
+    var editedEntry by remember(key1 = entryCategory) { mutableStateOf(value = entryCategory?.entry ?: Entry()) }
+    var selectedCategory by remember(key1 = category) { mutableStateOf(value = entryCategory?.name ?: "") }
+    var selectedAccount by remember(key1 = account) { mutableStateOf(value = account?.name ?: "") }
+
     var showDatePicker by remember { mutableStateOf(value = false) }
     var showAccountBottomSheet by remember { mutableStateOf(value = false) }
     var showCategoryBottomSheet by remember { mutableStateOf(value = false) }
     var isEditingAmount by remember { mutableStateOf(value = false) }
-    var amountInput by remember {
+    var amountInput by remember(key1 = entryCategory) {
         mutableStateOf(
             value = getFormattedAmount(
-                value = selectedEntry?.entry?.amount ?: 0.00
+                value = entryCategory?.entry?.amount ?: 0.00
             )
         )
     }
@@ -195,13 +195,13 @@ fun EditTransactionScreen(
             Spacer(modifier = Modifier.height(height = 16.dp))
             EditableDetailTile(
                 title = stringResource(id = R.string.account),
-                currentValue = if (selectedAccount != "") selectedAccount else (selectedEntryAccount?.name
+                currentValue = if (selectedAccount != "") selectedAccount else (account?.name
                     ?: ""),
                 icon = ImageVector.vectorResource(id = R.drawable.baseline_wallet),
                 action = {
                     IconButton(
                         onClick = {
-                            if ((selectedEntry?.entry?.categoryId ?: 0L) in 3..4) {
+                            if ((entryCategory?.entry?.categoryId ?: 0L) in 3..4) {
                                 viewModel.showToast(message = "Account of transfer transactions cannot be edited")
                             } else {
                                 showAccountBottomSheet = true
@@ -222,7 +222,7 @@ fun EditTransactionScreen(
                 action = {
                     IconButton(
                         onClick = {
-                            if ((selectedEntry?.entry?.categoryId ?: 0L) in 3..4) {
+                            if ((entryCategory?.entry?.categoryId ?: 0L) in 3..4) {
                                 viewModel.showToast(message = "Category of transfer transactions cannot be edited")
                             } else {
                                 showCategoryBottomSheet = true
