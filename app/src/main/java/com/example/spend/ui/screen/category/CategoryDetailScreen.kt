@@ -164,10 +164,7 @@ fun CategoryDetailScreen(
                             iconTint = Color.Black,
                             showDate = true,
                             clickable = true,
-                            onClick = {
-                                entryViewModel.selectEntry(entryCategory)
-                                navHostController.navigate(Routes.EntryDetailScreen)
-                            }
+                            onClick = { navHostController.navigate(Routes.EntryDetailScreen(id = entryCategory.entry.id)) }
                         )
                     }
                 }
