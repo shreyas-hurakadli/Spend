@@ -75,7 +75,7 @@ class AddViewModel @Inject constructor(
     private val _is24hr = MutableStateFlow(value = false)
     val is24hr = _is24hr.asStateFlow()
 
-    private var allAccount = Account()
+    private val allAccount = defaultAccountRepository.getFirstAccount()
 
     val accounts = defaultAccountRepository
         .getAllAccounts()
@@ -139,7 +139,6 @@ class AddViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _is24hr.value = defaultPreferencesRepository.timeFormat.first() == "24h"
-            allAccount = defaultAccountRepository.getFirstAccount().first()
         }
     }
 
@@ -262,7 +261,7 @@ class AddViewModel @Inject constructor(
                     entry = entry,
                     fromAccount = fromAccount,
                     toAccount = toAccount,
-                    allAccount = allAccount,
+                    allAccount = allAccount.first(),
                     transferIncomeId = transferCategoryIncome.value.id,
                     selectedIndex = selectedIndex
                 )

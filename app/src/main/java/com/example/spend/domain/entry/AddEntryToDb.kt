@@ -1,5 +1,6 @@
 package com.example.spend.domain.entry
 
+import android.util.Log
 import androidx.room.withTransaction
 import com.example.spend.data.room.RoomDatabaseClass
 import com.example.spend.data.room.account.Account
@@ -21,6 +22,11 @@ class AddEntryToDb @Inject constructor(
         transferIncomeId: Long,
         selectedIndex: Int
     ): Boolean = try {
+        Log.d("AddEntryToDb", entry.toString())
+        Log.d("AddEntryToDb", fromAccount.toString())
+        Log.d("AddEntryToDb", toAccount.toString())
+        Log.d("AddEntryToDb", allAccount.toString())
+        Log.d("AddEntryToDb", selectedIndex.toString())
         database.withTransaction {
             entryRepository.insert(entry)
             if (selectedIndex > 0) {
