@@ -56,7 +56,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun BudgetScreen(
     navHostController: NavHostController,
-    viewModel: BudgetViewModel = hiltViewModel()
+    viewModel: BudgetViewModel = hiltViewModel(),
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val drawerScope = rememberCoroutineScope()
@@ -119,8 +119,11 @@ fun BudgetScreen(
                                     expense = it.second,
                                     currencySymbol = currencySymbol,
                                     onClick = {
-                                        viewModel.selectBudget(budgetPair = it)
-                                        navHostController.navigate(route = Routes.BudgetDetailScreen)
+                                        navHostController.navigate(
+                                            route = Routes.BudgetDetailScreen(
+                                                id = it.first.id
+                                            )
+                                        )
                                     },
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp)

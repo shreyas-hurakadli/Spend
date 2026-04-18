@@ -2,7 +2,6 @@ package com.example.spend.data.room.budget
 
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
-import kotlin.time.Clock
 
 class DefaultBudgetRepository @Inject constructor(
     private val dao: BudgetDao
@@ -21,6 +20,8 @@ class DefaultBudgetRepository @Inject constructor(
 
     override fun getAllActiveBudgets(): Flow<List<Budget>> =
         dao.getBudgetsBetweenTime(time = System.currentTimeMillis() / 1000L)
+
+    override fun getBudgetById(id: Long): Flow<Budget?> = dao.getBudgetById(id = id)
 
     override fun thereAreBudgets(): Flow<Boolean> = dao.thereAreNoBudgets()
 }

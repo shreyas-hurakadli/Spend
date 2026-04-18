@@ -2,6 +2,7 @@ package com.example.spend.data.notification
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import androidx.core.app.NotificationCompat
 import com.example.spend.R
@@ -28,6 +29,7 @@ class NotificationService(
         contentTitle: String,
         contentText: String,
         priority: Int,
+        pendingIntent: PendingIntent,
         autoCancel: Boolean = true
     ) {
         val notification = NotificationCompat.Builder(context, channelId)
@@ -36,6 +38,7 @@ class NotificationService(
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setPriority(priority)
             .setAutoCancel(autoCancel)
+            .setContentIntent(pendingIntent)
             .build()
         notificationManager.notify(notificationId, notification)
     }

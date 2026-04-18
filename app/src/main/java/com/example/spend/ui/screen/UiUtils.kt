@@ -2,7 +2,6 @@ package com.example.spend.ui.screen
 
 import android.content.Context
 import android.widget.Toast
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -135,7 +134,7 @@ private val navigationIcon = listOf(
     NavigationIcon(
         baseLineIcon = R.drawable.baseline_summarize,
         outlinedIcon = R.drawable.outline_summarize,
-        route = Routes.ExpensesScreen,
+        route = Routes.SummaryScreen,
         contentDescription = "Summary"
     ),
     NavigationIcon(

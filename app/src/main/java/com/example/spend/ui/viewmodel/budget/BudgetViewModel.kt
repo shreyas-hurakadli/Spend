@@ -12,6 +12,7 @@ import com.example.spend.domain.budget.EditBudget
 import com.example.spend.ui.data.MAX_BUDGET_NAME_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.max
 
 private const val TIMEOUT_MILLIS = 1_000L
@@ -185,6 +187,13 @@ class BudgetViewModel @Inject constructor(
 
     fun selectBudget(budgetPair: Pair<Budget, Double>) {
         _selectedBudget.value = budgetPair
+    }
+
+    suspend fun selectBudget(id: Long): Boolean = withContext(context = Dispatchers.Default) {
+        _selectedBudget.value = _budgets.value.find {
+            it.first.id == id
+        }
+        true
     }
 
     fun deleteBudget(budget: Budget) {

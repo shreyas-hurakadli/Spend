@@ -33,4 +33,7 @@ interface BudgetDao {
 
     @Query("SELECT * FROM budgets WHERE :time BETWEEN start_time_stamp AND start_time_stamp + period")
     fun getBudgetsBetweenTime(time: Long): Flow<List<Budget>>
+
+    @Query("SELECT * FROM budgets WHERE id = :id")
+    fun getBudgetById(id: Long): Flow<Budget?>
 }

@@ -16,4 +16,6 @@ interface BudgetRepository {
     fun getAllBudgets(): Flow<List<Budget>>
 
     fun getAllActiveBudgets(): Flow<List<Budget>>
+
+    fun getBudgetById(id: Long): Flow<Budget?>
 }

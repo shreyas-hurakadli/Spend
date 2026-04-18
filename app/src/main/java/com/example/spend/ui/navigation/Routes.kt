@@ -13,7 +13,7 @@ sealed class Routes {
     data object HomeScreen: Routes()
 
     @Serializable
-    data object ExpensesScreen: Routes()
+    data object SummaryScreen: Routes()
 
     @Serializable
     data object AddScreen: Routes()
@@ -43,7 +43,7 @@ sealed class Routes {
     data object EntryDetailScreen: Routes()
 
     @Serializable
-    data object BudgetDetailScreen: Routes()
+    data class BudgetDetailScreen(val id: Long): Routes()
 
     @Serializable
     data object AccountDetailScreen: Routes()

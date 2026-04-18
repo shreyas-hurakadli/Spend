@@ -16,8 +16,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.spend.ui.screen.IntroductionScreen
 import com.example.spend.ui.screen.HomeScreen
+import com.example.spend.ui.screen.IntroductionScreen
 import com.example.spend.ui.screen.SettingsScreen
 import com.example.spend.ui.screen.SummaryScreen
 import com.example.spend.ui.screen.account.AccountDetailScreen
@@ -94,17 +94,14 @@ fun NavigationManager(
             composable<Routes.HomeScreen> {
                 HomeScreen(navHostController = navHostController)
             }
-            composable<Routes.ExpensesScreen> {
+            composable<Routes.SummaryScreen> {
                 SummaryScreen(navHostController = navHostController)
             }
             composable<Routes.AddScreen> {
                 AddScreen(navHostController = navHostController)
             }
             composable<Routes.EntryScreen> {
-                EntryScreen(
-                    navHostController = navHostController,
-                    viewModel = hiltViewModel(viewModelStoreOwner = it)
-                )
+                EntryScreen(navHostController = navHostController)
             }
             composable<Routes.SettingsScreen> {
                 SettingsScreen(navHostController = navHostController)
@@ -122,7 +119,9 @@ fun NavigationManager(
                 CreateCategoryScreen(navHostController = navHostController)
             }
             composable<Routes.BudgetScreen> {
-                BudgetScreen(navHostController = navHostController)
+                BudgetScreen(
+                    navHostController = navHostController,
+                )
             }
             composable<Routes.AddBudgetScreen> {
                 AddBudgetScreen(navHostController = navHostController)
@@ -156,12 +155,7 @@ fun NavigationManager(
                 )
             }
             composable<Routes.BudgetDetailScreen> {
-                BudgetDetailScreen(
-                    navHostController = navHostController,
-                    viewModel = if (navHostController.previousBackStackEntry != null) hiltViewModel(
-                        viewModelStoreOwner = navHostController.previousBackStackEntry!!
-                    ) else hiltViewModel()
-                )
+                BudgetDetailScreen(navHostController = navHostController)
             }
             composable<Routes.CategoryDetailScreen> {
                 val backStackEntry = remember(key1 = it) {
