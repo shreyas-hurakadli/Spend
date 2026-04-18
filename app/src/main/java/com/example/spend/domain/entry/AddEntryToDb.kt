@@ -22,11 +22,6 @@ class AddEntryToDb @Inject constructor(
         transferIncomeId: Long,
         selectedIndex: Int
     ): Boolean = try {
-        Log.d("AddEntryToDb", entry.toString())
-        Log.d("AddEntryToDb", fromAccount.toString())
-        Log.d("AddEntryToDb", toAccount.toString())
-        Log.d("AddEntryToDb", allAccount.toString())
-        Log.d("AddEntryToDb", selectedIndex.toString())
         database.withTransaction {
             entryRepository.insert(entry)
             if (selectedIndex > 0) {
