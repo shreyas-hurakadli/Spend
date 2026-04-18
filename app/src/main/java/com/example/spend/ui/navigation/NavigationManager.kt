@@ -211,20 +211,7 @@ fun NavigationManager(
                 )
             }
             composable<Routes.EditBudgetScreen> {
-                val backStackEntry = remember(key1 = it) {
-                    try {
-                        navHostController.getBackStackEntry(route = Routes.BudgetScreen)
-                    } catch (e: Exception) {
-                        null
-                    }
-                }
-                EditBudgetScreen(
-                    navHostController = navHostController,
-                    viewModel = if (backStackEntry != null) hiltViewModel(
-                        viewModelStoreOwner = backStackEntry
-                    )
-                    else hiltViewModel()
-                )
+                EditBudgetScreen(navHostController = navHostController)
             }
             composable<Routes.EditCategoryScreen> {
                 val backStackEntry = remember(key1 = it) {

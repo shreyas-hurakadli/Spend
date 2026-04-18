@@ -7,6 +7,7 @@ import androidx.navigation.toRoute
 import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.data.room.budget.BudgetRepository
 import com.example.spend.data.room.entry.EntryRepository
+import com.example.spend.domain.budget.DeleteBudget
 import com.example.spend.ui.navigation.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TIMEOUT_MILLIS = 1_000L
@@ -26,7 +28,8 @@ class BudgetDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val entryRepository: EntryRepository,
     private val budgetRepository: BudgetRepository,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val deleteBudgetUseCase: DeleteBudget
 ) : ViewModel() {
     private val budgetId = savedStateHandle.toRoute<Routes.BudgetDetailScreen>().id
 
@@ -100,4 +103,12 @@ class BudgetDetailViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),
             initialValue = ""
         )
+
+    fun deleteBudget() {
+        viewModelScope.launch {
+            budget.value?.let { budget ->
+                deleteBudgetUseCase(budget = budget)
+            }
+        }
+    }
 }

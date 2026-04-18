@@ -63,7 +63,7 @@ import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.CategoryBottomSheet
 import com.example.spend.ui.screen.DatePicker
 import com.example.spend.ui.screen.showToast
-import com.example.spend.ui.viewmodel.budget.BudgetViewModel
+import com.example.spend.ui.viewmodel.budget.EditBudgetViewModel
 import com.example.spend.validateCurrency
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -71,23 +71,23 @@ import kotlinx.coroutines.withContext
 @Composable
 fun EditBudgetScreen(
     navHostController: NavHostController,
-    viewModel: BudgetViewModel = hiltViewModel()
+    viewModel: EditBudgetViewModel = hiltViewModel()
 ) {
     val showToast by viewModel.showToast.collectAsState()
     val toastMessage by viewModel.toastMessage.collectAsState()
-    val selectedBudget by viewModel.selectedBudget.collectAsState()
+    val budget by viewModel.budget.collectAsState()
     val currencyCode by viewModel.currencyCode.collectAsState()
     val currencySymbol by viewModel.currencySymbol.collectAsState()
     val accounts by viewModel.accounts.collectAsState()
     val categories by viewModel.categories.collectAsState()
 
-    var editedBudget by remember { mutableStateOf(value = selectedBudget?.first) }
+    var editedBudget by remember(key1 = budget) { mutableStateOf(value = budget) }
     var showDatePicker by remember { mutableStateOf(value = false) }
     var showAccounts by remember { mutableStateOf(value = false) }
     var showCategories by remember { mutableStateOf(value = false) }
     var selectedAccount: Account? by remember { mutableStateOf(value = null) }
     var selectedCategory: Category? by remember { mutableStateOf(value = null) }
-    var amountInput by remember { mutableStateOf(value = editedBudget?.amount?.toString() ?: "") }
+    var amountInput by remember(key1 = budget) { mutableStateOf(value = editedBudget?.amount?.toString() ?: "") }
 
     val context = LocalContext.current
 
@@ -102,12 +102,12 @@ fun EditBudgetScreen(
         withContext(context = Dispatchers.Default) {
             if (selectedAccount == null) {
                 selectedAccount = accounts.find {
-                    it.id == selectedBudget?.first?.accountId
+                    it.id == budget?.accountId
                 }
             }
             if (selectedCategory == null) {
                 selectedCategory = categories.find {
-                    it.id == selectedBudget?.first?.categoryId
+                    it.id == budget?.categoryId
                 }
             }
         }
@@ -131,7 +131,7 @@ fun EditBudgetScreen(
                 .fillMaxSize()
                 .verticalScroll(state = rememberScrollState())
         ) {
-            if (selectedBudget == null) {
+            if (budget == null) {
                 CircularProgressIndicator()
             }
             editedBudget?.let {

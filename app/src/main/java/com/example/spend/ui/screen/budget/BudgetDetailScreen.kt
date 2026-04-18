@@ -49,6 +49,7 @@ import com.example.spend.R
 import com.example.spend.getFormattedAmount
 import com.example.spend.ui.navigation.Routes
 import com.example.spend.ui.screen.AppTopBar
+import com.example.spend.ui.screen.DialogBox
 import com.example.spend.ui.screen.NoTransactions
 import com.example.spend.ui.screen.TransactionCard
 import com.example.spend.ui.viewmodel.budget.BudgetDetailViewModel
@@ -240,7 +241,7 @@ fun BudgetDetailScreen(
                 }
             }
             OutlinedButton(
-                onClick = { navHostController.navigate(Routes.EditBudgetScreen) },
+                onClick = { navHostController.navigate(Routes.EditBudgetScreen(id = budget?.id ?: -1L)) },
                 colors = ButtonDefaults.filledTonalButtonColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 ),
@@ -253,13 +254,12 @@ fun BudgetDetailScreen(
             }
         }
     }
-    /*
     if (showDialogBox) {
         DialogBox(
             onDismissRequest = { showDialogBox = false },
             onConfirmation = {
                 navHostController.popBackStack()
-                viewModel.deleteBudget(selectedBudget?.first ?: Budget())
+                viewModel.deleteBudget()
             },
             dialogTitle = stringResource(id = R.string.delete_budget),
             dialogText = stringResource(id = R.string.budget_delete_message),
@@ -272,5 +272,4 @@ fun BudgetDetailScreen(
             dismissText = { Text(text = stringResource(id = R.string.cancel)) },
         )
     }
-     */
 }

@@ -55,7 +55,7 @@ sealed class Routes {
     data object EditAccountScreen: Routes()
 
     @Serializable
-    data object EditBudgetScreen: Routes()
+    data class EditBudgetScreen(val id: Long): Routes()
 
     @Serializable
     data object CurrencyConverterScreen: Routes()

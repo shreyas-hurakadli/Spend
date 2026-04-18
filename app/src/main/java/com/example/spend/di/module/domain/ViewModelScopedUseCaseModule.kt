@@ -2,11 +2,9 @@ package com.example.spend.di.module.domain
 
 import com.example.spend.data.room.RoomDatabaseClass
 import com.example.spend.data.room.account.AccountRepository
-import com.example.spend.data.room.budget.BudgetRepository
 import com.example.spend.data.room.entry.EntryRepository
 import com.example.spend.domain.account.DeleteAccount
 import com.example.spend.domain.account.EditAccount
-import com.example.spend.domain.budget.EditBudget
 import com.example.spend.domain.entry.DeleteTransaction
 import com.example.spend.domain.entry.EditTransaction
 import dagger.Module
@@ -54,15 +52,6 @@ object ViewModelScopedUseCaseModule {
         database: RoomDatabaseClass
     ): EditAccount = EditAccount(
         accountRepository = accountRepository,
-        database = database
-    )
-    
-    @Provides
-    fun provideEditBudget(
-        budgetRepository: BudgetRepository,
-        database: RoomDatabaseClass
-    ): EditBudget = EditBudget(
-        budgetRepository = budgetRepository,
         database = database
     )
 }

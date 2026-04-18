@@ -7,6 +7,8 @@ import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.currency.CurrencyRepository
 import com.example.spend.data.room.entry.EntryRepository
 import com.example.spend.domain.account.AddAccount
+import com.example.spend.domain.budget.DeleteBudget
+import com.example.spend.domain.budget.EditBudget
 import com.example.spend.domain.category.AddCategory
 import com.example.spend.domain.entry.AddEntryToDb
 import com.example.spend.domain.settings.ResetData
@@ -61,6 +63,24 @@ object UseCaseModule {
         categoryRepository = categoryRepository,
         budgetRepository = budgetRepository,
         currencyRepository = currencyRepository,
+        database = database
+    )
+
+    @Provides
+    fun provideDeleteBudget(
+        budgetRepository: BudgetRepository,
+        database: RoomDatabaseClass
+    ): DeleteBudget = DeleteBudget(
+        budgetRepository = budgetRepository,
+        database = database
+    )
+
+    @Provides
+    fun provideEditBudget(
+        budgetRepository: BudgetRepository,
+        database: RoomDatabaseClass
+    ): EditBudget = EditBudget(
+        budgetRepository = budgetRepository,
         database = database
     )
 }
