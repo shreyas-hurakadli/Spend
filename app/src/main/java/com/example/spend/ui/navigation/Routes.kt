@@ -64,7 +64,7 @@ sealed class Routes {
     data object CategoryScreen: Routes()
 
     @Serializable
-    data object CategoryDetailScreen: Routes()
+    data class CategoryDetailScreen(val id: Long): Routes()
 
     @Serializable
     data object EditCategoryScreen: Routes()

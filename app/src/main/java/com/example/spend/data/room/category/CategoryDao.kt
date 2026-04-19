@@ -149,7 +149,7 @@ interface CategoryDao {
     }
 
     @Query("SELECT * FROM categories WHERE id = :id")
-    fun getCategory(id: Long): Flow<Category>
+    fun getCategory(id: Long): Flow<Category?>
 
     @Query("SELECT * FROM categories")
     fun getAllCategories(): Flow<List<Category>>
@@ -165,4 +165,7 @@ interface CategoryDao {
 
     @Query("SELECT * FROM categories WHERE name = :name AND is_expense = :isExpense")
     fun findCategoryByNameAndType(name: String, isExpense: Int): Flow<Category>
+
+    @Query("SELECT SUM(amount) FROM entries WHERE category_id = :id")
+    fun getExpenseByCategoryId(id: Long): Flow<Double>
 }

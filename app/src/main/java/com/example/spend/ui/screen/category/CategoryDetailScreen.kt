@@ -49,18 +49,16 @@ import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.DialogBox
 import com.example.spend.ui.screen.NoTransactions
 import com.example.spend.ui.screen.TransactionCard
-import com.example.spend.ui.viewmodel.category.CategoryViewModel
-import com.example.spend.ui.viewmodel.entry.EntryViewModel
+import com.example.spend.ui.viewmodel.category.CategoryDetailViewModel
 
 @Composable
 fun CategoryDetailScreen(
     navHostController: NavHostController,
-    entryViewModel: EntryViewModel = hiltViewModel(),
-    viewModel: CategoryViewModel = hiltViewModel()
+    viewModel: CategoryDetailViewModel = hiltViewModel()
 ) {
-    val selectedCategory by viewModel.selectedCategory.collectAsState()
-    val transactions by viewModel.categoryTransactions.collectAsState()
-    val totalCategoryAmount by viewModel.totalCategoryAmount.collectAsState()
+    val category by viewModel.category.collectAsState()
+    val transactions by viewModel.transactions.collectAsState()
+    val totalCategoryAmount by viewModel.amount.collectAsState()
     val currencySymbol by viewModel.currencySymbol.collectAsState()
 
     var showDialogBox by remember { mutableStateOf(value = false) }
@@ -99,52 +97,54 @@ fun CategoryDetailScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .background(
-                                    color = selectedCategory.color,
-                                    shape = RoundedCornerShape(size = 16.dp)
-                                )
-                                .size(size = 60.dp)
-                        ) {
-                            selectedCategory.icon?.let { icon ->
-                                icons[icon]?.let { resourceId ->
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(id = resourceId),
-                                        tint = MaterialTheme.colorScheme.onBackground,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(size = 30.dp)
+                        category?.let { category ->
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .background(
+                                        color = category.color,
+                                        shape = RoundedCornerShape(size = 16.dp)
                                     )
+                                    .size(size = 60.dp)
+                            ) {
+                                category.icon?.let { icon ->
+                                    icons[icon]?.let { resourceId ->
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(id = resourceId),
+                                            tint = MaterialTheme.colorScheme.onBackground,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(size = 30.dp)
+                                        )
+                                    }
                                 }
                             }
-                        }
-                        Spacer(modifier = Modifier.height(height = 8.dp))
-                        Text(
-                            text = selectedCategory.name,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(height = 16.dp))
-                        BasicText(
-                            text = "$currencySymbol ${getFormattedAmount(value = totalCategoryAmount)}",
-                            style = MaterialTheme.typography.displayMedium.copy(
+                            Spacer(modifier = Modifier.height(height = 8.dp))
+                            Text(
+                                text = category.name,
+                                style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Bold
-                            ),
-                            autoSize = TextAutoSize.StepBased(
-                                minFontSize = 24.sp,
-                                maxFontSize = 48.sp
-                            ),
-                            maxLines = 1
-                        )
-                        Spacer(modifier = Modifier.height(height = 16.dp))
-                        Text(
-                            text = stringResource(id = R.string.transactions),
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.align(Alignment.Start)
-                        )
-                        Spacer(modifier = Modifier.height(height = 8.dp))
+                            )
+                            Spacer(modifier = Modifier.height(height = 16.dp))
+                            BasicText(
+                                text = "$currencySymbol ${getFormattedAmount(value = totalCategoryAmount)}",
+                                style = MaterialTheme.typography.displayMedium.copy(
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                autoSize = TextAutoSize.StepBased(
+                                    minFontSize = 24.sp,
+                                    maxFontSize = 48.sp
+                                ),
+                                maxLines = 1
+                            )
+                            Spacer(modifier = Modifier.height(height = 16.dp))
+                            Text(
+                                text = stringResource(id = R.string.transactions),
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.align(Alignment.Start)
+                            )
+                            Spacer(modifier = Modifier.height(height = 8.dp))
+                        }
                         if (transactions.isEmpty()) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -187,8 +187,8 @@ fun CategoryDetailScreen(
             DialogBox(
                 onDismissRequest = { showDialogBox = false },
                 onConfirmation = {
+                    viewModel.deleteCategory()
                     navHostController.popBackStack()
-                    viewModel.deleteCategory(selectedCategory)
                 },
                 dialogTitle = stringResource(id = R.string.delete_category),
                 dialogText = stringResource(id = R.string.category_delete_message),

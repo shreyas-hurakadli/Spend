@@ -13,7 +13,7 @@ interface CategoryRepository {
 
     suspend fun resetData()
 
-    fun getCategory(id: Long): Flow<Category>
+    fun getCategory(id: Long): Flow<Category?>
 
     fun getAllCategories(): Flow<List<Category>>
 
@@ -24,4 +24,6 @@ interface CategoryRepository {
     fun findCategoryById(id: Long): Flow<Category>
 
     fun findCategoryByNameAndId(name: String, isExpense: Boolean): Flow<Category>
+
+    fun getExpenseByCategoryId(id: Long): Flow<Double>
 }

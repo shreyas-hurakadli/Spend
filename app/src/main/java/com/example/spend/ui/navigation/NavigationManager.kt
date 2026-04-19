@@ -119,9 +119,7 @@ fun NavigationManager(
                 CreateCategoryScreen(navHostController = navHostController)
             }
             composable<Routes.BudgetScreen> {
-                BudgetScreen(
-                    navHostController = navHostController,
-                )
+                BudgetScreen(navHostController = navHostController)
             }
             composable<Routes.AddBudgetScreen> {
                 AddBudgetScreen(navHostController = navHostController)
@@ -136,13 +134,7 @@ fun NavigationManager(
                 BudgetDetailScreen(navHostController = navHostController)
             }
             composable<Routes.CategoryDetailScreen> {
-                val backStackEntry = remember(key1 = it) {
-                    navHostController.getBackStackEntry(route = Routes.CategoryScreen)
-                }
-                CategoryDetailScreen(
-                    navHostController = navHostController,
-                    viewModel = hiltViewModel(viewModelStoreOwner = backStackEntry)
-                )
+                CategoryDetailScreen(navHostController = navHostController)
             }
             composable<Routes.AccountDetailScreen> {
                 AccountDetailScreen(navHostController = navHostController)

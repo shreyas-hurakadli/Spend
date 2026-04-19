@@ -102,8 +102,11 @@ fun CategoryScreen(
                     CategoryView(
                         category = category,
                         onClick = {
-                            viewModel.selectCategory(category = it)
-                            navHostController.navigate(route = Routes.CategoryDetailScreen)
+                            navHostController.navigate(
+                                route = Routes.CategoryDetailScreen(
+                                    id = it.id
+                                )
+                            )
                         }
                     )
                 }

@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 class DefaultCategoryRepository @Inject constructor(
     private val dao: CategoryDao
-): CategoryRepository {
+) : CategoryRepository {
     override suspend fun insert(category: Category): Long = dao.insert(category)
 
     override suspend fun update(category: Category) = dao.update(category)
@@ -19,7 +19,7 @@ class DefaultCategoryRepository @Inject constructor(
 
     override suspend fun resetData() = dao.resetData()
 
-    override fun getCategory(id: Long): Flow<Category> = dao.getCategory(id)
+    override fun getCategory(id: Long): Flow<Category?> = dao.getCategory(id)
 
     override fun getAllCategories(): Flow<List<Category>> = dao.getAllCategories()
 
@@ -29,5 +29,9 @@ class DefaultCategoryRepository @Inject constructor(
 
     override fun findCategoryById(id: Long): Flow<Category> = dao.findCategoryById(id)
 
-    override fun findCategoryByNameAndId(name: String, isExpense: Boolean): Flow<Category> = dao.findCategoryByNameAndType(name, if (isExpense) 1 else 0)
+    override fun findCategoryByNameAndId(name: String, isExpense: Boolean): Flow<Category> =
+        dao.findCategoryByNameAndType(name, if (isExpense) 1 else 0)
+
+    override fun getExpenseByCategoryId(id: Long): Flow<Double> =
+        dao.getExpenseByCategoryId(id = id)
 }
