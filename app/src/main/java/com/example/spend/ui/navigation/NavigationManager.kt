@@ -1,5 +1,6 @@
 package com.example.spend.ui.navigation
 
+import android.content.Intent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -15,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.spend.data.intent.PendingIntentData
 import com.example.spend.ui.screen.HomeScreen
 import com.example.spend.ui.screen.IntroductionScreen
 import com.example.spend.ui.screen.SettingsScreen
@@ -44,6 +46,7 @@ private const val durationMillis = 150
 @Composable
 fun NavigationManager(
     navHostController: NavHostController,
+    intent: Intent,
     viewModel: AppViewModel = hiltViewModel()
 ) {
     val startDestination by viewModel.startDestination.collectAsState()
@@ -151,5 +154,21 @@ fun NavigationManager(
                 EditCategoryScreen(navHostController = navHostController)
             }
         }
+
+        handleIntent(
+            intent = intent,
+            navHostController = navHostController
+        )
+    }
+
+}
+
+private fun handleIntent(
+    intent: Intent,
+    navHostController: NavHostController
+) {
+    val budgetId = intent.getLongExtra(PendingIntentData.budgetId, -1L)
+    if (budgetId != -1L) {
+        navHostController.navigate(Routes.BudgetDetailScreen(id = budgetId))
     }
 }
