@@ -55,24 +55,25 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.spend.R
+import com.example.spend.data.room.category.Category
 import com.example.spend.ui.data.MAX_CATEGORY_NAME_LENGTH
 import com.example.spend.ui.data.icons
 import com.example.spend.ui.data.pastelColors
 import com.example.spend.ui.screen.AppTopBar
 import com.example.spend.ui.screen.SegmentedControl
 import com.example.spend.ui.screen.showToast
-import com.example.spend.ui.viewmodel.category.CategoryViewModel
+import com.example.spend.ui.viewmodel.category.EditCategoryViewModel
 
 @Composable
 fun EditCategoryScreen(
     navHostController: NavHostController,
-    viewModel: CategoryViewModel = hiltViewModel()
+    viewModel: EditCategoryViewModel = hiltViewModel()
 ) {
-    val selectedCategory by viewModel.selectedCategory.collectAsState()
+    val category by viewModel.category.collectAsState()
     val showToast by viewModel.showToast.collectAsState()
     val toastMessage by viewModel.toastMessage.collectAsState()
 
-    var editedCategory by remember { mutableStateOf(value = selectedCategory) }
+    var editedCategory by remember(key1 = category) { mutableStateOf(value = category) }
 
     val context = LocalContext.current
 
@@ -100,8 +101,8 @@ fun EditCategoryScreen(
         ) {
             SegmentedControl(
                 options = listOf("Income", "Expenses"),
-                selectedIndex = if (editedCategory.isExpense) 1 else 0,
-                onSegmentSelected = { editedCategory = editedCategory.copy(isExpense = (it == 1)) }
+                selectedIndex = if (editedCategory?.isExpense ?: false) 1 else 0,
+                onSegmentSelected = { editedCategory = editedCategory?.copy(isExpense = (it == 1)) }
             )
             Spacer(Modifier.height(8.dp))
             Row(
@@ -109,46 +110,50 @@ fun EditCategoryScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(55.dp)
-                        .background(
-                            color = editedCategory.color,
-                            shape = RoundedCornerShape(size = 16.dp)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    icons[editedCategory.icon]?.let { resourceId ->
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = resourceId),
-                            contentDescription = null,
-                            modifier = Modifier.size(30.dp)
-                        )
+                editedCategory?.color?.let {
+                    Box(
+                        modifier = Modifier
+                            .size(55.dp)
+                            .background(
+                                color = it,
+                                shape = RoundedCornerShape(size = 16.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        icons[editedCategory?.icon]?.let { resourceId ->
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = resourceId),
+                                contentDescription = null,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
                     }
                 }
                 Spacer(Modifier.width(4.dp))
-                OutlinedTextField(
-                    value = editedCategory.name,
-                    onValueChange = { input -> editedCategory = editedCategory.copy(name = input) },
-                    label = {
-                        Text(
-                            text = "Enter category name",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    },
-                    isError = editedCategory.name.length > MAX_CATEGORY_NAME_LENGTH,
-                    singleLine = true,
-                    shape = RoundedCornerShape(size = 24.dp),
-                    textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 16.sp
-                    ),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text
-                    ),
-                    modifier = Modifier.weight(1f)
-                )
+                editedCategory?.name?.let {
+                    OutlinedTextField(
+                        value = it,
+                        onValueChange = { input -> editedCategory = editedCategory?.copy(name = input) },
+                        label = {
+                            Text(
+                                text = "Enter category name",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        isError = it.length > MAX_CATEGORY_NAME_LENGTH,
+                        singleLine = true,
+                        shape = RoundedCornerShape(size = 24.dp),
+                        textStyle = TextStyle(
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = 16.sp
+                        ),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text
+                        ),
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
             Spacer(Modifier.height(16.dp))
             Text(
@@ -180,14 +185,14 @@ fun EditCategoryScreen(
                                 .size(36.dp)
                                 .background(color)
                                 .border(
-                                    width = if (color == editedCategory.color) 2.dp else 0.dp,
+                                    width = if (color == editedCategory?.color) 2.dp else 0.dp,
                                     color = MaterialTheme.colorScheme.onTertiary,
                                     shape = CircleShape
                                 )
                                 .clickable(
                                     enabled = true,
                                     onClick = {
-                                        editedCategory = editedCategory.copy(color = color)
+                                        editedCategory = editedCategory?.copy(color = color)
                                     }
                                 )
                         )
@@ -220,7 +225,7 @@ fun EditCategoryScreen(
                         key = { it.key }
                     ) { entry ->
                         IconButton(
-                            onClick = { editedCategory = editedCategory.copy(icon = entry.key) },
+                            onClick = { editedCategory = editedCategory?.copy(icon = entry.key) },
                             modifier = Modifier.wrapContentSize()
                         ) {
                             Icon(
@@ -234,7 +239,7 @@ fun EditCategoryScreen(
             }
             Spacer(Modifier.weight(1f))
             OutlinedButton(
-                onClick = { viewModel.editCategory(editedCategory) },
+                onClick = { viewModel.editCategory(editedCategory ?: Category()) },
                 colors = ButtonDefaults.filledTonalButtonColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 ),

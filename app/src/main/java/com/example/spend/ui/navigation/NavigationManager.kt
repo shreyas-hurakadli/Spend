@@ -9,7 +9,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -149,20 +148,7 @@ fun NavigationManager(
                 EditBudgetScreen(navHostController = navHostController)
             }
             composable<Routes.EditCategoryScreen> {
-                val backStackEntry = remember(key1 = it) {
-                    try {
-                        navHostController.getBackStackEntry(route = Routes.CategoryScreen)
-                    } catch (e: Exception) {
-                        null
-                    }
-                }
-                EditCategoryScreen(
-                    navHostController = navHostController,
-                    viewModel = if (backStackEntry != null) hiltViewModel(
-                        viewModelStoreOwner = backStackEntry
-                    )
-                    else hiltViewModel()
-                )
+                EditCategoryScreen(navHostController = navHostController)
             }
         }
     }

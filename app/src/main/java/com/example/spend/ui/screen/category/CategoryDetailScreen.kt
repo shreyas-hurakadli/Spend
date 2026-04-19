@@ -170,7 +170,13 @@ fun CategoryDetailScreen(
                 }
             }
             OutlinedButton(
-                onClick = { navHostController.navigate(route = Routes.EditCategoryScreen) },
+                onClick = {
+                    navHostController.navigate(
+                        route = Routes.EditCategoryScreen(
+                            id = category?.id ?: -1L
+                        )
+                    )
+                },
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
