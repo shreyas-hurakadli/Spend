@@ -17,17 +17,17 @@ private const val durationMillis = 1_000L
 
 @HiltViewModel
 class EntryViewModel @Inject constructor(
-    private val defaultRepository: EntryRepository,
-    private val defaultPreferencesRepository: PreferencesRepository,
+    private val entryRepository: EntryRepository,
+    private val preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
-    val currencySymbol = defaultPreferencesRepository.baseCurrencySymbol
+    val currencySymbol = preferencesRepository.baseCurrencySymbol
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = durationMillis),
             initialValue = ""
         )
 
-    val thereAreEntries = defaultRepository.areEntriesPresent()
+    val thereAreEntries = entryRepository.areEntriesPresent()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = durationMillis),
@@ -35,7 +35,7 @@ class EntryViewModel @Inject constructor(
         )
 
     val transactions =
-        defaultRepository.getEntryIconAndColor()
+        entryRepository.getEntryIconAndColor()
             .map {
                 it.groupBy { entryCategory -> longToDate(longDate = entryCategory.entry.epochSeconds) }
             }

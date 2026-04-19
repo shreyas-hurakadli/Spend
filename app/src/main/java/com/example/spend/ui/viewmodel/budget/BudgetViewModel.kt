@@ -8,7 +8,6 @@ import com.example.spend.data.room.budget.Budget
 import com.example.spend.data.room.budget.BudgetRepository
 import com.example.spend.data.room.category.CategoryRepository
 import com.example.spend.data.room.entry.EntryRepository
-import com.example.spend.domain.budget.EditBudget
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.async
@@ -28,21 +27,20 @@ class BudgetViewModel @Inject constructor(
     private val budgetRepository: BudgetRepository,
     private val accountRepository: AccountRepository,
     private val categoryRepository: CategoryRepository,
-    private val defaultPreferencesRepository: PreferencesRepository,
-    private val editBudgetUseCase: EditBudget
+    private val preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
     private val _budgets: MutableStateFlow<List<Pair<Budget, Double>>> =
         MutableStateFlow(value = emptyList())
     val budgets = _budgets.asStateFlow()
 
-    val currencySymbol = defaultPreferencesRepository.baseCurrencySymbol
+    val currencySymbol = preferencesRepository.baseCurrencySymbol
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),
             initialValue = ""
         )
 
-    val currencyCode = defaultPreferencesRepository.baseCurrency
+    val currencyCode = preferencesRepository.baseCurrency
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = TIMEOUT_MILLIS),
