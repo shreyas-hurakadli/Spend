@@ -1,6 +1,7 @@
 package com.example.spend.di.module.retrofit
 
 import com.example.spend.data.api.currency.CurrencyApiService
+import com.example.spend.ui.data.CURRENCY_API_URL
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -19,7 +20,7 @@ object NetworkModule {
     fun provideJson(): Json = Json { ignoreUnknownKeys = true }
 
     @Provides
-    fun provideUrl(): String = "https://api.frankfurter.dev/"
+    fun provideUrl(): String = CURRENCY_API_URL
 
     @Provides
     @Singleton
