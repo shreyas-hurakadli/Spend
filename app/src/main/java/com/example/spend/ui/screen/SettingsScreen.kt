@@ -57,6 +57,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import com.example.spend.R
+import com.example.spend.ui.data.APP_VERSION
+import com.example.spend.ui.data.PRIVACY_POLICY_URL
 import com.example.spend.ui.navigation.RouteNumbers
 import com.example.spend.ui.screen.currency.CurrencyBottomSheet
 import com.example.spend.ui.viewmodel.SettingsViewModel
@@ -269,7 +271,7 @@ fun SettingsScreen(
                         description = "",
                         action = {
                             Text(
-                                text = "1.0.0",
+                                text = APP_VERSION,
                                 style = MaterialTheme.typography.labelSmall
                             )
                         }
@@ -278,6 +280,8 @@ fun SettingsScreen(
                         name = "Privacy Policy",
                         icon = ImageVector.vectorResource(id = R.drawable.policy),
                         description = "",
+                        clickable = true,
+                        onClick = { viewModel.redirectToUrl(url = PRIVACY_POLICY_URL) },
                         action = {}
                     )
                 }

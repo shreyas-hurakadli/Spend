@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spend.data.datastore.config.PreferencesRepository
 import com.example.spend.domain.settings.ExportCsv
+import com.example.spend.domain.settings.RedirectToUrl
 import com.example.spend.domain.settings.ResetData
-import com.example.spend.ui.screen.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,10 +25,11 @@ private const val DURATION_MILLIS = 1_000L
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    @ApplicationContext context: Context,
+    @ApplicationContext private val context: Context,
     private val defaultPreferencesRepository: PreferencesRepository,
     private val resetDataUseCase: ResetData,
-    private val exportCsvUseCase: ExportCsv
+    private val exportCsvUseCase: ExportCsv,
+    private val redirectToUrlUseCase: RedirectToUrl
 ) : ViewModel() {
     private val notificationManagerCompat = NotificationManagerCompat.from(context)
 
@@ -142,6 +143,13 @@ class SettingsViewModel @Inject constructor(
             } else {
                 showToast(message = "Failed to export files")
             }
+        }
+    }
+
+    fun redirectToUrl(url: String) {
+        val result = redirectToUrlUseCase(url)
+        if (!result) {
+            showToast(message = "No web browser found")
         }
     }
 

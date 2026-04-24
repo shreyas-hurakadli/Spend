@@ -1,5 +1,6 @@
 package com.example.spend.di.module.domain
 
+import android.content.Context
 import com.example.spend.data.room.RoomDatabaseClass
 import com.example.spend.data.room.account.AccountRepository
 import com.example.spend.data.room.budget.BudgetRepository
@@ -11,10 +12,12 @@ import com.example.spend.domain.budget.DeleteBudget
 import com.example.spend.domain.budget.EditBudget
 import com.example.spend.domain.category.AddCategory
 import com.example.spend.domain.entry.AddEntryToDb
+import com.example.spend.domain.settings.RedirectToUrl
 import com.example.spend.domain.settings.ResetData
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
 @Module
@@ -83,4 +86,9 @@ object UseCaseModule {
         budgetRepository = budgetRepository,
         database = database
     )
+
+    @Provides
+    fun provideRedirectUrl(
+        @ApplicationContext context: Context
+    ): RedirectToUrl = RedirectToUrl(context = context)
 }
