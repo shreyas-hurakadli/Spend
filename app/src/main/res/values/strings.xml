@@ -110,4 +110,5 @@
     <string name="category_detail">Category Detail</string>
     <string name="currency">Currency</string>
     <string name="currency_setting_message">Choose your preferred currency</string>
+    <string name="total_income">Total Income</string>
 </resources>

@@ -75,7 +75,7 @@ fun SummaryScreen(
     viewModel: SummaryViewModel = hiltViewModel()
 ) {
     var index by remember { mutableIntStateOf(value = 1) }
-    val total = 2
+    val total by remember { mutableIntStateOf(value = 2) }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val drawerScope = rememberCoroutineScope()
@@ -130,7 +130,7 @@ fun SummaryScreen(
                         )
                         Spacer(Modifier.padding(all = 8.dp))
                         InfoBar(
-                            balance = uiState.income - uiState.expense,
+                            balance = uiState.income,
                             expense = uiState.expense,
                             currencySymbol = currencySymbol
                         )
@@ -231,16 +231,18 @@ private fun InfoBar(
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(size = 24.dp))
+            .background(
+                color = MaterialTheme.colorScheme.tertiary,
+                shape = RoundedCornerShape(size = 24.dp)
+            )
             .padding(all = 16.dp)
-            .animateContentSize()
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.weight(weight = 1f)
         ) {
             Text(
-                text = stringResource(id = R.string.net_income),
+                text = stringResource(id = R.string.total_income),
                 color = Color(0xFF4CAF50),
                 style = MaterialTheme.typography.labelLarge,
                 textAlign = TextAlign.Center
