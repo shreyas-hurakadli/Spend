@@ -1,0 +1,71 @@
+package com.shreyashurakadli.budgetwise.ui.navigation
+
+import kotlinx.serialization.Serializable
+
+sealed class Routes {
+    @Serializable
+    data object IntroductionScreen: Routes()
+
+    @Serializable
+    data object SelectCurrencyScreen: Routes()
+
+    @Serializable
+    data object HomeScreen: Routes()
+
+    @Serializable
+    data object SummaryScreen: Routes()
+
+    @Serializable
+    data object AddScreen: Routes()
+
+    @Serializable
+    data object EntryScreen: Routes()
+
+    @Serializable
+    data object SettingsScreen: Routes()
+
+    @Serializable
+    data object AccountScreen: Routes()
+
+    @Serializable
+    data object AddAccountScreen: Routes()
+
+    @Serializable
+    data object CreateCategoryScreen: Routes()
+
+    @Serializable
+    data object BudgetScreen: Routes()
+
+    @Serializable
+    data object AddBudgetScreen: Routes()
+
+    @Serializable
+    data class EntryDetailScreen(val id: Long): Routes()
+
+    @Serializable
+    data class BudgetDetailScreen(val id: Long): Routes()
+
+    @Serializable
+    data class AccountDetailScreen(val id: Long): Routes()
+
+    @Serializable
+    data class EditTransactionScreen(val id: Long): Routes()
+
+    @Serializable
+    data class EditAccountScreen(val id: Long): Routes()
+
+    @Serializable
+    data class EditBudgetScreen(val id: Long): Routes()
+
+    @Serializable
+    data object CurrencyConverterScreen: Routes()
+
+    @Serializable
+    data object CategoryScreen: Routes()
+
+    @Serializable
+    data class CategoryDetailScreen(val id: Long): Routes()
+
+    @Serializable
+    data class EditCategoryScreen(val id: Long): Routes()
+}

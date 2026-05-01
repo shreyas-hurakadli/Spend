@@ -10,11 +10,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.spend"
+    namespace = "com.shreyashurakadli.budgetwise"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.example.spend"
+        applicationId = "com.shreyashurakadli.budgetwise"
         minSdk = 29
         targetSdk = 37
         versionCode = 1

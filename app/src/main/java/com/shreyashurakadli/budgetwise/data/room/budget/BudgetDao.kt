@@ -1,0 +1,39 @@
+package com.shreyashurakadli.budgetwise.data.room.budget
+
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy.Companion.ABORT
+import androidx.room.Query
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface BudgetDao {
+    @Insert(onConflict = ABORT)
+    suspend fun insert(budget: Budget): Long
+
+    @Update(onConflict = ABORT)
+    suspend fun update(budget: Budget)
+
+    @Delete
+    suspend fun delete(budget: Budget)
+
+    @Query("DELETE FROM budgets")
+    suspend fun deleteAll()
+
+    @Query("DELETE FROM sqlite_sequence WHERE name = 'budgets'")
+    suspend fun resetAutoIncrement()
+
+    @Query("SELECT EXISTS (SELECT 1 FROM budgets WHERE id IS NOT NULL)")
+    fun thereAreNoBudgets(): Flow<Boolean>
+
+    @Query("SELECT * FROM budgets ORDER BY id DESC")
+    fun getAllBudgets(): Flow<List<Budget>>
+
+    @Query("SELECT * FROM budgets WHERE :time BETWEEN start_time_stamp AND start_time_stamp + period")
+    fun getBudgetsBetweenTime(time: Long): Flow<List<Budget>>
+
+    @Query("SELECT * FROM budgets WHERE id = :id")
+    fun getBudgetById(id: Long): Flow<Budget?>
+}

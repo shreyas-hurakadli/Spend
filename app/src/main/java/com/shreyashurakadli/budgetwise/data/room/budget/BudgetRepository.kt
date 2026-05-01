@@ -1,0 +1,21 @@
+package com.shreyashurakadli.budgetwise.data.room.budget
+
+import kotlinx.coroutines.flow.Flow
+
+interface BudgetRepository {
+    suspend fun insert(budget: Budget): Long
+
+    suspend fun update(budget: Budget)
+
+    suspend fun delete(budget: Budget)
+
+    suspend fun deleteAll()
+
+    fun thereAreBudgets(): Flow<Boolean>
+
+    fun getAllBudgets(): Flow<List<Budget>>
+
+    fun getAllActiveBudgets(): Flow<List<Budget>>
+
+    fun getBudgetById(id: Long): Flow<Budget?>
+}
