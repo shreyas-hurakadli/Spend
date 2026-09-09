@@ -234,7 +234,7 @@ fun BudgetDetailScreen(
                                 iconTint = Color.Black,
                                 showDate = true,
                                 clickable = true,
-                                onClick = { navHostController.navigate(route = Routes.EntryDetailScreen) }
+                                onClick = { navHostController.navigate(route = Routes.EntryDetailScreen(entryCategory.entry.id)) }
                             )
                         }
                     }
