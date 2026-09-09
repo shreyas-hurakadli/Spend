@@ -168,9 +168,9 @@ fun AccountDetailScreen(
                                     currencySymbol = currencySymbol,
                                     iconTint = Color.Black,
                                     showDate = true,
-                                    clickable = false,
+                                    clickable = true,
                                     onClick = {
-                                        navHostController.navigate(Routes.EntryDetailScreen)
+                                        navHostController.navigate(Routes.EntryDetailScreen(entryCategory.entry.id))
                                     }
                                 )
                             }
