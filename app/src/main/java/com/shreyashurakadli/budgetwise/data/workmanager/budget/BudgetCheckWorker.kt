@@ -74,7 +74,7 @@ class BudgetCheckWorker(
 
             val pendingIntent = PendingIntent.getActivity(
                 context,
-                budget.id.toInt(),
+                budget.id.hashCode(),
                 intent,
                 PendingIntent.FLAG_IMMUTABLE
             )
