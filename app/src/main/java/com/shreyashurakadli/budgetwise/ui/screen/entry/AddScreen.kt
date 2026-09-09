@@ -495,7 +495,7 @@ private fun DateTimePicker(
             if (showTimePicker) {
                 val (initialHour, initialMinute) = rememberSaveable {
                     val dayRelativeSeconds = (System.currentTimeMillis() / 1000) - getTodayStart()
-                    (dayRelativeSeconds / 3600) to (dayRelativeSeconds / 216000)
+                    (dayRelativeSeconds / 3600) to ((dayRelativeSeconds % 3600) / 60)
                 }
                 val timePickerState = rememberTimePickerState(
                     initialHour = initialHour.toInt(),
