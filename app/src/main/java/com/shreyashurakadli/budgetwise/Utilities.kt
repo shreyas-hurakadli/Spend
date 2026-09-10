@@ -135,6 +135,9 @@ fun String.escapeCsv(): String = if (contains(",") || contains("\"") || contains
  * Checks if the given string is a valid number
  */
 fun String.isCurrencyAppropriate() = try {
+    if (this.isEmpty()) {
+        throw NumberFormatException()
+    }
     if (this.isNotEmpty()) {
         this.toDouble()
     }
