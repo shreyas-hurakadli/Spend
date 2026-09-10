@@ -20,60 +20,34 @@ class EditTransaction @Inject constructor(
         allAccount: Account
     ): Boolean = try {
         database.withTransaction {
-            val change = editedEntry.amount - entry.amount
-            val allAccount = accountRepository.getFirstAccount().first()
+            val oldImpact = entry.amount * if (entry.isExpense) -1.0 else 1.0
+            val newImpact = editedEntry.amount * if (editedEntry.isExpense) -1.0 else 1.0
 
             if (entry.accountId != editedEntry.accountId) {
-                val editedAccount =
-                    accountRepository.getAccountById(id = editedEntry.accountId)
-                        .first()
-                val prevAccount =
-                    accountRepository.getAccountById(
-                        id = entry.accountId
-                    )
-                        .first()
-
-                if (change != 0.00) {
-                    editedAccount?.let {
-                        accountRepository.update(
-                            account = it.copy(balance = it.balance + editedEntry.amount)
-                        )
-                    }
-                } else {
-                    editedAccount?.let {
-                        accountRepository.update(
-                            account = it.copy(
-                                balance = it.balance + entry.amount
-                            )
-                        )
-                    }
-                }
+                val prevAccount = accountRepository.getAccountById(id = entry.accountId).first()
+                val nextAccount = accountRepository.getAccountById(id = editedEntry.accountId).first()
 
                 prevAccount?.let {
-                    accountRepository.update(
-                        account = it.copy(
-                            balance = it.balance - entry.amount
-                        )
-                    )
+                    accountRepository.update(it.copy(balance = it.balance - oldImpact))
+                }
+                nextAccount?.let {
+                    accountRepository.update(it.copy(balance = it.balance + newImpact))
                 }
             } else {
-                if (change != 0.00) {
-                    val curAccount =
-                        accountRepository.getAccountById(id = editedEntry.accountId)
-                            .first()
-                    curAccount?.let {
-                        accountRepository.update(
-                            account = it.copy(balance = it.balance + change)
-                        )
-                    }
+                val curAccount = accountRepository.getAccountById(id = editedEntry.accountId).first()
+                curAccount?.let {
+                    accountRepository.update(it.copy(balance = it.balance - oldImpact + newImpact))
                 }
             }
 
-            if (change != 0.00) {
-                accountRepository.update(
-                    account = allAccount.copy(balance = allAccount.balance + change)
-                )
-            }
+            val allAccountLatest = accountRepository.getFirstAccount().first()
+            val isTransfer = entry.categoryId in 3L..4L
+            val isNewTransfer = editedEntry.categoryId in 3L..4L
+            
+            val oldAllImpact = if (isTransfer) 0.0 else oldImpact
+            val newAllImpact = if (isNewTransfer) 0.0 else newImpact
+            
+            accountRepository.update(allAccountLatest.copy(balance = allAccountLatest.balance - oldAllImpact + newAllImpact))
 
             entryRepository.update(entry = editedEntry)
         }
